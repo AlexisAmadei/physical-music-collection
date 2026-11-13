@@ -153,16 +153,9 @@ fun Cover(url: String?, modifier: Modifier = Modifier) {
 /** Square-ish cover, title (+ rating and optional comment when [showMeta]). Tap → detail. */
 @Composable
 private fun CoverCard(d: Disc, onClick: () -> Unit, showMeta: Boolean = true) {
+    var flipped by rememberSaveable(d.id) { mutableStateOf(false) }
     Column {
-        Cover(
-            d.coverUrl,
-            Modifier
-                .fillMaxWidth()
-                .aspectRatio(176f / 177f)
-                .shadow(4.dp, ambientColor = Color.Black.copy(alpha = 0.25f), spotColor = Color.Black.copy(alpha = 0.25f))
-                .clickable(role = Role.Button, onClick = onClick)
-                .semantics { contentDescription = d.a11yLabel() },
-        )
+        FlipCover(d, flipped, onFlip = { flipped = !flipped }, onEdit = onClick, Modifier.fillMaxWidth().aspectRatio(176f / 177f))
         Row(
             Modifier.padding(top = 8.dp).fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically,
@@ -178,12 +171,12 @@ private fun CoverCard(d: Disc, onClick: () -> Unit, showMeta: Boolean = true) {
 
 /** Read-only 0..5 stars, one semantic node. */
 @Composable
-private fun StarRating(rating: Int) {
+fun StarRating(rating: Int, size: Dp = 15.dp) {
     Row(
         Modifier.clearAndSetSemantics { contentDescription = if (rating > 0) "Note : $rating sur 5" else "Non noté" },
         horizontalArrangement = Arrangement.spacedBy(1.dp),
     ) {
-        (1..5).forEach { i -> Icon(Glyphs.Star, null, Modifier.size(15.dp), tint = if (i <= rating) Palette.Ink else Palette.Line) }
+        (1..5).forEach { i -> Icon(Glyphs.Star, null, Modifier.size(size), tint = if (i <= rating) Palette.Ink else Palette.Line) }
     }
 }
 

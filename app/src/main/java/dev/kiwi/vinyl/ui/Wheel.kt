@@ -1,6 +1,16 @@
 package dev.kiwi.vinyl.ui
 
 import android.provider.Settings
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.Alignment
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -81,6 +91,7 @@ private class WheelState {
     var angle by mutableFloatStateOf(0f)
     var dragging by mutableStateOf(false)
     var touching = false
+    var frozen by mutableStateOf(false) // a sleeve is open: no drift, no drag
     private var vel = 0f
     private var target: Float? = null
     private var holdUntil = 0L
@@ -93,8 +104,9 @@ private class WheelState {
     fun focus(k: Int) { target = -k * STEP; hold(FOCUS_HOLD) }
     fun stepBy(cards: Int) { target = (target ?: nearest(angle)) - cards * STEP; hold(FOCUS_HOLD) }
 
-    fun startDrag() { target = null; vel = 0f; dragging = true }
+    fun startDrag() { if (frozen) return; target = null; vel = 0f; dragging = true }
     fun endDrag(degPerSec: Float) {
+        if (!dragging) return
         target = nearest(angle + degPerSec.coerceIn(-MAX_FLING, MAX_FLING) * 0.25f)
         hold(TOUCH_HOLD); dragging = false
     }
@@ -104,7 +116,7 @@ private class WheelState {
         while (true) withFrameNanos { now ->
             val dt = if (last == 0L) 1 / 60f else min((now - last) / 1e9f, 0.05f)
             last = now
-            if (!dragging) tick(dt, drift && !touching && System.nanoTime() >= holdUntil)
+            if (!dragging) tick(dt, drift && !frozen && !touching && System.nanoTime() >= holdUntil)
         }
     }
 
@@ -130,12 +142,48 @@ private class WheelState {
     }
 }
 
+private val SlideEase = CubicBezierEasing(0.2f, 0.8f, 0.2f, 1f)
+
+/**
+ * Open sleeve on the Home wheel. FRONT → FLIPPING → BACK_SETTLED → DISC_OUT, then the reverse.
+ * The vinyl is only ever visible once the flip has finished, and hidden again before it starts.
+ */
+private class FlipState(private val reduced: Boolean) {
+    val rot = Animatable(0f)
+    val slide = Animatable(0f) // 0 = hidden behind the sleeve, 1 = 78 dp out
+    var k by mutableStateOf<Int?>(null) // wheel index of the open disc
+    var discVisible by mutableStateOf(false)
+    var spinning by mutableStateOf(false)
+    var busy = false
+    val isOpen get() = k != null
+
+    suspend fun open(index: Int) {
+        busy = true; k = index
+        if (reduced) rot.snapTo(180f) else rot.animateTo(180f, tween(FLIP_OPEN_MS, easing = FlipEase))
+        discVisible = true
+        if (reduced) slide.snapTo(1f) else { delay(30); slide.animateTo(1f, tween(500, easing = SlideEase)) }
+        spinning = !reduced
+        busy = false
+    }
+
+    suspend fun close() {
+        busy = true; spinning = false
+        if (reduced) { slide.snapTo(0f); rot.snapTo(0f) }
+        else { slide.animateTo(0f, tween(450)); discVisible = false; rot.animateTo(0f, tween(FLIP_CLOSE_MS, easing = FlipEase)) }
+        discVisible = false; k = null; busy = false
+    }
+}
+
 /** Home carousel: covers on a vertical 3D wheel, front card centred on the screen. */
 @Composable
 fun CoverWheel(discs: List<Disc>, onOpen: (Disc) -> Unit, modifier: Modifier = Modifier) {
     val ctx = LocalContext.current
     val reduced = remember { Settings.Global.getFloat(ctx.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f }
     val wheel = remember { WheelState() }
+    val flip = remember { FlipState(reduced) }
+    val scope = rememberCoroutineScope()
+    SideEffect { wheel.frozen = flip.isOpen }
+    BackHandler(flip.isOpen) { if (!flip.busy) scope.launch { flip.close() } }
     LaunchedEffect(reduced) { wheel.run(drift = !reduced) }
     val n = discs.size
     val disc = { k: Int -> discs[Math.floorMod(k, n)] }
@@ -173,6 +221,7 @@ fun CoverWheel(discs: List<Disc>, onOpen: (Disc) -> Unit, modifier: Modifier = M
                         onDragEnd = { wheel.endDrag(tracker.calculateVelocity().y * degPerPx) },
                         onDragCancel = { wheel.endDrag(0f) },
                     ) { change, dy ->
+                        if (!wheel.dragging) return@detectVerticalDragGestures
                         change.consume()
                         tracker.addPosition(change.uptimeMillis, change.position)
                         wheel.angle += dy * degPerPx
@@ -186,10 +235,27 @@ fun CoverWheel(discs: List<Disc>, onOpen: (Disc) -> Unit, modifier: Modifier = M
                     val d = disc(k)
                     WheelCard(
                         d, theta = { wheel.theta(k) },
-                        onClick = { if (k == wheel.front) onOpen(d) else wheel.focus(k) },
-                        modifier = Modifier.offset(w / 2 - (CARD / 2).dp, h / 2 - (CARD / 2).dp),
+                        onClick = {
+                            if (!flip.busy) when {
+                                flip.isOpen -> scope.launch { flip.close(); if (k != wheel.front) wheel.focus(k) }
+                                k == wheel.front -> scope.launch { wheel.focus(k); flip.open(k) }
+                                else -> wheel.focus(k)
+                            }
+                        },
+                        modifier = Modifier.offset(w / 2 - (CARD / 2).dp, h / 2 - (CARD / 2).dp).alpha(if (flip.k == k) 0f else 1f),
                     )
                 }
+            }
+        }
+        // Open sleeve: a copy of the front card, centred, with the vinyl behind it.
+        flip.k?.let { fk ->
+            val d = disc(fk)
+            Box(Modifier.offset(w / 2 - (CARD / 2).dp, h / 2 - (CARD / 2).dp).size(CARD.dp), contentAlignment = Alignment.Center) {
+                if (flip.discVisible) Vinyl(d, flip.spinning, Modifier.offset { IntOffset((-78.dp.toPx() * flip.slide.value).roundToInt(), 0) })
+                FlipFaces(
+                    d, flip.rot.value, onTap = { if (!flip.busy) scope.launch { flip.close() } }, onEdit = { onOpen(d) },
+                    Modifier.size(CARD.dp), large = true, elevation = 5.dp,
+                )
             }
         }
         // Polite announcement of the front disc (TalkBack).

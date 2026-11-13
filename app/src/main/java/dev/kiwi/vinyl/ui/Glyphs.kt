@@ -54,6 +54,13 @@ object Glyphs {
         stroke("M100.5 859.5V884.5", 2f, Accent, cap = StrokeCap.Butt)
     }
     /** 24 × 24, single color: tint it. */
+    val Pencil = ImageVector.Builder("pencil", 24.dp, 24.dp, 24f, 24f).apply {
+        addPath(
+            addPathNodes("M4 20l1-4L16 5a2.1 2.1 0 0 1 3 3L8 19l-4 1zM14 7l3 3"),
+            stroke = SolidColor(Color.Black), strokeLineWidth = 1.7f, strokeLineCap = StrokeCap.Round, strokeLineJoin = StrokeJoin.Round,
+        )
+    }.build()
+    /** 24 × 24, single color: tint it. */
     val Star = ImageVector.Builder("star", 24.dp, 24.dp, 24f, 24f).apply {
         addPath(addPathNodes("M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6L2.5 9.4l6.6-.8z"), fill = SolidColor(Color.Black))
     }.build()
