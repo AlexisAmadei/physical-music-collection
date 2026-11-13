@@ -1,14 +1,22 @@
 package dev.kiwi.vinyl
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
-import androidx.compose.material3.MaterialTheme
+import androidx.activity.enableEdgeToEdge
 import dev.kiwi.vinyl.ui.App
+import dev.kiwi.vinyl.ui.PhysicalTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        // The design is light-only: dark system-bar icons over the white surface, whatever the system theme.
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.light(Color.argb(0xe6, 0xff, 0xff, 0xff), Color.argb(0x80, 0x1b, 0x1b, 0x1b)),
+        )
         super.onCreate(savedInstanceState)
-        setContent { MaterialTheme { App() } }
+        setContent { PhysicalTheme { App() } }
     }
 }

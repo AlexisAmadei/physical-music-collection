@@ -2,6 +2,8 @@ package dev.kiwi.vinyl.data
 
 import android.content.Context
 import androidx.room.*
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.flow.Flow
 
 enum class Format { CD, VINYL }
@@ -18,6 +20,7 @@ data class Disc(
     val comment: String = "",
     val wishlist: Boolean = false,
     val addedAt: Long = System.currentTimeMillis(),
+    val coverUrl: String? = null,
 )
 
 @Dao
@@ -35,13 +38,17 @@ interface DiscDao {
     @Delete suspend fun delete(d: Disc)
 }
 
-@Database(entities = [Disc::class], version = 1)
+@Database(entities = [Disc::class], version = 2)
 abstract class AppDb : RoomDatabase() {
     abstract fun dao(): DiscDao
     companion object {
         @Volatile private var db: AppDb? = null
+        private val V1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) = db.execSQL("ALTER TABLE Disc ADD COLUMN coverUrl TEXT")
+        }
         fun get(c: Context) = db ?: synchronized(this) {
-            db ?: Room.databaseBuilder(c.applicationContext, AppDb::class.java, "vinyl.db").build().also { db = it }
+            db ?: Room.databaseBuilder(c.applicationContext, AppDb::class.java, "vinyl.db")
+                .addMigrations(V1_2).build().also { db = it }
         }
     }
 }

@@ -35,6 +35,8 @@ object MusicBrainz {
                     year = r.optString("date").take(4).toIntOrNull(),
                     format = if (media.contains("CD", true)) Format.CD else Format.VINYL,
                     barcode = r.optString("barcode").ifBlank { null },
+                    // Cover Art Archive; 404s (no art) fall back to the placeholder.
+                    coverUrl = r.optString("id").ifBlank { null }?.let { "https://coverartarchive.org/release/$it/front-500" },
                 )
             }
         }.getOrDefault(emptyList())

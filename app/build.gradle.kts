@@ -4,6 +4,12 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.devtools.ksp")
 }
+import java.util.Properties
+
+// Discogs app credentials: local.properties (git-ignored) or env vars in CI. Blank = anonymous search.
+val localProps = Properties().apply { rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use(::load) }
+fun secret(prop: String, env: String) = localProps.getProperty(prop) ?: System.getenv(env) ?: ""
+
 android {
     namespace = "dev.kiwi.vinyl"
     compileSdk = 35
@@ -13,10 +19,12 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "0.1"
+        buildConfigField("String", "DISCOGS_KEY", "\"${secret("discogs.key", "DISCOGS_KEY")}\"")
+        buildConfigField("String", "DISCOGS_SECRET", "\"${secret("discogs.secret", "DISCOGS_SECRET")}\"")
     }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
     kotlinOptions { jvmTarget = "17" }
-    buildFeatures { compose = true }
+    buildFeatures { compose = true; buildConfig = true }
 }
 dependencies {
     val bom = platform("androidx.compose:compose-bom:2025.06.01")
@@ -33,4 +41,6 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:1.4.2")
     implementation("androidx.camera:camera-view:1.4.2")
     implementation("com.google.mlkit:barcode-scanning:17.3.0")
+    implementation("io.coil-kt:coil-compose:2.7.0")
+    implementation("dev.chrisbanes.haze:haze:1.6.10")
 }
