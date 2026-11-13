@@ -7,7 +7,7 @@ F=app/build.gradle.kts
 [ "$(git branch --show-current)" = main ] || { echo "Not on main."; exit 1; }
 
 cur=$(sed -nE 's/.*versionName = "([0-9.]+)".*/\1/p' $F)
-IFS=. read -r ma mi pa <<<"$cur.0.0"
+IFS=. read -r ma mi pa _ <<<"$cur.0.0"
 case "${1:-patch}" in
   major) new="$((ma+1)).0.0" ;;
   minor) new="$ma.$((mi+1)).0" ;;
@@ -17,7 +17,7 @@ case "${1:-patch}" in
 esac
 code=$(( $(sed -nE 's/.*versionCode = ([0-9]+).*/\1/p' $F) + 1 ))
 
-sed -i '' -E "s/versionName = \"[0-9.]+\"/versionName = \"$new\"/; s/versionCode = [0-9]+/versionCode = $code/" $F
+sed -i.bak -E "s/versionName = \"[0-9.]+\"/versionName = \"$new\"/; s/versionCode = [0-9]+/versionCode = $code/" $F && rm $F.bak
 git commit -qam "Release v$new"
 git tag "v$new"
 git push -q origin main "v$new"
