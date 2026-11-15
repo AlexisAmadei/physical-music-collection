@@ -42,8 +42,16 @@ _Avoid_: Worth, total
 ## Profile
 
 **Profile**:
-The user's own screen. For now its only section is the Collection value.
+The user's own screen: the Profile card, then the Collection value by Format.
 _Avoid_: Stats, account
+
+**Profile card**:
+The brushed silver card at the top of the Profile: Profile name, Collection value and the number of Collection Discs. It tilts with the phone.
+_Avoid_: Holo card, badge
+
+**Profile name**:
+The name the user types for the Profile card (24 characters at most). Optional; kept on the phone only.
+_Avoid_: Username, handle
 
 ## Catalog
 

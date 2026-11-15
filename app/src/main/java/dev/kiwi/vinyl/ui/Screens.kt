@@ -13,6 +13,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -25,6 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -33,6 +36,8 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -43,6 +48,7 @@ import dev.chrisbanes.haze.hazeSource
 import dev.kiwi.vinyl.data.Disc
 import dev.kiwi.vinyl.data.Format
 import dev.kiwi.vinyl.data.Price
+import dev.kiwi.vinyl.data.ProfileName
 import dev.kiwi.vinyl.data.CollectionValue
 import dev.kiwi.vinyl.data.collectionValue
 import kotlinx.coroutines.launch
@@ -120,48 +126,75 @@ fun WishlistScreen(vm: AppVm, nav: NavHostController) {
     }
 }
 
-/** The user's own screen. For now its only section is the Collection value. */
+/** The user's own screen: the Profile card, then the Collection value by Format. */
 @Composable
 fun ProfileScreen(vm: AppVm, nav: NavHostController) {
     val all by vm.dao.byList(false).collectAsState(null)
+    val name by vm.name.collectAsState()
+    var editing by rememberSaveable { mutableStateOf(false) }
     val list = all ?: return
+    val value = remember(list) { collectionValue(list) }
     Column(
         Modifier.fillMaxSize().hazeSource(LocalHaze.current).verticalScroll(rememberScrollState())
             .padding(start = 20.dp, end = 20.dp, top = screenTop(), bottom = 119.dp + chromeBottom()),
     ) {
         Text("MON PROFIL", style = Type.Display)
+        ProfileCard(name, value.total, list.size, onEditName = { editing = true }, Modifier.padding(top = 24.dp))
         if (list.isEmpty()) {
             var adding by remember { mutableStateOf(false) }
             EmptyState(
                 "Scanne un code-barres ou cherche un album pour commencer.", "Ajouter mon premier disque",
-                onAdd = { adding = true }, Modifier.padding(top = 120.dp - 36.dp),
+                onAdd = { adding = true }, Modifier.padding(top = 35.dp),
             ) { AddChoices(adding, { adding = false }, vm, nav) }
         } else {
-            CollectionValueSection(remember(list) { collectionValue(list) }, Modifier.padding(top = 35.dp))
+            ValueByFormat(value, Modifier.padding(top = 35.dp))
         }
     }
+    if (editing) NameSheet(name, onDone = { vm.setName(it); editing = false }, onDismiss = { editing = false })
 }
 
 @Composable
-private fun CollectionValueSection(v: CollectionValue, modifier: Modifier = Modifier) {
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Valeur de la collection", style = Type.Label, color = Palette.Muted)
-        Text(Price.format(v.total), style = Type.Display)
-        Column(Modifier.padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            listOf("CD" to v.cd, "Vinyle" to v.vinyl).forEach { (label, cents) ->
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text(label, style = Type.Body)
-                    Text(Price.format(cents), style = Type.Body, fontWeight = FontWeight.Medium)
-                }
+private fun ValueByFormat(v: CollectionValue, modifier: Modifier = Modifier) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text("Par format", Modifier.padding(bottom = 4.dp), style = Type.Label, color = Palette.Muted)
+        listOf("CD" to v.cd, "Vinyle" to v.vinyl).forEach { (label, cents) ->
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(label, style = Type.Body)
+                Text(Price.format(cents), style = Type.Body, fontWeight = FontWeight.Medium)
             }
         }
         if (v.unpriced > 0) {
             Text(
                 if (v.unpriced == 1) "1 disque sans prix" else "${v.unpriced} disques sans prix",
-                Modifier.padding(top = 8.dp), style = Type.Body, color = Palette.Muted,
+                Modifier.padding(top = 12.dp), style = Type.Body, color = Palette.Muted,
             )
         }
     }
+}
+
+/** One field for the Profile name. Blank clears it. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun NameSheet(current: String, onDone: (String) -> Unit, onDismiss: () -> Unit) {
+    var text by rememberSaveable { mutableStateOf(current) }
+    val focus = remember { FocusRequester() }
+    ModalBottomSheet(onDismiss, containerColor = Palette.Surface) {
+        Column(Modifier.padding(start = 20.dp, end = 20.dp, bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Text("Ton nom", style = Type.Title)
+            OutlinedTextField(
+                text, { text = it.take(ProfileName.MAX) }, Modifier.fillMaxWidth().focusRequester(focus),
+                singleLine = true, supportingText = { Text("${text.length} / ${ProfileName.MAX}") },
+                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { onDone(text) }),
+            )
+            Button(
+                { onDone(text) }, Modifier.height(48.dp).align(Alignment.End), shape = RoundedCornerShape(24.dp),
+                colors = ButtonDefaults.buttonColors(Palette.Ink, Color.White),
+                contentPadding = PaddingValues(horizontal = 24.dp),
+            ) { Text("OK", style = Type.Body, fontWeight = FontWeight.Medium) }
+        }
+    }
+    LaunchedEffect(Unit) { focus.requestFocus() }
 }
 
 /** Two equal columns, 20 dp margins and gutter; the uppercase title scrolls with the grid. */
