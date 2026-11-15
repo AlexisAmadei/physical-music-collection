@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.kiwi.vinyl.data.Disc
 import dev.kiwi.vinyl.data.Format
+import dev.kiwi.vinyl.data.Price
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -118,6 +119,8 @@ fun FlipFaces(
 private fun BackFace(d: Disc, onTap: () -> Unit, onEdit: () -> Unit, large: Boolean) {
     val pad = if (large) 18.dp else 14.dp
     val star = if (large) 13.dp else 12.dp
+    // Seen price in the Wishlist, Paid price in the Collection; the other one stays hidden.
+    val price = if (d.wishlist) d.seenPrice?.let { "Vu à ${Price.format(it)}" } else d.paidPrice?.let { "Payé ${Price.format(it)}" }
     Box(Modifier.fillMaxSize().clipToBounds().clickable(onClickLabel = "Retourner", role = Role.Button, onClick = onTap)) {
         Cover(
             d.coverUrl,
@@ -133,7 +136,8 @@ private fun BackFace(d: Disc, onTap: () -> Unit, onEdit: () -> Unit, large: Bool
                 )
             }
             Text(
-                d.title.ifBlank { "Sans titre" }, maxLines = 3, overflow = TextOverflow.Ellipsis,
+                // The extra price line would push a 3-line title into the barcode on small cards.
+                d.title.ifBlank { "Sans titre" }, maxLines = if (price != null && !large) 2 else 3, overflow = TextOverflow.Ellipsis,
                 style = Type.Title.copy(fontSize = if (large) 17.sp else 15.sp, lineHeight = if (large) 21.sp else 19.sp),
                 color = Palette.Ink,
             )
@@ -142,6 +146,7 @@ private fun BackFace(d: Disc, onTap: () -> Unit, onEdit: () -> Unit, large: Bool
                 style = Type.Label, color = Palette.Ink,
             )
             Text("Ajouté le ${addedOn(d.addedAt)}", style = Type.Label.copy(fontSize = 11.sp), color = Palette.Ink.copy(alpha = 0.7f))
+            if (price != null) Text(price, style = Type.Label, color = Palette.Ink)
             if (!d.wishlist) StarRating(d.rating, size = star)
         }
         Barcode(d.id * 31 + d.title.hashCode(), Modifier.align(Alignment.BottomStart).padding(start = pad, bottom = pad))

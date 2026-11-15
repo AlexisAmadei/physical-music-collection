@@ -85,7 +85,7 @@ fun GlassIconButton(icon: ImageVector, label: String, onClick: () -> Unit, modif
 private class Tab(val route: String?, val label: String, val icon: ImageVector, val active: ImageVector = icon)
 
 private val pillTabs = listOf(
-    Tab(null, "Profil", Glyphs.Profile), // no screen yet
+    Tab(R.PROFILE, "Profil", Glyphs.Profile, Glyphs.ProfileOn),
     Tab(R.WISH, "Wishlist", Glyphs.Heart, Glyphs.HeartOn),
     Tab(R.COLL, "Collection", Glyphs.Disc, Glyphs.DiscOn),
     Tab(R.SEARCH, "Rechercher", Glyphs.Search, Glyphs.SearchOn),

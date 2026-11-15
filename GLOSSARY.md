@@ -5,7 +5,7 @@ A personal app to keep track of the physical records (vinyl and CD) someone owns
 ## Records
 
 **Disc**:
-One physical release (an album on vinyl or CD) as the user knows it: title, artist, year, format, rating, comment.
+One physical release (an album on vinyl or CD) as the user knows it: title, artist, year, format, rating, comment, Seen price, Paid price.
 _Avoid_: Record, album, item
 
 **Format**:
@@ -22,6 +22,28 @@ _Avoid_: Wantlist
 
 **Draft**:
 A Disc being added or edited, not yet saved.
+
+## Prices
+
+All prices are in euros, typed by the user (never from the Catalog), and optional.
+
+**Seen price**:
+The price the user saw a Wishlist Disc at, kept as a reminder. Kept but hidden once the Disc moves to the Collection.
+_Avoid_: Target price, wish price
+
+**Paid price**:
+What the user paid for a Disc in the Collection. Prefilled from the Seen price when the Disc moves from the Wishlist.
+_Avoid_: Cost, value
+
+**Collection value**:
+The sum of the Paid prices of the Collection Discs that have one. Discs without a Paid price are counted apart, not as zero.
+_Avoid_: Worth, total
+
+## Profile
+
+**Profile**:
+The user's own screen. For now its only section is the Collection value.
+_Avoid_: Stats, account
 
 ## Catalog
 

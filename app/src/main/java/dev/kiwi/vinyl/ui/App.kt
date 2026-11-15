@@ -13,10 +13,10 @@ import androidx.navigation.navArgument
 import dev.chrisbanes.haze.rememberHazeState
 import dev.kiwi.vinyl.data.Disc
 
-object R { const val HOME = "home"; const val COLL = "collection"; const val WISH = "wishlist"; const val SEARCH = "search"; const val SCAN = "scan"; const val EDIT = "edit" }
+object R { const val HOME = "home"; const val COLL = "collection"; const val WISH = "wishlist"; const val SEARCH = "search"; const val SCAN = "scan"; const val EDIT = "edit"; const val PROFILE = "profile" }
 
 /** Routes that show the floating glass chrome (nav pill + scan / add buttons). */
-private val chromeRoutes = setOf(R.HOME, R.COLL, R.WISH, R.SEARCH)
+private val chromeRoutes = setOf(R.HOME, R.COLL, R.WISH, R.SEARCH, R.PROFILE)
 
 /** Open edit form on a draft (new or existing disc). */
 fun NavHostController.edit(vm: AppVm, d: Disc) { vm.draft = d; navigate(R.EDIT) }
@@ -32,6 +32,7 @@ fun App() {
                 composable(R.HOME) { HomeScreen(vm, nav) }
                 composable(R.COLL) { CollectionScreen(vm, nav) }
                 composable(R.WISH) { WishlistScreen(vm, nav) }
+                composable(R.PROFILE) { ProfileScreen(vm, nav) }
                 composable(R.SEARCH + "?nf={nf}", listOf(navArgument("nf") { defaultValue = "" })) { SearchScreen(vm, nav, it.arguments?.getString("nf") ?: "") }
                 composable(R.SCAN) { Box(Modifier.safeDrawingPadding()) { ScanScreen(vm, nav) } }
                 composable(R.EDIT) { Box(Modifier.safeDrawingPadding()) { EditScreen(vm, nav) } }

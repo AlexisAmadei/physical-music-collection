@@ -42,6 +42,9 @@ import coil.compose.AsyncImage
 import dev.chrisbanes.haze.hazeSource
 import dev.kiwi.vinyl.data.Disc
 import dev.kiwi.vinyl.data.Format
+import dev.kiwi.vinyl.data.Price
+import dev.kiwi.vinyl.data.CollectionValue
+import dev.kiwi.vinyl.data.collectionValue
 import kotlinx.coroutines.launch
 
 @Composable
@@ -114,6 +117,50 @@ fun WishlistScreen(vm: AppVm, nav: NavHostController) {
             )
         }
         items(list, key = { it.id }) { d -> CoverCard(d, showMeta = false, onClick = { nav.edit(vm, d) }) }
+    }
+}
+
+/** The user's own screen. For now its only section is the Collection value. */
+@Composable
+fun ProfileScreen(vm: AppVm, nav: NavHostController) {
+    val all by vm.dao.byList(false).collectAsState(null)
+    val list = all ?: return
+    Column(
+        Modifier.fillMaxSize().hazeSource(LocalHaze.current).verticalScroll(rememberScrollState())
+            .padding(start = 20.dp, end = 20.dp, top = screenTop(), bottom = 119.dp + chromeBottom()),
+    ) {
+        Text("MON PROFIL", style = Type.Display)
+        if (list.isEmpty()) {
+            var adding by remember { mutableStateOf(false) }
+            EmptyState(
+                "Scanne un code-barres ou cherche un album pour commencer.", "Ajouter mon premier disque",
+                onAdd = { adding = true }, Modifier.padding(top = 120.dp - 36.dp),
+            ) { AddChoices(adding, { adding = false }, vm, nav) }
+        } else {
+            CollectionValueSection(remember(list) { collectionValue(list) }, Modifier.padding(top = 35.dp))
+        }
+    }
+}
+
+@Composable
+private fun CollectionValueSection(v: CollectionValue, modifier: Modifier = Modifier) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text("Valeur de la collection", style = Type.Label, color = Palette.Muted)
+        Text(Price.format(v.total), style = Type.Display)
+        Column(Modifier.padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            listOf("CD" to v.cd, "Vinyle" to v.vinyl).forEach { (label, cents) ->
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(label, style = Type.Body)
+                    Text(Price.format(cents), style = Type.Body, fontWeight = FontWeight.Medium)
+                }
+            }
+        }
+        if (v.unpriced > 0) {
+            Text(
+                if (v.unpriced == 1) "1 disque sans prix" else "${v.unpriced} disques sans prix",
+                Modifier.padding(top = 8.dp), style = Type.Body, color = Palette.Muted,
+            )
+        }
     }
 }
 
@@ -293,6 +340,9 @@ private fun DiscRow(d: Disc, onClick: () -> Unit) = ListItem(
 @Composable
 fun EditScreen(vm: AppVm, nav: NavHostController) {
     var d by remember { mutableStateOf(vm.draft) }
+    // Raw text so "12," survives while typing; parsed into the Disc on save.
+    var seen by remember { mutableStateOf(Price.input(vm.draft.seenPrice)) }
+    var paid by remember { mutableStateOf(Price.input(vm.draft.paidPrice)) }
     Column(Modifier.padding(16.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(if (d.id == 0L) "Add disc" else "Edit disc", style = MaterialTheme.typography.headlineSmall)
         OutlinedTextField(d.title, { d = d.copy(title = it) }, Modifier.fillMaxWidth(), label = { Text("Title") })
@@ -312,9 +362,27 @@ fun EditScreen(vm: AppVm, nav: NavHostController) {
         }
         OutlinedTextField(d.comment, { d = d.copy(comment = it) }, Modifier.fillMaxWidth(), label = { Text("Comment") })
         Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-            Switch(d.wishlist, { d = d.copy(wishlist = it) }); Text("  In wishlist")
+            Switch(d.wishlist, {
+                // Bought: suggest the seen price as the paid price, still editable.
+                if (!it && paid.isBlank() && Price.isValid(seen)) paid = seen
+                d = d.copy(wishlist = it)
+            }); Text("  In wishlist")
         }
-        Button(enabled = d.title.isNotBlank(), onClick = { vm.save(d); nav.popBackStack() }) { Text("Save") }
+        // One field at a time: Seen price in the Wishlist, Paid price in the Collection.
+        val price = if (d.wishlist) seen else paid
+        OutlinedTextField(
+            price, { if (d.wishlist) seen = it else paid = it }, Modifier.fillMaxWidth(),
+            label = { Text(if (d.wishlist) "Prix vu" else "Prix payé") },
+            suffix = { Text("€") }, singleLine = true, isError = !Price.isValid(price),
+            supportingText = { if (!Price.isValid(price)) Text("Exemple : 12,50") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+        )
+        Button(enabled = d.title.isNotBlank() && Price.isValid(price), onClick = {
+            // The hidden field cannot be fixed from here: keep its stored value if it is malformed.
+            fun cents(text: String, stored: Long?) = if (Price.isValid(text)) Price.parse(text) else stored
+            vm.save(d.copy(seenPrice = cents(seen, d.seenPrice), paidPrice = cents(paid, d.paidPrice)))
+            nav.popBackStack()
+        }) { Text("Save") }
         if (d.id != 0L) OutlinedButton({ vm.delete(d); nav.popBackStack() }) { Text("Delete") }
     }
 }

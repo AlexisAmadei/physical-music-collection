@@ -60,4 +60,5 @@ dependencies {
     implementation("com.google.mlkit:barcode-scanning:17.3.0")
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation("dev.chrisbanes.haze:haze:1.6.10")
+    testImplementation("junit:junit:4.13.2")
 }
