@@ -12,6 +12,10 @@ _Avoid_: Record, album, item
 The physical medium of a Disc: vinyl or CD. Anything else (cassette, file, DVD) is out of scope.
 _Avoid_: Media, type
 
+**Vinyl color**:
+The color of a vinyl Disc's wax, picked from a short fixed list of solid colors (or clear). Black when not set. Kept but hidden if the Disc's Format is CD.
+_Avoid_: Colour, variant
+
 **Collection**:
 The Discs the user owns.
 _Avoid_: Library, shelf

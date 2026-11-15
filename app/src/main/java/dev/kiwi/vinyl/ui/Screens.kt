@@ -1,6 +1,7 @@
 package dev.kiwi.vinyl.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -8,10 +9,12 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -49,6 +52,7 @@ import dev.kiwi.vinyl.data.Disc
 import dev.kiwi.vinyl.data.Format
 import dev.kiwi.vinyl.data.Price
 import dev.kiwi.vinyl.data.ProfileName
+import dev.kiwi.vinyl.data.VinylColor
 import dev.kiwi.vinyl.data.CollectionValue
 import dev.kiwi.vinyl.data.collectionValue
 import kotlinx.coroutines.launch
@@ -371,6 +375,34 @@ private fun DiscRow(d: Disc, onClick: () -> Unit) = ListItem(
     supportingContent = { Text(listOfNotNull(d.artist, d.year?.toString(), d.format.name).joinToString(" · ")) },
 )
 
+/** "Vinyle couleur" switch; when on, a row of 24 dp dots, the picked one ringed. Off = black (null). */
+@Composable
+private fun VinylColorField(color: VinylColor?, onChange: (VinylColor?) -> Unit) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Switch(color != null, { onChange(if (it) VinylColor.RED else null) }); Text("  Vinyle couleur")
+    }
+    if (color == null) return
+    Row(
+        Modifier.horizontalScroll(rememberScrollState()).selectableGroup(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        VinylColor.entries.forEach { c ->
+            val on = c == color
+            Box(
+                Modifier
+                    .size(32.dp)
+                    .clip(CircleShape)
+                    .selectable(on, role = Role.RadioButton) { onChange(c) }
+                    .semantics { contentDescription = c.label }
+                    .border(2.dp, if (on) Palette.Ink else Color.Transparent, CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Box(Modifier.size(24.dp).clip(CircleShape).background(Color(c.argb)).border(1.dp, Palette.Line, CircleShape))
+            }
+        }
+    }
+}
+
 @Composable
 fun EditScreen(vm: AppVm, nav: NavHostController) {
     var d by remember { mutableStateOf(vm.draft) }
@@ -387,6 +419,7 @@ fun EditScreen(vm: AppVm, nav: NavHostController) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Format.entries.forEach { f -> FilterChip(d.format == f, { d = d.copy(format = f) }, { Text(f.name) }) }
         }
+        if (d.format == Format.VINYL) VinylColorField(d.vinylColor) { d = d.copy(vinylColor = it) }
         Row {
             (1..5).forEach { i ->
                 IconButton({ d = d.copy(rating = if (d.rating == i) 0 else i) }) {

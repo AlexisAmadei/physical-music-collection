@@ -197,7 +197,7 @@ private fun Modifier.saturate(amount: Float) = drawWithContent {
 }
 
 /**
- * The record that slides out of the sleeve: 188 dp disc, black grooves, round cover as label,
+ * The record that slides out of the sleeve: 188 dp disc (black, or its Vinyl color), grooves, round cover as label,
  * 8 dp hole. Spins while [spinning] (1 turn / 1.8 s); the highlight stays fixed.
  */
 @Composable
@@ -213,12 +213,15 @@ fun Vinyl(d: Disc, spinning: Boolean, modifier: Modifier = Modifier) {
     }
     Box(modifier.size(188.dp)) {
         Box(Modifier.fillMaxSize().graphicsLayer { rotationZ = angle }, contentAlignment = Alignment.Center) {
+            // Vinyl color only shows for vinyl; a CD keeps its hidden value.
+            val wax = d.vinylColor.takeIf { d.format == Format.VINYL }
+            val groove = if (wax?.light == true) Color.Black.copy(alpha = 0.10f) else Color.White.copy(alpha = 0.07f)
             Canvas(Modifier.fillMaxSize()) {
-                drawCircle(Color(0xFF121212))
+                drawCircle(wax?.let { Color(it.argb) } ?: Color(0xFF121212))
                 val outer = size.minDimension / 2
                 var r = outer * 0.36f
                 while (r < outer - 2.dp.toPx()) {
-                    drawCircle(Color.White.copy(alpha = 0.07f), r, style = Stroke(0.8.dp.toPx()))
+                    drawCircle(groove, r, style = Stroke(0.8.dp.toPx()))
                     r += 3.dp.toPx()
                 }
             }

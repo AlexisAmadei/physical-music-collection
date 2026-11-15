@@ -25,6 +25,8 @@ data class Disc(
     val seenPrice: Long? = null,
     /** Paid price, euro cents: what the Collection value adds up. */
     val paidPrice: Long? = null,
+    /** Vinyl color, null = black. Kept (not cleared) if the Format becomes CD. */
+    val vinylColor: VinylColor? = null,
 )
 
 @Dao
@@ -42,7 +44,7 @@ interface DiscDao {
     @Delete suspend fun delete(d: Disc)
 }
 
-@Database(entities = [Disc::class], version = 3)
+@Database(entities = [Disc::class], version = 4)
 abstract class AppDb : RoomDatabase() {
     abstract fun dao(): DiscDao
     companion object {
@@ -56,9 +58,12 @@ abstract class AppDb : RoomDatabase() {
                 db.execSQL("ALTER TABLE Disc ADD COLUMN paidPrice INTEGER")
             }
         }
+        private val V3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) = db.execSQL("ALTER TABLE Disc ADD COLUMN vinylColor TEXT")
+        }
         fun get(c: Context) = db ?: synchronized(this) {
             db ?: Room.databaseBuilder(c.applicationContext, AppDb::class.java, "vinyl.db")
-                .addMigrations(V1_2, V2_3).build().also { db = it }
+                .addMigrations(V1_2, V2_3, V3_4).build().also { db = it }
         }
     }
 }
