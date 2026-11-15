@@ -333,6 +333,7 @@ fun SearchScreen(vm: AppVm, nav: NavHostController, notFound: String) {
 @Composable
 private fun DiscRow(d: Disc, onClick: () -> Unit) = ListItem(
     modifier = Modifier.clickable(onClick = onClick),
+    leadingContent = { Cover(d.coverUrl, Modifier.size(56.dp).clip(RoundedCornerShape(4.dp))) },
     headlineContent = { Text(d.title) },
     supportingContent = { Text(listOfNotNull(d.artist, d.year?.toString(), d.format.name).joinToString(" · ")) },
 )
