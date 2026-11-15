@@ -22,6 +22,23 @@ android {
         buildConfigField("String", "DISCOGS_KEY", "\"${secret("discogs.key", "DISCOGS_KEY")}\"")
         buildConfigField("String", "DISCOGS_SECRET", "\"${secret("discogs.secret", "DISCOGS_SECRET")}\"")
     }
+    // Stable release key: same signer every build, so new APKs install as updates.
+    signingConfigs {
+        create("release") {
+            val store = secret("signing.storeFile", "SIGNING_STORE_FILE")
+            if (store.isNotBlank()) {
+                storeFile = file(store)
+                storePassword = secret("signing.storePassword", "SIGNING_STORE_PASSWORD")
+                keyAlias = secret("signing.keyAlias", "SIGNING_KEY_ALIAS")
+                keyPassword = secret("signing.keyPassword", "SIGNING_KEY_PASSWORD")
+            }
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig = signingConfigs.getByName("release").takeIf { it.storeFile != null }
+        }
+    }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
     kotlinOptions { jvmTarget = "17" }
     buildFeatures { compose = true; buildConfig = true }

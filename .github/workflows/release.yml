@@ -12,10 +12,19 @@ jobs:
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: '21' }
       - uses: gradle/actions/setup-gradle@v4
-      - run: ./gradlew assembleDebug
+      - name: Decode signing keystore
+        run: |
+          test -n "$KEYSTORE_B64" || { echo "SIGNING_KEYSTORE_B64 secret missing"; exit 1; }
+          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
+        env: { KEYSTORE_B64: '${{ secrets.SIGNING_KEYSTORE_B64 }}' }
+      - run: ./gradlew assembleRelease
         env:
           DISCOGS_KEY: ${{ secrets.DISCOGS_KEY }}
           DISCOGS_SECRET: ${{ secrets.DISCOGS_SECRET }}
-      - run: mv app/build/outputs/apk/debug/app-debug.apk vinyl-${{ github.event.release.tag_name }}.apk
+          SIGNING_STORE_FILE: ${{ runner.temp }}/release.jks
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+      - run: mv app/build/outputs/apk/release/app-release.apk vinyl-${{ github.event.release.tag_name }}.apk
       - run: gh release upload "${{ github.event.release.tag_name }}" vinyl-*.apk
         env: { GH_TOKEN: '${{ github.token }}' }
