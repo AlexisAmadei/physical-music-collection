@@ -17,9 +17,15 @@ case "${1:-patch}" in
 esac
 code=$(( $(sed -nE 's/.*versionCode = ([0-9]+).*/\1/p' $F) + 1 ))
 
+# Changelog: promote "## Unreleased" to the new version; its body becomes the release notes.
+notes_file=$(mktemp)
+awk '/^## /{f=($2=="Unreleased");next} f' CHANGELOG.md >"$notes_file"
+grep -q '[^[:space:]]' "$notes_file" || { echo "CHANGELOG.md has no Unreleased entries."; exit 1; }
+awk -v h="## v$new - $(date +%F)" '{print} /^## Unreleased$/{print ""; print h}' CHANGELOG.md >CHANGELOG.tmp && mv CHANGELOG.tmp CHANGELOG.md
+
 sed -i.bak -E "s/versionName = \"[0-9.]+\"/versionName = \"$new\"/; s/versionCode = [0-9]+/versionCode = $code/" $F && rm $F.bak
 git commit -qam "Release v$new"
 git tag "v$new"
 git push -q origin main "v$new"
-gh release create "v$new" --generate-notes --title "v$new"
+gh release create "v$new" --notes-file "$notes_file" --title "v$new"
 echo "Released v$new (code $code). CI builds APK."
