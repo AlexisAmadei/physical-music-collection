@@ -40,8 +40,14 @@ final class AppModel {
         draft = Draft(disc)
     }
 
-    /// Saves the current Draft as a new or updated Disc.
+    /// Whether Save is enabled: the Draft needs a title.
+    var canSaveDraft: Bool {
+        !draft.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    /// Saves the current Draft as a new or updated Disc. Refused (does nothing) when `canSaveDraft` is false.
     func saveDraft() {
+        guard canSaveDraft else { return }
         store.upsert(draft)
         refresh()
     }

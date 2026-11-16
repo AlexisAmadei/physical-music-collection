@@ -43,11 +43,15 @@ struct CoverCard: View {
         VStack(alignment: .leading, spacing: 0) {
             Cover(url: disc.coverURL)
                 .aspectRatio(176 / 177, contentMode: .fit)
-            Text(disc.title.isEmpty ? "Sans titre" : disc.title)
-                .textStyle(Typography.title)
-                .foregroundStyle(Palette.ink)
-                .lineLimit(1)
-                .padding(.top, 8)
+            HStack(spacing: 6) {
+                Text(disc.title.isEmpty ? "Sans titre" : disc.title)
+                    .textStyle(Typography.title)
+                    .foregroundStyle(Palette.ink)
+                    .lineLimit(1)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                StarRating(rating: disc.rating)
+            }
+            .padding(.top, 8)
             if !disc.artist.isEmpty {
                 Text(disc.artist)
                     .textStyle(Typography.body)

@@ -13,10 +13,19 @@
     "Artist" : {
 
     },
+    "Barcode" : {
+
+    },
     "CD" : {
 
     },
+    "Comment" : {
+
+    },
     "Date d’ajout" : {
+
+    },
+    "Delete" : {
 
     },
     "Edit disc" : {
@@ -26,6 +35,15 @@
 
     },
     "Ma collection" : {
+
+    },
+    "Non noté" : {
+
+    },
+    "Note : %lld sur 5" : {
+
+    },
+    "Rate %lld" : {
 
     },
     "Sans titre" : {

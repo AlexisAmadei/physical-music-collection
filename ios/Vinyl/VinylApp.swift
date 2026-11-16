@@ -24,7 +24,7 @@ struct RootView: View {
     @State private var editing = false
 
     var body: some View {
-        CollectionScreen(app: app)
+        CollectionScreen(app: app, onEdit: { app.edit($0); editing = true })
             .overlay(alignment: .bottomLeading) {
                 Button {
                     app.newDraft()

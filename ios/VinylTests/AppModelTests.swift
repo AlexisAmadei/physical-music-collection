@@ -45,10 +45,17 @@ struct AppModelTests {
         #expect(!app.draft.isNew)
         app.draft.title = "Amnesiac"
         app.draft.year = 2001
+        app.draft.barcodeText = "0724353276420"
+        app.draft.tapStar(4)
+        app.draft.comment = "Pyramid Song"
         app.saveDraft()
 
         #expect(app.collection.map(\.title) == ["Amnesiac"])
-        #expect(app.collection.first?.year == 2001)
+        let saved = try #require(app.collection.first)
+        #expect(saved.year == 2001)
+        #expect(saved.barcode == "0724353276420")
+        #expect(saved.rating == 4)
+        #expect(saved.comment == "Pyramid Song")
     }
 
     @Test func deletingTheEditedDiscRemovesIt() throws {
@@ -59,6 +66,54 @@ struct AppModelTests {
         app.deleteDraft()
 
         #expect(app.collection.map(\.title) == ["Debut"])
+    }
+
+    @Test func saveIsRefusedWithoutATitle() {
+        app.newDraft()
+        app.draft.artist = "Radiohead"
+        #expect(!app.canSaveDraft)
+        app.saveDraft()
+        app.draft.title = "   "
+        #expect(!app.canSaveDraft)
+        app.saveDraft()
+
+        #expect(app.collection.isEmpty)
+        app.draft.title = "Kid A"
+        #expect(app.canSaveDraft)
+    }
+
+    @Test func tappingAStarRatesAndTappingTheCurrentStarClears() {
+        app.newDraft()
+        #expect(app.draft.rating == 0)
+        app.draft.tapStar(4)
+        #expect(app.draft.rating == 4)
+        app.draft.tapStar(2)
+        #expect(app.draft.rating == 2)
+        app.draft.tapStar(2)
+        #expect(app.draft.rating == 0)
+    }
+
+    @Test func yearTakesDigitsOnly() {
+        app.newDraft()
+        app.draft.yearText = "1997"
+        #expect(app.draft.year == 1997)
+        app.draft.yearText = "1997x"
+        #expect(app.draft.year == 1997)
+        #expect(app.draft.yearText == "1997")
+        app.draft.yearText = "-20"
+        #expect(app.draft.year == 20)
+        app.draft.yearText = "abc"
+        #expect(app.draft.year == nil)
+        #expect(app.draft.yearText == "")
+    }
+
+    @Test func blankBarcodeMeansNoBarcode() {
+        app.newDraft()
+        app.draft.barcodeText = "0724384260927"
+        #expect(app.draft.barcode == "0724384260927")
+        app.draft.barcodeText = "  "
+        #expect(app.draft.barcode == nil)
+        #expect(app.draft.barcodeText == "")
     }
 
     @Test func searchFindsMyDiscsByTitleOrArtistOrderedByArtist() {
