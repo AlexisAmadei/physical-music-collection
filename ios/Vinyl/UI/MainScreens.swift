@@ -35,6 +35,15 @@ struct WishlistScreen: View {
         ScrollView {
             LazyVGrid(columns: columns, alignment: .leading, spacing: 12) {
                 Section {
+                    ForEach(app.wishlist) { disc in
+                        Button { app.open(disc) } label: { CoverCard(disc: disc) }
+                            .buttonStyle(.plain)
+                    }
+                } header: {
+                    ScreenTitle(text: "Ma wishlist")
+                        .padding(.bottom, 21 - 12)
+                } footer: {
+                    // A footer spans both columns.
                     if app.wishlist.isEmpty {
                         EmptyState(hint: "Ajoute les disques que tu cherches.") {
                             Button { app.addToWishlist() } label: {
@@ -43,14 +52,7 @@ struct WishlistScreen: View {
                             .buttonStyle(.plain)
                         }
                         .padding(.top, 120 - 12)
-                        .gridCellColumns(2)
                     }
-                    ForEach(app.wishlist) { disc in
-                        CoverCard(disc: disc)
-                    }
-                } header: {
-                    ScreenTitle(text: "Ma wishlist")
-                        .padding(.bottom, 21 - 12)
                 }
             }
             .padding(.horizontal, 20)

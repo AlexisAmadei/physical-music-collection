@@ -11,22 +11,26 @@ struct CollectionScreen: View {
         ScrollView {
             LazyVGrid(columns: columns, alignment: .leading, spacing: 28) {
                 Section {
-                    if app.collection.isEmpty {
-                        EmptyState(app: app)
-                            .padding(.top, 120 - 28)
-                            .gridCellColumns(2)
-                    }
-                    ForEach(app.collection) { disc in
+                    ForEach(app.shownCollection) { disc in
                         Button { onEdit(disc) } label: { CoverCard(disc: disc) }
                             .buttonStyle(.plain)
                     }
                 } header: {
-                    Text("Ma collection")
-                        .textCase(.uppercase)
-                        .textStyle(Typography.display)
-                        .foregroundStyle(Palette.ink)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.bottom, 35 - 28)
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text("Ma collection")
+                            .textCase(.uppercase)
+                            .textStyle(Typography.display)
+                            .foregroundStyle(Palette.ink)
+                        CollectionHeader(filter: Bindable(app).collectionFilter)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.bottom, 35 - 28)
+                } footer: {
+                    // A footer spans both columns.
+                    if app.shownCollection.isEmpty {
+                        EmptyState(app: app)
+                            .padding(.top, 120 - 28)
+                    }
                 }
             }
             .padding(.horizontal, 20)
@@ -45,11 +49,15 @@ struct CoverCard: View {
         VStack(alignment: .leading, spacing: 0) {
             Cover(url: disc.coverURL)
                 .aspectRatio(176 / 177, contentMode: .fit)
-            Text(disc.title.isEmpty ? "Sans titre" : disc.title)
-                .textStyle(Typography.title)
-                .foregroundStyle(Palette.ink)
-                .lineLimit(1)
-                .padding(.top, 8)
+            HStack(spacing: 6) {
+                Text(disc.title.isEmpty ? "Sans titre" : disc.title)
+                    .textStyle(Typography.title)
+                    .foregroundStyle(Palette.ink)
+                    .lineLimit(1)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                StarRating(rating: disc.rating)
+            }
+            .padding(.top, 8)
             if !disc.artist.isEmpty {
                 Text(disc.artist)
                     .textStyle(Typography.body)

@@ -16,6 +16,10 @@ final class AppModel {
     var tab = Tab.home
     /// Screens pushed over the main screen; empty = a single level.
     var path: [Route] = []
+    /// The Collection screen's Format filter and sort. Lives here so it survives switching screens.
+    var collectionFilter = CollectionFilter()
+    /// The Collection as the Collection screen shows it: filtered by Format and sorted.
+    var shownCollection: [Disc] { collectionFilter.apply(to: collection) }
 
     @ObservationIgnored private let store: DiscStore
     /// The network the Catalog will use. Unused until the Catalog ticket.
@@ -40,8 +44,14 @@ final class AppModel {
         draft = Draft(disc)
     }
 
-    /// Saves the current Draft as a new or updated Disc.
+    /// Whether Save is enabled: the Draft needs a title.
+    var canSaveDraft: Bool {
+        !draft.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    /// Saves the current Draft as a new or updated Disc. Refused (does nothing) when `canSaveDraft` is false.
     func saveDraft() {
+        guard canSaveDraft else { return }
         store.upsert(draft)
         refresh()
     }

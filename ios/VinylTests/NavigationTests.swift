@@ -92,4 +92,23 @@ struct NavigationTests {
         #expect(app.path.isEmpty)
         #expect(app.collection.map(\.title) == ["Kid A"])
     }
+
+    @Test func tappingACoverOpensItsDraftAndDeleteGoesBack() throws {
+        app.choose(.manual)
+        app.draft.title = "Kid A"
+        app.saveDraft()
+        app.back()
+        app.select(.collection)
+
+        app.open(try #require(app.collection.first))
+        #expect(app.path == [.draft])
+        #expect(app.draft.title == "Kid A")
+        #expect(!app.draft.isNew)
+
+        app.deleteDraft()
+        app.back()
+        #expect(app.tab == .collection)
+        #expect(app.path.isEmpty)
+        #expect(app.collection.isEmpty)
+    }
 }

@@ -19,13 +19,28 @@
     "Ajouter à la wishlist" : {
 
     },
+    "Année" : {
+
+    },
     "Artist" : {
+
+    },
+    "Barcode" : {
 
     },
     "CD" : {
 
     },
     "Collection" : {
+
+    },
+    "Comment" : {
+
+    },
+    "Date d’ajout" : {
+
+    },
+    "Delete" : {
 
     },
     "Edit disc" : {
@@ -43,7 +58,16 @@
     "MON PROFIL" : {
 
     },
+    "Non noté" : {
+
+    },
+    "Note : %lld sur 5" : {
+
+    },
     "Profil" : {
+
+    },
+    "Rate %lld" : {
 
     },
     "Rechercher" : {
@@ -74,6 +98,9 @@
 
     },
     "VINYL" : {
+
+    },
+    "Vinyle" : {
 
     },
     "Welcome home..." : {

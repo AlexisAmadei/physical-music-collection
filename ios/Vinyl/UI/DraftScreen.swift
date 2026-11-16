@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// The Draft form: add or edit a Disc. Edits `app.draft`; Save hands it to the app model.
+/// The Draft form: add or edit a Disc. Edits `app.draft`; Save and Delete hand it to the app model.
+/// `onDone` runs after Save or Delete: the presenter uses it to go back to the previous screen.
 struct DraftScreen: View {
     @Bindable var app: AppModel
     var onDone: () -> Void = {}
@@ -9,26 +10,30 @@ struct DraftScreen: View {
         Form {
             TextField("Title", text: $app.draft.title)
             TextField("Artist", text: $app.draft.artist)
-            TextField("Year", text: year)
+            TextField("Year", text: $app.draft.yearText)
                 .keyboardType(.numberPad)
+            TextField("Barcode", text: $app.draft.barcodeText)
             Picker("Format", selection: $app.draft.format) {
                 Text("CD").tag(Format.cd)
                 Text("VINYL").tag(Format.vinyl)
             }
             .pickerStyle(.segmented)
-            Button("Save") {
-                app.saveDraft()
-                onDone()
+            StarPicker(draft: $app.draft)
+            TextField("Comment", text: $app.draft.comment, axis: .vertical)
+            Section {
+                Button("Save") {
+                    app.saveDraft()
+                    onDone()
+                }
+                .disabled(!app.canSaveDraft)
+                if !app.draft.isNew {
+                    Button("Delete", role: .destructive) {
+                        app.deleteDraft()
+                        onDone()
+                    }
+                }
             }
         }
         .navigationTitle(app.draft.isNew ? "Add disc" : "Edit disc")
-    }
-
-    /// Year as text; anything that is not a number means no year.
-    private var year: Binding<String> {
-        Binding(
-            get: { app.draft.year.map(String.init) ?? "" },
-            set: { app.draft.year = Int($0) }
-        )
     }
 }

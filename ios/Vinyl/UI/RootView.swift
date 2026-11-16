@@ -24,7 +24,7 @@ struct RootView: View {
     @ViewBuilder private var main: some View {
         switch app.tab {
         case .home: HomeScreen(app: app)
-        case .collection: CollectionScreen(app: app)
+        case .collection: CollectionScreen(app: app) { app.open($0) }
         case .wishlist: WishlistScreen(app: app)
         case .search: SearchScreen()
         case .profile: ProfileScreen(app: app)

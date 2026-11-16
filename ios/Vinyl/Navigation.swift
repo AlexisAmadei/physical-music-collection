@@ -23,6 +23,12 @@ extension AppModel {
         path.append(.scan)
     }
 
+    /// Tapping a cover: opens the Draft that edits that Disc.
+    func open(_ disc: Disc) {
+        edit(disc)
+        path.append(.draft)
+    }
+
     /// Leaves the pushed screen (after Save or Delete on a Draft): back where the user came from.
     func back() {
         _ = path.popLast()

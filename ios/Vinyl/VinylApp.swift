@@ -7,8 +7,7 @@ struct VinylApp: App {
 
     init() {
         do {
-            _app = State(initialValue: AppModel(container: try DiscStore.persistentContainer()))
-        } catch {
+            _app = State(initialValue: AppModel(container: try DiscStore.persistentContainer()))        } catch {
             fatalError("Cannot open the Disc store: \(error)")
         }
     }
