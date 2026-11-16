@@ -11,17 +11,20 @@ struct CollectionScreen: View {
         ScrollView {
             LazyVGrid(columns: columns, alignment: .leading, spacing: 28) {
                 Section {
-                    ForEach(app.collection) { disc in
+                    ForEach(app.shownCollection) { disc in
                         Button { onEdit(disc) } label: { CoverCard(disc: disc) }
                             .buttonStyle(.plain)
                     }
                 } header: {
-                    Text("Ma collection")
-                        .textCase(.uppercase)
-                        .textStyle(Typography.display)
-                        .foregroundStyle(Palette.ink)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.bottom, 35 - 28)
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text("Ma collection")
+                            .textCase(.uppercase)
+                            .textStyle(Typography.display)
+                            .foregroundStyle(Palette.ink)
+                        CollectionHeader(filter: Bindable(app).collectionFilter)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.bottom, 35 - 28)
                 }
             }
             .padding(.horizontal, 20)
