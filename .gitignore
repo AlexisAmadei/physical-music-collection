@@ -4,3 +4,12 @@ local.properties
 .idea/
 *.iml
 .kotlin/
+
+# Xcode (ios/)
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+*.xcresult
+ios/build/
+ios/DerivedData/
+DerivedData/

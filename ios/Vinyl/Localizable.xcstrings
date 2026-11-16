@@ -1,0 +1,42 @@
+{
+  "sourceLanguage" : "fr",
+  "strings" : {
+    "Add disc" : {
+
+    },
+    "Ajouter un disque" : {
+
+    },
+    "Artist" : {
+
+    },
+    "CD" : {
+
+    },
+    "Edit disc" : {
+
+    },
+    "Format" : {
+
+    },
+    "Ma collection" : {
+
+    },
+    "Sans titre" : {
+
+    },
+    "Save" : {
+
+    },
+    "Title" : {
+
+    },
+    "VINYL" : {
+
+    },
+    "Year" : {
+
+    }
+  },
+  "version" : "1.0"
+}
