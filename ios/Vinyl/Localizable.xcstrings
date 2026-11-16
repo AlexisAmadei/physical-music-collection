@@ -13,6 +13,12 @@
     "Barcode" : {
 
     },
+    "Blanc" : {
+
+    },
+    "Bleu" : {
+
+    },
     "CD" : {
 
     },
@@ -28,6 +34,9 @@
     "Format" : {
 
     },
+    "Jaune" : {
+
+    },
     "Ma collection" : {
 
     },
@@ -37,7 +46,16 @@
     "Note : %lld sur 5" : {
 
     },
+    "Orange" : {
+
+    },
     "Rate %lld" : {
+
+    },
+    "Rose" : {
+
+    },
+    "Rouge" : {
 
     },
     "Sans titre" : {
@@ -49,7 +67,25 @@
     "Title" : {
 
     },
+    "Transparent" : {
+
+    },
     "VINYL" : {
+
+    },
+    "Vert" : {
+
+    },
+    "Vinyle" : {
+
+    },
+    "Vinyle couleur" : {
+
+    },
+    "Vinyle couleur %@" : {
+
+    },
+    "Violet" : {
 
     },
     "Year" : {
