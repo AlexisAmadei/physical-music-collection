@@ -12,6 +12,10 @@ final class AppModel {
     private(set) var collection: [Disc] = []
     /// Wanted Discs, in store order.
     private(set) var wishlist: [Disc] = []
+    /// The main screen the nav pill shows. Change it with `select(_:)` (see `Navigation.swift`).
+    var tab = Tab.home
+    /// Screens pushed over the main screen; empty = a single level.
+    var path: [Route] = []
 
     @ObservationIgnored private let store: DiscStore
     /// The network the Catalog will use. Unused until the Catalog ticket.

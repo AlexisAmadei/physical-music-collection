@@ -1,16 +1,31 @@
 {
   "sourceLanguage" : "fr",
   "strings" : {
+    "Accueil" : {
+
+    },
     "Add disc" : {
 
     },
+    "Ajoute les disques que tu cherches." : {
+
+    },
+    "Ajouter mon premier disque" : {
+
+    },
     "Ajouter un disque" : {
+
+    },
+    "Ajouter à la wishlist" : {
 
     },
     "Artist" : {
 
     },
     "CD" : {
+
+    },
+    "Collection" : {
 
     },
     "Edit disc" : {
@@ -22,16 +37,49 @@
     "Ma collection" : {
 
     },
+    "Ma wishlist" : {
+
+    },
+    "MON PROFIL" : {
+
+    },
+    "Profil" : {
+
+    },
+    "Rechercher" : {
+
+    },
+    "Rechercher un album" : {
+
+    },
+    "Rien ici pour l’instant." : {
+
+    },
+    "Saisie manuelle" : {
+
+    },
     "Sans titre" : {
 
     },
     "Save" : {
 
     },
+    "Scanne un code-barres ou cherche un album pour commencer." : {
+
+    },
+    "Scanner un code-barres" : {
+
+    },
     "Title" : {
 
     },
     "VINYL" : {
+
+    },
+    "Welcome home..." : {
+
+    },
+    "Wishlist" : {
 
     },
     "Year" : {

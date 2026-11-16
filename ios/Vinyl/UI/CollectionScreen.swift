@@ -11,6 +11,11 @@ struct CollectionScreen: View {
         ScrollView {
             LazyVGrid(columns: columns, alignment: .leading, spacing: 28) {
                 Section {
+                    if app.collection.isEmpty {
+                        EmptyState(app: app)
+                            .padding(.top, 120 - 28)
+                            .gridCellColumns(2)
+                    }
                     ForEach(app.collection) { disc in
                         Button { onEdit(disc) } label: { CoverCard(disc: disc) }
                             .buttonStyle(.plain)
