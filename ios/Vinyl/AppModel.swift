@@ -12,6 +12,10 @@ final class AppModel {
     private(set) var collection: [Disc] = []
     /// Wanted Discs, in store order.
     private(set) var wishlist: [Disc] = []
+    /// The Collection screen's Format filter and sort. Lives here so it survives switching screens.
+    var collectionFilter = CollectionFilter()
+    /// The Collection as the Collection screen shows it: filtered by Format and sorted.
+    var shownCollection: [Disc] { collectionFilter.apply(to: collection) }
 
     @ObservationIgnored private let store: DiscStore
     /// The network the Catalog will use. Unused until the Catalog ticket.

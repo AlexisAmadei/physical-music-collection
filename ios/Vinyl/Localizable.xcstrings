@@ -7,10 +7,16 @@
     "Ajouter un disque" : {
 
     },
+    "Année" : {
+
+    },
     "Artist" : {
 
     },
     "CD" : {
+
+    },
+    "Date d’ajout" : {
 
     },
     "Edit disc" : {
@@ -32,6 +38,9 @@
 
     },
     "VINYL" : {
+
+    },
+    "Vinyle" : {
 
     },
     "Year" : {
