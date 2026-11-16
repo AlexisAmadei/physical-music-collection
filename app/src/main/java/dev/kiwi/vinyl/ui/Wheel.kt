@@ -5,11 +5,12 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.CubicBezierEasing
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.Alignment
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,6 +34,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -79,6 +81,8 @@ private const val DRIFT = 10f                  // °/s, upwards
 private const val MAX_FLING = 1400f            // °/s
 private const val TOUCH_HOLD = 2_500L          // ms of pause after touch
 private const val FOCUS_HOLD = 2_800L          // ms of pause after tap
+private const val SLIDE_OUT_MS = 500
+private const val SLIDE_BACK_MS = 300
 
 private fun nearest(a: Float) = (a / STEP).roundToInt() * STEP
 
@@ -87,11 +91,10 @@ private fun nearest(a: Float) = (a / STEP).roundToInt() * STEP
  * Only the 10 cards around the front are drawn, so collections of any size scroll through in order;
  * a card changes disc only while it is hidden directly behind the front cards.
  */
-private class WheelState {
+private class WheelState(private val frozen: () -> Boolean) { // frozen: a sleeve is open, no drift
     var angle by mutableFloatStateOf(0f)
     var dragging by mutableStateOf(false)
     var touching = false
-    var frozen by mutableStateOf(false) // a sleeve is open: no drift, no drag
     private var vel = 0f
     private var target: Float? = null
     private var holdUntil = 0L
@@ -104,7 +107,7 @@ private class WheelState {
     fun focus(k: Int) { target = -k * STEP; hold(FOCUS_HOLD) }
     fun stepBy(cards: Int) { target = (target ?: nearest(angle)) - cards * STEP; hold(FOCUS_HOLD) }
 
-    fun startDrag() { if (frozen) return; target = null; vel = 0f; dragging = true }
+    fun startDrag() { target = null; vel = 0f; dragging = true }
     fun endDrag(degPerSec: Float) {
         if (!dragging) return
         target = nearest(angle + degPerSec.coerceIn(-MAX_FLING, MAX_FLING) * 0.25f)
@@ -116,7 +119,7 @@ private class WheelState {
         while (true) withFrameNanos { now ->
             val dt = if (last == 0L) 1 / 60f else min((now - last) / 1e9f, 0.05f)
             last = now
-            if (!dragging) tick(dt, drift && !frozen && !touching && System.nanoTime() >= holdUntil)
+            if (!dragging) tick(dt, drift && !frozen() && !touching && System.nanoTime() >= holdUntil)
         }
     }
 
@@ -145,32 +148,56 @@ private class WheelState {
 private val SlideEase = CubicBezierEasing(0.2f, 0.8f, 0.2f, 1f)
 
 /**
- * Open sleeve on the Home wheel. FRONT → FLIPPING → BACK_SETTLED → DISC_OUT, then the reverse.
- * The vinyl is only ever visible once the flip has finished, and hidden again before it starts.
+ * Open sleeve on the Home wheel. FRONT → FLIPPING → DISC_OUT, then the reverse.
+ * The vinyl comes out once the sleeve first faces backwards (the flip's overshoot settles meanwhile),
+ * and is tucked back in before the sleeve turns. Every step can be interrupted: a new open or close
+ * picks up from wherever the sleeve is.
  */
-private class FlipState(private val reduced: Boolean) {
+private class FlipState(private val reduced: Boolean, private val scope: CoroutineScope) {
     val rot = Animatable(0f)
     val slide = Animatable(0f) // 0 = hidden behind the sleeve, 1 = 78 dp out
     var k by mutableStateOf<Int?>(null) // wheel index of the open disc
     var discVisible by mutableStateOf(false)
     var spinning by mutableStateOf(false)
-    var busy = false
-    val isOpen get() = k != null
+    var closing by mutableStateOf(false)
+    private var job: Job? = null
 
-    suspend fun open(index: Int) {
-        busy = true; k = index
-        if (reduced) rot.snapTo(180f) else rot.animateTo(180f, tween(FLIP_OPEN_MS, easing = FlipEase))
-        discVisible = true
-        if (reduced) slide.snapTo(1f) else { delay(30); slide.animateTo(1f, tween(500, easing = SlideEase)) }
-        spinning = !reduced
-        busy = false
+    /** Open or opening: the wheel holds still. A closing sleeve already lets it go. */
+    val holding get() = k != null && !closing
+
+    fun open(index: Int) {
+        job?.cancel()
+        job = scope.launch {
+            if (k != null && k != index) reset() // another sleeve still settling: shut it at once
+            k = index; closing = false
+            if (reduced) { rot.snapTo(180f); discVisible = true; slide.snapTo(1f); return@launch }
+            coroutineScope {
+                if (rot.value < 180f) launch { rot.animateTo(180f, tween(FLIP_OPEN_MS, easing = FlipEase)) }
+                snapshotFlow { rot.value }.first { it >= 180f }
+                discVisible = true
+                slide.animateTo(1f, tween(SLIDE_OUT_MS, easing = SlideEase))
+                spinning = true
+            }
+        }
     }
 
-    suspend fun close() {
-        busy = true; spinning = false
-        if (reduced) { slide.snapTo(0f); rot.snapTo(0f) }
-        else { slide.animateTo(0f, tween(450)); discVisible = false; rot.animateTo(0f, tween(FLIP_CLOSE_MS, easing = FlipEase)) }
-        discVisible = false; k = null; busy = false
+    fun close() {
+        if (!holding) return
+        job?.cancel()
+        closing = true; spinning = false
+        job = scope.launch {
+            if (!reduced) {
+                if (discVisible) slide.animateTo(0f, tween(SLIDE_BACK_MS))
+                discVisible = false
+                rot.animateTo(0f, tween(FLIP_CLOSE_MS, easing = FlipEase))
+            }
+            reset()
+        }
+    }
+
+    private suspend fun reset() {
+        rot.snapTo(0f); slide.snapTo(0f)
+        discVisible = false; spinning = false; closing = false; k = null
     }
 }
 
@@ -179,14 +206,21 @@ private class FlipState(private val reduced: Boolean) {
 fun CoverWheel(discs: List<Disc>, onOpen: (Disc) -> Unit, modifier: Modifier = Modifier) {
     val ctx = LocalContext.current
     val reduced = remember { Settings.Global.getFloat(ctx.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f }
-    val wheel = remember { WheelState() }
-    val flip = remember { FlipState(reduced) }
     val scope = rememberCoroutineScope()
-    SideEffect { wheel.frozen = flip.isOpen }
-    BackHandler(flip.isOpen) { if (!flip.busy) scope.launch { flip.close() } }
+    val flip = remember { FlipState(reduced, scope) }
+    val wheel = remember { WheelState(frozen = { flip.holding }) }
+    BackHandler(flip.holding) { flip.close() }
     LaunchedEffect(reduced) { wheel.run(drift = !reduced) }
     val n = discs.size
     val disc = { k: Int -> discs[Math.floorMod(k, n)] }
+    // Closing never blocks the wheel: it turns toward the tapped card while the sleeve shuts.
+    val tap = { k: Int ->
+        when {
+            flip.holding -> { flip.close(); if (k != wheel.front) wheel.focus(k) }
+            k == wheel.front -> { wheel.focus(k); flip.open(k) }
+            else -> wheel.focus(k)
+        }
+    }
 
     BoxWithConstraints(modifier.fillMaxSize()) {
         val w = maxWidth
@@ -200,8 +234,8 @@ fun CoverWheel(discs: List<Disc>, onOpen: (Disc) -> Unit, modifier: Modifier = M
                 .semantics {
                     contentDescription = "Ma collection"
                     customActions = listOf(
-                        CustomAccessibilityAction("Disque suivant") { wheel.stepBy(1); true },
-                        CustomAccessibilityAction("Disque précédent") { wheel.stepBy(-1); true },
+                        CustomAccessibilityAction("Disque suivant") { flip.close(); wheel.stepBy(1); true },
+                        CustomAccessibilityAction("Disque précédent") { flip.close(); wheel.stepBy(-1); true },
                     )
                 }
                 .pointerInput(Unit) { // pause while any finger is down, without consuming
@@ -217,7 +251,7 @@ fun CoverWheel(discs: List<Disc>, onOpen: (Disc) -> Unit, modifier: Modifier = M
                     val degPerPx = 180f / (PI.toFloat() * RADIUS.dp.toPx())
                     val tracker = VelocityTracker()
                     detectVerticalDragGestures(
-                        onDragStart = { tracker.resetTracking(); wheel.startDrag() },
+                        onDragStart = { tracker.resetTracking(); flip.close(); wheel.startDrag() },
                         onDragEnd = { wheel.endDrag(tracker.calculateVelocity().y * degPerPx) },
                         onDragCancel = { wheel.endDrag(0f) },
                     ) { change, dy ->
@@ -233,29 +267,12 @@ fun CoverWheel(discs: List<Disc>, onOpen: (Disc) -> Unit, modifier: Modifier = M
                 val k = front + j
                 key(Math.floorMod(k, N)) {
                     val d = disc(k)
-                    WheelCard(
-                        d, theta = { wheel.theta(k) },
-                        onClick = {
-                            if (!flip.busy) when {
-                                flip.isOpen -> scope.launch { flip.close(); if (k != wheel.front) wheel.focus(k) }
-                                k == wheel.front -> scope.launch { wheel.focus(k); flip.open(k) }
-                                else -> wheel.focus(k)
-                            }
-                        },
-                        modifier = Modifier.offset(w / 2 - (CARD / 2).dp, h / 2 - (CARD / 2).dp).alpha(if (flip.k == k) 0f else 1f),
-                    )
+                    val theta = { wheel.theta(k) }
+                    val place = Modifier.offset(w / 2 - (CARD / 2).dp, h / 2 - (CARD / 2).dp)
+                    // The open sleeve stays on its card, so it rides along when the wheel turns.
+                    if (flip.k == k) Sleeve(d, flip, theta, onTap = { tap(k) }, onEdit = { onOpen(d) }, place)
+                    else WheelCard(d, theta, onClick = { tap(k) }, place)
                 }
-            }
-        }
-        // Open sleeve: a copy of the front card, centred, with the vinyl behind it.
-        flip.k?.let { fk ->
-            val d = disc(fk)
-            Box(Modifier.offset(w / 2 - (CARD / 2).dp, h / 2 - (CARD / 2).dp).size(CARD.dp), contentAlignment = Alignment.Center) {
-                if (flip.discVisible) Vinyl(d, flip.spinning, Modifier.offset { IntOffset((-78.dp.toPx() * flip.slide.value).roundToInt(), 0) })
-                FlipFaces(
-                    d, flip.rot.value, onTap = { if (!flip.busy) scope.launch { flip.close() } }, onEdit = { onOpen(d) },
-                    Modifier.size(CARD.dp), large = true, elevation = 5.dp,
-                )
             }
         }
         // Polite announcement of the front disc (TalkBack).
@@ -275,21 +292,7 @@ private fun WheelCard(d: Disc, theta: () -> Float, onClick: () -> Unit, modifier
     Box(
         modifier
             .size(CARD.dp)
-            .layout { m, c -> // all per-frame work happens in placement / draw, not composition
-                val p = m.measure(c)
-                layout(p.width, p.height) {
-                    val t = theta()
-                    val rad = t * PI.toFloat() / 180
-                    val r = RADIUS.dp.toPx()
-                    p.placeWithLayer(0, 0, zIndex = cos(rad)) {
-                        translationY = r * sin(rad)
-                        val s = PERSPECTIVE / (PERSPECTIVE + RADIUS * (1 - cos(rad)))
-                        scaleX = s; scaleY = s
-                        rotationX = -t
-                        cameraDistance = PERSPECTIVE.dp.toPx() / 72f // RenderNode units: 1 = 72 px
-                    }
-                }
-            }
+            .onWheel(theta)
             .shadow(5.dp, ambientColor = Color.Black.copy(alpha = 0.25f), spotColor = Color.Black.copy(alpha = 0.25f))
             .clickable(role = Role.Button, onClick = onClick)
             .semantics { contentDescription = d.a11yLabel() },
@@ -301,6 +304,32 @@ private fun WheelCard(d: Disc, theta: () -> Float, onClick: () -> Unit, modifier
             val fade = 0.55f * Math.pow(((1 - facing) / 2).toDouble(), 1.25).toFloat()
             drawRect(Color.White, alpha = fade)
         })
+    }
+}
+
+/** Front card turned into an open sleeve: [FlipFaces] with the vinyl sliding out to its left. */
+@Composable
+private fun Sleeve(d: Disc, flip: FlipState, theta: () -> Float, onTap: () -> Unit, onEdit: () -> Unit, modifier: Modifier) {
+    Box(modifier.size(CARD.dp).onWheel(theta), contentAlignment = Alignment.Center) {
+        if (flip.discVisible) Vinyl(d, flip.spinning, Modifier.offset { IntOffset((-78.dp.toPx() * flip.slide.value).roundToInt(), 0) })
+        FlipFaces(d, flip.rot.value, onTap, onEdit, Modifier.size(CARD.dp), large = true, elevation = 5.dp)
+    }
+}
+
+/** Places a card on the wheel at [theta] degrees. All per-frame work happens in placement, not composition. */
+private fun Modifier.onWheel(theta: () -> Float) = layout { m, c ->
+    val p = m.measure(c)
+    layout(p.width, p.height) {
+        val t = theta()
+        val rad = t * PI.toFloat() / 180
+        val r = RADIUS.dp.toPx()
+        p.placeWithLayer(0, 0, zIndex = cos(rad)) {
+            translationY = r * sin(rad)
+            val s = PERSPECTIVE / (PERSPECTIVE + RADIUS * (1 - cos(rad)))
+            scaleX = s; scaleY = s
+            rotationX = -t
+            cameraDistance = PERSPECTIVE.dp.toPx() / 72f // RenderNode units: 1 = 72 px
+        }
     }
 }
 
