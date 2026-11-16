@@ -53,6 +53,7 @@ import dev.kiwi.vinyl.data.Format
 import dev.kiwi.vinyl.data.Price
 import dev.kiwi.vinyl.data.ProfileName
 import dev.kiwi.vinyl.data.VinylColor
+import dev.kiwi.vinyl.data.shownVinylColor
 import dev.kiwi.vinyl.data.CollectionValue
 import dev.kiwi.vinyl.data.collectionValue
 import kotlinx.coroutines.launch
@@ -222,7 +223,11 @@ private fun CoverGrid(title: String, rowGap: Dp, headerGap: Dp, header: @Composa
 }
 
 fun Disc.a11yLabel() =
-    listOfNotNull(title.ifBlank { "Sans titre" }, artist.ifBlank { null }, if (format == Format.CD) "CD" else "Vinyle", year?.toString())
+    listOfNotNull(
+        title.ifBlank { "Sans titre" }, artist.ifBlank { null },
+        if (format == Format.CD) "CD" else shownVinylColor?.let { "Vinyle couleur ${it.label.lowercase()}" } ?: "Vinyle",
+        year?.toString(),
+    )
         .joinToString(", ")
 
 /** Cover art, or a neutral disc placeholder while loading / when there is none. */
@@ -370,7 +375,12 @@ fun SearchScreen(vm: AppVm, nav: NavHostController, notFound: String) {
 @Composable
 private fun DiscRow(d: Disc, onClick: () -> Unit) = ListItem(
     modifier = Modifier.clickable(onClick = onClick),
-    leadingContent = { Cover(d.coverUrl, Modifier.size(56.dp).clip(RoundedCornerShape(4.dp))) },
+    leadingContent = {
+        Box(Modifier.size(56.dp)) {
+            Cover(d.coverUrl, Modifier.matchParentSize().clip(RoundedCornerShape(4.dp)))
+            ColorStickerOf(d)
+        }
+    },
     headlineContent = { Text(d.title) },
     supportingContent = { Text(listOfNotNull(d.artist, d.year?.toString(), d.format.name).joinToString(" · ")) },
 )

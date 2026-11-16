@@ -1,9 +1,5 @@
 package dev.kiwi.vinyl.ui
 
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -24,7 +20,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,11 +48,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LifecycleResumeEffect
 import dev.kiwi.vinyl.data.Price
 import kotlin.math.exp
 import kotlin.math.hypot
@@ -81,7 +74,7 @@ private const val INTRO_NS = 1_400_000_000L
 /** The intro starts lit from the top right, then settles. */
 private val IntroStart = Offset(0.62f, -0.55f)
 /** Reduced motion: no tilt, light fixed here. */
-private val StillLight = Offset(0.35f, -0.3f)
+internal val StillLight = Offset(0.35f, -0.3f)
 
 /**
  * The Profile card: round-brushed silver, like the grooves of a record. Tilts with the phone,
@@ -91,7 +84,7 @@ private val StillLight = Offset(0.35f, -0.3f)
 @Composable
 fun ProfileCard(name: String, value: Long, discs: Int, onEditName: () -> Unit, modifier: Modifier = Modifier) {
     val reduced = rememberReducedMotion()
-    val phone = rememberPhoneTilt(enabled = !reduced)
+    val phone = rememberHoloTilt()
     var finger by remember { mutableStateOf<Tilt?>(null) }
     // Shown tilt, x / y in -1..1 (see Tilt). Read only in layer and draw: no recomposition per frame.
     val shown = remember { mutableStateOf(if (reduced) StillLight else IntroStart) }
@@ -128,7 +121,7 @@ fun ProfileCard(name: String, value: Long, discs: Int, onEditName: () -> Unit, m
             }
             .drawWithCache {
                 val rings = brushedRings()
-                onDrawBehind { drawSilver(rings, shown.value) }
+                onDrawBehind { drawSilver(shown.value, rings) }
             }
             .border(1.dp, Rim, CardShape),
     ) {
@@ -183,36 +176,6 @@ private suspend fun PointerInputScope.trackFinger(onTilt: (Tilt?) -> Unit) = awa
     }
 }
 
-/** Phone pose as a Tilt, zero at the pose on resume. Sensor runs only while the screen is resumed. */
-@Composable
-private fun rememberPhoneTilt(enabled: Boolean): State<Tilt> {
-    val ctx = LocalContext.current
-    val tilt = remember { mutableStateOf(Tilt.Zero) }
-    if (enabled) LifecycleResumeEffect(Unit) {
-        val sm = ctx.getSystemService(SensorManager::class.java)
-        // Game rotation vector: gyro + accel, no compass jumps. Older phones: the plain one.
-        val sensor = sm?.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR) ?: sm?.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
-        val tracker = TiltTracker()
-        val q = FloatArray(4)
-        var last = 0L
-        val listener = object : SensorEventListener {
-            override fun onSensorChanged(e: SensorEvent) {
-                SensorManager.getQuaternionFromVector(q, e.values)
-                val dt = if (last == 0L) 0f else min(0.1f, (e.timestamp - last) / 1e9f)
-                last = e.timestamp
-                tilt.value = tracker.update(q, dt)
-            }
-            override fun onAccuracyChanged(s: Sensor?, accuracy: Int) {}
-        }
-        if (sensor != null) sm.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_GAME)
-        onPauseOrDispose {
-            sm?.unregisterListener(listener)
-            tilt.value = Tilt.Zero
-        }
-    }
-    return tilt
-}
-
 /** Fine concentric brush lines, drawn once per size. Fixed seed: same metal every time. */
 private fun CacheDrawScope.brushedRings(): ImageBitmap {
     val img = ImageBitmap(size.width.roundToInt().coerceAtLeast(1), size.height.roundToInt().coerceAtLeast(1))
@@ -236,15 +199,15 @@ private fun CacheDrawScope.brushedRings(): ImageBitmap {
     return img
 }
 
-/** [p]: shown tilt. Light sits where the card is pushed away. */
-private fun DrawScope.drawSilver(rings: ImageBitmap, p: Offset) {
+/** [p]: shown tilt. Light sits where the card is pushed away. No [rings] on small things (Color sticker). */
+internal fun DrawScope.drawSilver(p: Offset, rings: ImageBitmap? = null) {
     val w = size.width
     val h = size.height
     val reach = min(1f, hypot(p.x, p.y))
     val shift = p.x * w * 0.3f + p.y * h * 0.3f
     // Cool silver with wide soft bands that slide with the tilt.
     drawRect(Brush.linearGradient(Base, start = Offset(shift, 0f), end = Offset(w + shift, h), tileMode = TileMode.Mirror))
-    drawImage(rings)
+    if (rings != null) drawImage(rings)
     // Round brushing reflects as two bright lobes through the center; they turn with the tilt.
     val bright = Color.White.copy(alpha = 0.45f + 0.35f * reach)
     val dark = Color.Black.copy(alpha = 0.1f)

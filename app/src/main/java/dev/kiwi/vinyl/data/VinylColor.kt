@@ -26,3 +26,9 @@ enum class VinylColor(val argb: Long, val label: String) {
         return 0.2126 * lin(16) + 0.7152 * lin(8) + 0.0722 * lin(0)
     }
 }
+
+/** The Vinyl color as shown: only on vinyl. A CD keeps its value hidden. */
+val Disc.shownVinylColor: VinylColor? get() = vinylColor.takeIf { format == Format.VINYL }
+
+/** Shows the Color sticker on its cover. */
+val Disc.hasColorSticker: Boolean get() = shownVinylColor != null

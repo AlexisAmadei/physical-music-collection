@@ -16,6 +16,10 @@ _Avoid_: Media, type
 The color of a vinyl Disc's wax, picked from a short fixed list of solid colors (or clear). Black when not set. Kept but hidden if the Disc's Format is CD.
 _Avoid_: Colour, variant
 
+**Color sticker**:
+The small round holo silver sticker on the cover of a Disc with a Vinyl color, a dot of that color in its middle. Shown on the cover front everywhere a cover appears.
+_Avoid_: Badge, hype sticker
+
 **Collection**:
 The Discs the user owns.
 _Avoid_: Library, shelf

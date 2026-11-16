@@ -26,7 +26,7 @@ fun App() {
     val nav = rememberNavController()
     val vm: AppVm = viewModel()
     val route = nav.currentBackStackEntryAsState().value?.destination?.route?.substringBefore("?")
-    CompositionLocalProvider(LocalHaze provides rememberHazeState()) {
+    CompositionLocalProvider(LocalHaze provides rememberHazeState()) { ProvideHoloLight {
         Box(Modifier.fillMaxSize().background(Palette.Surface)) {
             NavHost(nav, R.HOME, Modifier.fillMaxSize()) {
                 composable(R.HOME) { HomeScreen(vm, nav) }
@@ -39,7 +39,7 @@ fun App() {
             }
             if (route in chromeRoutes) Chrome(route, vm, nav)
         }
-    }
+    } }
 }
 
 /** Glass pill on the right, Scanner and "+" bottom-left; positions from the 412 × 917 dp frame. */

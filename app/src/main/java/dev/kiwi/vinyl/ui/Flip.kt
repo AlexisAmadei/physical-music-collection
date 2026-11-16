@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.sp
 import dev.kiwi.vinyl.data.Disc
 import dev.kiwi.vinyl.data.Format
 import dev.kiwi.vinyl.data.Price
+import dev.kiwi.vinyl.data.shownVinylColor
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -109,6 +110,7 @@ fun FlipFaces(
                     .clickable(onClickLabel = "Retourner", role = Role.Button, onClick = onTap)
                     .semantics { contentDescription = d.a11yLabel() },
             )
+            ColorStickerOf(d)
         } else {
             Box(Modifier.fillMaxSize().graphicsLayer { rotationY = 180f }) { BackFace(d, onTap, onEdit, large) }
         }
@@ -214,7 +216,7 @@ fun Vinyl(d: Disc, spinning: Boolean, modifier: Modifier = Modifier) {
     Box(modifier.size(188.dp)) {
         Box(Modifier.fillMaxSize().graphicsLayer { rotationZ = angle }, contentAlignment = Alignment.Center) {
             // Vinyl color only shows for vinyl; a CD keeps its hidden value.
-            val wax = d.vinylColor.takeIf { d.format == Format.VINYL }
+            val wax = d.shownVinylColor
             val groove = if (wax?.light == true) Color.Black.copy(alpha = 0.10f) else Color.White.copy(alpha = 0.07f)
             Canvas(Modifier.fillMaxSize()) {
                 drawCircle(wax?.let { Color(it.argb) } ?: Color(0xFF121212))
