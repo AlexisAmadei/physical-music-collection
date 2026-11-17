@@ -1,0 +1,302 @@
+{
+  "created": "2026-11-17T00:50:28.617Z",
+  "count": 5989,
+  "offset": 0,
+  "releases": [
+    {
+      "id": "de3726da-05b8-4c1a-a19d-1bf53b7889ea",
+      "title": "Ok Computer",
+      "artist-credit": [
+        {
+          "name": "Lemaitre",
+          "joinphrase": " & "
+        },
+        {
+          "name": "RebMoe"
+        }
+      ],
+      "date": "2021-08-20",
+      "barcode": "192641788758",
+      "media": [
+        {
+          "format": "Digital Media",
+          "track-count": 1
+        }
+      ]
+    },
+    {
+      "id": "a736eb98-ba6b-3e42-ad80-a65f648910a3",
+      "title": "OK Computer",
+      "artist-credit": [
+        {
+          "name": "Radiohead"
+        }
+      ],
+      "date": "2009-04-01",
+      "barcode": "4988006871502",
+      "media": [
+        {
+          "format": "CD",
+          "track-count": 12
+        },
+        {
+          "format": "CD",
+          "track-count": 15
+        },
+        {
+          "format": "DVD-Video",
+          "track-count": 6
+        }
+      ]
+    },
+    {
+      "id": "7169a92a-4dc1-42bb-9a21-c1c9223b68a8",
+      "title": "OK Computer",
+      "artist-credit": [
+        {
+          "name": "Radiohead"
+        }
+      ],
+      "date": "2009-03-24",
+      "barcode": "5099969362927",
+      "media": [
+        {
+          "format": "CD",
+          "track-count": 12
+        },
+        {
+          "format": "CD",
+          "track-count": 15
+        },
+        {
+          "format": "DVD-Video",
+          "track-count": 6
+        }
+      ]
+    },
+    {
+      "id": "d339ba4d-0e44-4d2d-bc7a-b8078c072da9",
+      "title": "OK Computer",
+      "artist-credit": [
+        {
+          "name": "Radiohead"
+        }
+      ],
+      "date": "2016-05-01",
+      "barcode": "634904078126",
+      "media": [
+        {
+          "format": "CD",
+          "track-count": 12
+        }
+      ]
+    },
+    {
+      "id": "6a09041b-0f79-3278-88d9-0552dd28d37f",
+      "title": "OK Computer",
+      "artist-credit": [
+        {
+          "name": "Radiohead"
+        }
+      ],
+      "date": "1997-07-01",
+      "barcode": "724385522925",
+      "media": [
+        {
+          "format": "CD",
+          "track-count": 12
+        }
+      ]
+    },
+    {
+      "id": "1834eae1-741b-3c03-9ca5-0df3decb43ea",
+      "title": "OK Computer",
+      "artist-credit": [
+        {
+          "name": "Radiohead"
+        }
+      ],
+      "date": "1997-05-21",
+      "barcode": "4988006729254",
+      "media": [
+        {
+          "format": "CD",
+          "track-count": 12
+        }
+      ]
+    },
+    {
+      "id": "9eff0482-170f-3e93-8c65-73ce18e10ee7",
+      "title": "OK Computer",
+      "artist-credit": [
+        {
+          "name": "Radiohead"
+        }
+      ],
+      "date": "2009-03-23",
+      "barcode": "5099969362620",
+      "media": [
+        {
+          "format": "CD",
+          "track-count": 12
+        },
+        {
+          "format": "CD",
+          "track-count": 15
+        },
+        {
+          "format": "DVD-Video",
+          "track-count": 6
+        }
+      ]
+    },
+    {
+      "id": "1c16cd42-472f-47cc-9848-d081d0737a7c",
+      "title": "OK Computer",
+      "artist-credit": [
+        {
+          "name": "Radiohead"
+        }
+      ],
+      "date": "1999",
+      "barcode": "724385522925",
+      "media": [
+        {
+          "format": "CD",
+          "track-count": 12
+        }
+      ]
+    },
+    {
+      "id": "fba5f8fe-c6c8-4511-8562-c9febf482674",
+      "title": "OK Computer",
+      "artist-credit": [
+        {
+          "name": "Radiohead"
+        }
+      ],
+      "date": "1997-06-16",
+      "barcode": "724385522949",
+      "media": [
+        {
+          "format": "Cassette",
+          "track-count": 12
+        }
+      ]
+    },
+    {
+      "id": "541a0976-ca45-3c0f-89e5-26bc376f58d1",
+      "title": "OK Computer",
+      "artist-credit": [
+        {
+          "name": "Radiohead"
+        }
+      ],
+      "date": "1997-06-16",
+      "barcode": "724385522918",
+      "media": [
+        {
+          "format": "12\" Vinyl",
+          "track-count": 6
+        },
+        {
+          "format": "12\" Vinyl",
+          "track-count": 6
+        }
+      ]
+    },
+    {
+      "id": "51df2038-5682-303e-9d87-7aeb99660433",
+      "title": "OK Computer",
+      "artist-credit": [
+        {
+          "name": "Radiohead"
+        }
+      ],
+      "date": "2008",
+      "barcode": "724385522918",
+      "media": [
+        {
+          "format": "12\" Vinyl",
+          "track-count": 6
+        },
+        {
+          "format": "12\" Vinyl",
+          "track-count": 6
+        }
+      ]
+    },
+    {
+      "id": "30702389-5c67-4438-9ea0-2351c8de0f1d",
+      "title": "OK Computer",
+      "artist-credit": [
+        {
+          "name": "Radiohead"
+        }
+      ],
+      "date": "2016-04-01",
+      "barcode": "634904078164",
+      "media": [
+        {
+          "format": "Digital Media",
+          "track-count": 12
+        }
+      ]
+    },
+    {
+      "id": "0c324f3a-dcbb-4f09-b33a-c03c676b4044",
+      "title": "OK Computer",
+      "artist-credit": [
+        {
+          "name": "Radiohead"
+        }
+      ],
+      "date": "2016-05-13",
+      "barcode": "634904078126",
+      "media": [
+        {
+          "format": "CD",
+          "track-count": 12
+        }
+      ]
+    },
+    {
+      "id": "943aa9da-7dc7-4a4a-a95e-2ffa707b6858",
+      "title": "OK Computer",
+      "artist-credit": [
+        {
+          "name": "Radiohead"
+        }
+      ],
+      "date": "2016",
+      "barcode": "634904078119",
+      "media": [
+        {
+          "format": "12\" Vinyl",
+          "track-count": 6
+        },
+        {
+          "format": "12\" Vinyl",
+          "track-count": 6
+        }
+      ]
+    },
+    {
+      "id": "4b3d18cc-8937-36f4-8de0-481088be58e6",
+      "title": "OK Computer",
+      "artist-credit": [
+        {
+          "name": "Radiohead"
+        }
+      ],
+      "date": "1997-06-17",
+      "barcode": "724385522925",
+      "media": [
+        {
+          "format": "CD",
+          "track-count": 12
+        }
+      ]
+    }
+  ]
+}

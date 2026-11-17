@@ -49,8 +49,11 @@ struct Catalog: Sendable {
 }
 
 extension Catalog {
-    /// The app's Catalog: Discogs first. MusicBrainz comes next with its own ticket.
+    /// The app's Catalog: Discogs first, MusicBrainz when Discogs finds nothing or fails.
     static func standard(transport: any CatalogTransport, discogs: DiscogsCredentials? = .bundled) -> Catalog {
-        Catalog(sources: [DiscogsSource(transport: transport, credentials: discogs)])
+        Catalog(sources: [
+            DiscogsSource(transport: transport, credentials: discogs),
+            MusicBrainzSource(transport: transport),
+        ])
     }
 }

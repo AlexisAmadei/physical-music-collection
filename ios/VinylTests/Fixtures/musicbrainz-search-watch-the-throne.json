@@ -1,0 +1,303 @@
+{
+  "created": "2026-11-17T00:50:34.551Z",
+  "count": 1208913,
+  "offset": 0,
+  "releases": [
+    {
+      "id": "c0fef474-876a-437e-a622-d995a044f148",
+      "title": "WATCH THE THRONE",
+      "artist-credit": [
+        {
+          "name": "Jaeychino"
+        }
+      ],
+      "media": [
+        {
+          "format": "Digital Media",
+          "track-count": 15
+        }
+      ]
+    },
+    {
+      "id": "e4b75377-4859-46d4-9406-08a58170b1f3",
+      "title": "Watch the Throne",
+      "artist-credit": [
+        {
+          "name": "Eminem"
+        }
+      ],
+      "date": "2013-04-11",
+      "barcode": "803341389786",
+      "media": [
+        {
+          "format": "CD",
+          "track-count": 14
+        }
+      ]
+    },
+    {
+      "id": "0828a9d6-f7ce-4120-b9d7-f2ba3bcc0408",
+      "title": "Watch the Throne",
+      "artist-credit": [
+        {
+          "name": "Dean Blunt",
+          "joinphrase": " Meets "
+        },
+        {
+          "name": "James Ferraro"
+        }
+      ],
+      "date": "2012-11-11",
+      "media": [
+        {
+          "format": "Digital Media",
+          "track-count": 1
+        }
+      ]
+    },
+    {
+      "id": "ef91d816-cdfe-4dcd-9148-d3cbdc40193e",
+      "title": "Watch the Throne",
+      "artist-credit": [
+        {
+          "name": "Warface"
+        }
+      ],
+      "date": "2024-10-18",
+      "barcode": "8721093998594",
+      "media": [
+        {
+          "format": "Digital Media",
+          "track-count": 1
+        }
+      ]
+    },
+    {
+      "id": "56eedc5a-4739-45c0-a95e-b34193d270b8",
+      "title": "Watch the Throne",
+      "artist-credit": [
+        {
+          "name": "JAŸ‐Z"
+        }
+      ],
+      "date": "2011",
+      "barcode": "602527650579",
+      "media": [
+        {
+          "format": "CD",
+          "track-count": 12
+        }
+      ]
+    },
+    {
+      "id": "f0d155f1-4769-4e1f-bb7a-2b7be9c8a8a0",
+      "title": "Watch the Throne",
+      "artist-credit": [
+        {
+          "name": "Jay‐Z",
+          "joinphrase": " & "
+        },
+        {
+          "name": "Kanye West"
+        }
+      ],
+      "date": "2011-08-08",
+      "media": [
+        {
+          "format": "Digital Media",
+          "track-count": 12
+        }
+      ]
+    },
+    {
+      "id": "aa556521-50ee-451e-b01a-18cc470cd491",
+      "title": "Watch the Throne",
+      "artist-credit": [
+        {
+          "name": "JAY‐Z",
+          "joinphrase": " & "
+        },
+        {
+          "name": "Kanye West"
+        }
+      ],
+      "date": "2011-08-12",
+      "barcode": "00602527812557",
+      "media": [
+        {
+          "format": "Digital Media",
+          "track-count": 16
+        }
+      ]
+    },
+    {
+      "id": "e08a3b6c-22ff-423a-8706-adbd45203698",
+      "title": "Watch the Throne",
+      "artist-credit": [
+        {
+          "name": "JAY Z",
+          "joinphrase": " & "
+        },
+        {
+          "name": "Kanye West"
+        }
+      ],
+      "date": "2011-08-12",
+      "barcode": "602527650579",
+      "media": [
+        {
+          "format": "CD",
+          "track-count": 12
+        }
+      ]
+    },
+    {
+      "id": "6148b8f5-384d-44ae-9a43-e2b0c1110211",
+      "title": "Watch the Throne",
+      "artist-credit": [
+        {
+          "name": "Jay Z",
+          "joinphrase": " & "
+        },
+        {
+          "name": "Kanye West"
+        }
+      ],
+      "date": "2012",
+      "barcode": "602527810829",
+      "media": [
+        {
+          "format": "12\" Vinyl",
+          "track-count": 8
+        },
+        {
+          "format": "12\" Vinyl",
+          "track-count": 7
+        }
+      ]
+    },
+    {
+      "id": "aa8a6b1e-c8fb-4db9-9166-6f34c7d708d2",
+      "title": "Watch the Throne",
+      "artist-credit": [
+        {
+          "name": "JAY‐Z",
+          "joinphrase": " & "
+        },
+        {
+          "name": "Kanye West"
+        }
+      ],
+      "date": "2011-08-12",
+      "barcode": "00602527812519",
+      "media": [
+        {
+          "format": "Digital Media",
+          "track-count": 12
+        }
+      ]
+    },
+    {
+      "id": "ad5e7413-7c90-4ed7-85e9-c12e8955fe2e",
+      "title": "Watch the Throne",
+      "artist-credit": [
+        {
+          "name": "JAY‐Z",
+          "joinphrase": " & "
+        },
+        {
+          "name": "Kanye West"
+        }
+      ],
+      "barcode": "00602527812526",
+      "media": [
+        {
+          "format": "Digital Media",
+          "track-count": 16
+        }
+      ]
+    },
+    {
+      "id": "2dfab7a7-7cdf-4ab8-bd35-785e5cded0be",
+      "title": "Watch the Throne",
+      "artist-credit": [
+        {
+          "name": "Jay‐Z",
+          "joinphrase": " & "
+        },
+        {
+          "name": "Kanye West"
+        }
+      ],
+      "date": "2011-08-12",
+      "barcode": "602527650579",
+      "media": [
+        {
+          "format": "CD",
+          "track-count": 12
+        }
+      ]
+    },
+    {
+      "id": "ff9333b2-afe7-47e4-8257-902ae66f5dd5",
+      "title": "Watch the Throne",
+      "artist-credit": [
+        {
+          "name": "Jay Z",
+          "joinphrase": " & "
+        },
+        {
+          "name": "Kanye West"
+        }
+      ],
+      "date": "2016-01-26",
+      "barcode": "00602547790118",
+      "media": [
+        {
+          "format": "Digital Media",
+          "track-count": 16
+        }
+      ]
+    },
+    {
+      "id": "196bb188-d579-4f00-ac29-9a83a7dc1b9c",
+      "title": "Watch the Throne",
+      "artist-credit": [
+        {
+          "name": "JAY‐Z",
+          "joinphrase": " & "
+        },
+        {
+          "name": "Kanye West"
+        }
+      ],
+      "barcode": "602547790163",
+      "media": [
+        {
+          "format": "Digital Media",
+          "track-count": 16
+        }
+      ]
+    },
+    {
+      "id": "abb01a2f-96cc-436d-9609-1d0ac67f1905",
+      "title": "Watch the Throne",
+      "artist-credit": [
+        {
+          "name": "JAY‐Z",
+          "joinphrase": " & "
+        },
+        {
+          "name": "Kanye West"
+        }
+      ],
+      "barcode": "00602527650593",
+      "media": [
+        {
+          "format": "Digital Media",
+          "track-count": 12
+        }
+      ]
+    }
+  ]
+}
