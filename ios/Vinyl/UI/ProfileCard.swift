@@ -3,18 +3,23 @@ import SwiftUI
 /// The Profile card: round-brushed silver, like the grooves of a record, with the Profile name, the Collection value
 /// and the number of Collection Discs. Mirrors Android `ProfileCard`. Tapping it edits the Profile name.
 ///
-/// Still for now: `tilt` only places the light. To make it move, feed `tilt` (and rotate the card with it).
+/// Tilts (10° at most) with the phone, and with the finger while it touches; the light sits where the card is
+/// pushed away (`CardTiltDriver`). Reduce Motion: no tilt, light fixed at `stillLight`.
 struct ProfileCard: View {
     let name: String
     /// Collection value, euro cents.
     let value: Int
     let discs: Int
-    /// Shown tilt, x and y in -1...1 (Android `Tilt`): the light sits where the card is pushed away.
-    var tilt = ProfileCard.stillLight
     let onEditName: () -> Void
 
-    /// Reduced motion (and the still card): no tilt, light fixed here. The Android `StillLight`.
+    /// Reduce Motion: no tilt, light fixed here. The Android `StillLight`.
     static let stillLight = CGPoint(x: 0.35, y: -0.3)
+    private static let maxDegrees = 10.0
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var driver = CardTiltDriver()
+    /// The card in window coordinates, to read the finger.
+    @State private var frame = CGRect.zero
 
     private static let shape = RoundedRectangle(cornerRadius: 18, style: .continuous)
     private static let ink = Color(hex: 0x33363B)
@@ -24,6 +29,8 @@ struct ProfileCard: View {
     )
 
     var body: some View {
+        let tilt = reduceMotion ? Self.stillLight : driver.shown
+        let turn = reduceMotion ? CGPoint.zero : tilt
         Button(action: onEditName) {
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -36,6 +43,17 @@ struct ProfileCard: View {
         }
         .buttonStyle(CardPress())
         .accessibilityHint("Modifier ton nom")
+        .gesture(FingerWatcher { [driver, frame, reduceMotion] point in
+            driver.finger = reduceMotion ? nil : point.map { Tilt(finger: $0, on: frame) }
+        })
+        .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { frame = $0 }
+        .rotation3DEffect(.degrees(turn.x * Self.maxDegrees), axis: (x: 0, y: 1, z: 0))
+        .rotation3DEffect(.degrees(-turn.y * Self.maxDegrees), axis: (x: 1, y: 0, z: 0))
+        .onAppear { if !reduceMotion { driver.start() } }
+        .onDisappear { driver.stop() }
+        .onChange(of: reduceMotion) { _, still in
+            if still { driver.stop() } else { driver.start() }
+        }
     }
 
     private var content: some View {
