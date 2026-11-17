@@ -1,7 +1,7 @@
 import Testing
 @testable import Vinyl
 
-/// Port of the Android `PriceTest`, same cases and expected values.
+/// Port of the Android `PriceTest`, same cases and expected values (its Collection value case: `CollectionValueTests`).
 struct PriceTests {
     @Test func parsesCommaDotAndWhole() {
         #expect(Price.parse("12,50") == 1250)
@@ -36,15 +36,5 @@ struct PriceTests {
             #expect(Price.parse(Price.input(cents)) == cents)
         }
         #expect(Price.input(nil) == "")
-    }
-
-    @Test func collectionValueSkipsWishlistAndCountsUnpriced() {
-        let v = CollectionValue([
-            Draft(format: .cd, paidPrice: 1000),
-            Draft(format: .vinyl, paidPrice: 2550),
-            Draft(format: .vinyl),
-            Draft(format: .vinyl, wishlist: true, seenPrice: 3000, paidPrice: 9999),
-        ])
-        #expect(v == CollectionValue(total: 3550, cd: 1000, vinyl: 2550, unpriced: 1))
     }
 }
