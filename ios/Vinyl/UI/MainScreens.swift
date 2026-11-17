@@ -67,34 +67,37 @@ struct WishlistScreen: View {
     }
 }
 
-/// "MON PROFIL". The Profile card and the value by Format come with the Profile ticket.
+/// "MON PROFIL": the Profile card, then the Collection value by Format (or the empty state).
 struct ProfileScreen: View {
     let app: AppModel
+    @State private var editingName = false
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 ScreenTitle(text: "MON PROFIL")
+                ProfileCard(
+                    name: app.profileName, value: app.collectionValue.total, discs: app.collection.count,
+                    onEditName: { editingName = true }
+                )
+                .padding(.top, 24)
                 if app.collection.isEmpty {
                     EmptyState(app: app)
                         .padding(.top, 35)
+                } else {
+                    ValueByFormat(value: app.collectionValue)
+                        .padding(.top, 35)
+                }
+            }
+            .sheet(isPresented: $editingName) {
+                ProfileNameSheet(current: app.profileName) { name in
+                    app.setProfileName(name)
+                    editingName = false
                 }
             }
             .padding(.horizontal, 20)
             .padding(.top, 44)
             .padding(.bottom, 119)
-        }
-        .background(Palette.surface)
-    }
-}
-
-/// Placeholder until the Search ticket.
-struct SearchScreen: View {
-    var body: some View {
-        ScrollView {
-            ScreenTitle(text: "Rechercher")
-                .padding(.horizontal, 20)
-                .padding(.top, 44)
         }
         .background(Palette.surface)
     }

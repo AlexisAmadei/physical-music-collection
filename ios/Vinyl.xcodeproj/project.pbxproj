@@ -20,6 +20,8 @@
 		A1000000000000000000C001 /* Vinyl.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vinyl.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1000000000000000000C002 /* VinylTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VinylTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1000000000000000000C003 /* Vinyl-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Vinyl-Info.plist"; sourceTree = "<group>"; };
+		A1000000000000000000C004 /* Vinyl.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Vinyl.xcconfig; sourceTree = "<group>"; };
+		A1000000000000000000C005 /* Secrets.example.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.example.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -76,6 +78,8 @@
 			isa = PBXGroup;
 			children = (
 				A1000000000000000000C003 /* Vinyl-Info.plist */,
+				A1000000000000000000C004 /* Vinyl.xcconfig */,
+				A1000000000000000000C005 /* Secrets.example.xcconfig */,
 			);
 			path = Config;
 			sourceTree = "<group>";
@@ -268,6 +272,7 @@
 		};
 		A1000000000000000000F020 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A1000000000000000000C004 /* Vinyl.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -292,6 +297,7 @@
 		};
 		A1000000000000000000F021 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A1000000000000000000C004 /* Vinyl.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;

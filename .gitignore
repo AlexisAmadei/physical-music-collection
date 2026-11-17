@@ -13,3 +13,4 @@ xcuserdata/
 ios/build/
 ios/DerivedData/
 DerivedData/
+ios/Config/Secrets.xcconfig

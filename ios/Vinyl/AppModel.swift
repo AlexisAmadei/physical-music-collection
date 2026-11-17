@@ -20,17 +20,33 @@ final class AppModel {
     var collectionFilter = CollectionFilter()
     /// The Collection as the Collection screen shows it: filtered by Format and sorted.
     var shownCollection: [Disc] { collectionFilter.apply(to: collection) }
+    /// The Collection value, by Format; follows every save and delete.
+    var collectionValue: CollectionValue { CollectionValue(collection) }
+    /// Profile name; "" = unset. Change it with `setProfileName(_:)`.
+    private(set) var profileName: String
+    @ObservationIgnored private let profilePreferences: any ProfilePreferences
 
     @ObservationIgnored private let store: DiscStore
-    /// The network the Catalog will use. Unused until the Catalog ticket.
+    /// The network the Catalog uses.
     @ObservationIgnored let catalogTransport: any CatalogTransport
+    /// Asked by Search (and Scan) to prefill a Draft.
+    @ObservationIgnored let catalog: Catalog
+    /// The Search screen's text and Catalog results (see `Search.swift`).
+    var searchState = SearchState()
 
     /// - Parameters:
     ///   - container: `DiscStore.persistentContainer()` in the app, `DiscStore.inMemoryContainer()` in tests.
     ///   - catalogTransport: the real network by default, a fake in tests.
-    init(container: ModelContainer, catalogTransport: any CatalogTransport = URLSessionTransport()) {
+    ///   - profilePreferences: where the Profile name is kept; `UserDefaults` by default, in memory in tests.
+    init(
+        container: ModelContainer, catalogTransport: any CatalogTransport = URLSessionTransport(),
+        profilePreferences: any ProfilePreferences = UserDefaultsProfilePreferences()
+    ) {
         store = DiscStore(container: container)
         self.catalogTransport = catalogTransport
+        catalog = .standard(transport: catalogTransport)
+        self.profilePreferences = profilePreferences
+        profileName = profilePreferences.name ?? ""
         refresh()
     }
 
@@ -62,6 +78,12 @@ final class AppModel {
         guard let id = draft.id, let disc = store.get(id) else { return }
         store.delete(disc)
         refresh()
+    }
+
+    /// Sets the Profile name: trimmed and cut to 24 characters; blank unsets it. Kept in on-device preferences only.
+    func setProfileName(_ raw: String) {
+        profileName = ProfileName.clean(raw)
+        profilePreferences.name = profileName.isEmpty ? nil : profileName
     }
 
     /// My Discs (Collection and Wishlist) whose title or artist contains the text, by artist.
