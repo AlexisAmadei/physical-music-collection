@@ -7,8 +7,10 @@ no project file edit needed.
 | Path | What |
 | --- | --- |
 | `Vinyl/AppModel.swift` | The app model: the one object screens talk to |
-| `Vinyl/Model/` | SwiftData `Disc`, the `Draft` value, `DiscStore` (the Android DAO queries) |
-| `Vinyl/Catalog/` | The Catalog (Sources asked in order), the Discogs Source, `CatalogTransport` (the network seam, fake in tests) |
+| `Vinyl/Navigation.swift`, `Search.swift`, `Scan.swift` | The app model's navigation, Search and Scan state and actions |
+| `Vinyl/DebugSeed.swift` | Debug builds only: the `-seedDiscs` launch argument (see below) |
+| `Vinyl/Model/` | SwiftData `Disc`, the `Draft` value and its form rules, `DiscStore` (the Android DAO queries), and the pure rules screens read: Price, Vinyl color, Collection value, Collection filter, Profile name, cover caption, wheel, sleeve, tilt |
+| `Vinyl/Catalog/` | The Catalog (Sources asked in order), its two Sources (Discogs, then MusicBrainz), `CatalogTransport` (the network seam, fake in tests) |
 | `Config/` | `Vinyl.xcconfig` (app target build settings), `Secrets.example.xcconfig`, `Vinyl-Info.plist` |
 | `Vinyl/UI/` | `Theme.swift` (Palette, Typography = Android `Type`), screens |
 | `Vinyl/Fonts/` | Lexend, registered through `Config/Vinyl-Info.plist` (`UIAppFonts`) |
@@ -72,7 +74,8 @@ app.saveDraft()
 
 `catalogTransport` defaults to `URLSessionTransport()`; tests pass a fake conforming to `CatalogTransport`
 (`VinylTests/FakeTransport.swift`, e.g. `FakeTransport(fixture: "discogs-search-ok-computer")`). Tests never touch
-the real network.
+the real network. The app model asks both Sources, so tests that search or scan through it answer each Source
+explicitly: `FakeTransport.network(discogs: FakeTransport.recorded("discogs-search-empty"), musicBrainz: ...)`.
 
 The Catalog is a list of Sources asked in order (`Catalog.standard` in `Vinyl/Catalog/Catalog.swift`); any failure,
 non-2xx status or timeout counts as empty and the next Source is asked. Test it directly:
