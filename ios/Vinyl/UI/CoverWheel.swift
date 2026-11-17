@@ -23,7 +23,7 @@ struct CoverWheel: View {
                     .simultaneousGesture(drag)
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel("Ma collection")
-                    .accessibilityValue(Text(verbatim: discs[driver.motion.disc(atCard: driver.motion.front, count: discs.count)].wheelLabel))
+                    .accessibilityValue(Text(verbatim: discs[driver.motion.disc(atCard: driver.motion.front, count: discs.count)].coverLabel))
                     .accessibilityAction(named: "Disque suivant") { step(by: 1) }
                     .accessibilityAction(named: "Disque précédent") { step(by: -1) }
                     .accessibilityAdjustableAction { direction in
@@ -72,7 +72,7 @@ struct CoverWheel: View {
     private func step(by cards: Int) {
         driver.motion.step(by: cards)
         let disc = discs[driver.motion.disc(atCard: driver.motion.heading, count: discs.count)]
-        AccessibilityNotification.Announcement(disc.wheelLabel).post()
+        AccessibilityNotification.Announcement(disc.coverLabel).post()
     }
 
     /// One finger: any touch pauses the drift; a vertical move turns the wheel; lifting flings it.
@@ -113,6 +113,7 @@ struct WheelCard: View {
 
     var body: some View {
         Cover(url: disc.coverURL)
+            .colorSticker(disc.shownVinylColor)
             .overlay(Color.white.opacity(veil))
             .frame(width: WheelPlacement.card, height: WheelPlacement.card)
             .background(Color.white.shadow(.drop(color: .black.opacity(0.25), radius: 5, y: 2)))
@@ -208,20 +209,5 @@ final class WheelDriver: NSObject {
         var next = motion
         next.tick(dt: dt, canDrift: driftAllowed && !frozen && !touching)
         if next != motion { motion = next } // a still wheel redraws nothing
-    }
-}
-
-private extension Disc {
-    /// What VoiceOver reads for the front Disc: title, artist, Format, year (Android `Disc.a11yLabel`).
-    /// The Vinyl color ticket adds "Vinyle couleur <color>".
-    var wheelLabel: String {
-        [
-            title.isEmpty ? "Sans titre" : title,
-            artist.isEmpty ? nil : artist,
-            format == .cd ? "CD" : "Vinyle",
-            year.map(String.init),
-        ]
-        .compactMap { $0 }
-        .joined(separator: ", ")
     }
 }
