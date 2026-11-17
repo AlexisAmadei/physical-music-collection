@@ -53,6 +53,9 @@ xcrun simctl delete "$UDID"
 
 One test or suite: add `-only-testing:VinylTests/AppModelTests` (or `.../AppModelTests/savedDraftShowsInTheCollectionInStoreOrder()`).
 
+Large Collection, debug builds only: `xcrun simctl launch "$UDID" dev.kiwi.vinyl -seedDiscs 240` opens the app on an
+in-memory store with 240 generated Collection Discs (`Vinyl/DebugSeed.swift`, not compiled into release). The real store is untouched.
+
 If `xcrun simctl list runtimes` shows no iOS runtime, install it with `xcodebuild -downloadPlatform iOS`.
 
 ## Seams for tests
