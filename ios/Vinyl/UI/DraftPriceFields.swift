@@ -9,15 +9,15 @@ struct DraftPriceFields: View {
         Toggle("In wishlist", isOn: $draft.inWishlist)
         VStack(alignment: .leading, spacing: 4) {
             HStack {
-                Text(draft.wishlist ? LocalizedStringKey("Prix vu") : LocalizedStringKey("Prix payé"))
+                Text(draft.priceLabel)
                 TextField("", text: $draft.priceText)
                     .keyboardType(.decimalPad)
                     .multilineTextAlignment(.trailing)
                 Text("€")
                     .foregroundStyle(Palette.muted)
             }
-            if !Price.isValid(draft.priceText) {
-                Text("Exemple : 12,50")
+            if let hint = draft.priceHint {
+                Text(hint)
                     .font(.footnote)
                     .foregroundStyle(.red)
             }

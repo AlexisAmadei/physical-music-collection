@@ -90,4 +90,23 @@ struct DraftPriceTests {
         #expect(owned.seenPrice == 1250)
         #expect(owned.paidPrice == 1500)
     }
+
+    @Test func thePriceFieldIsPrixVuInTheWishlistAndPrixPayeInTheCollection() {
+        app.newDraft(wishlist: true)
+        #expect(app.draft.priceLabel == "Prix vu")
+
+        app.draft.inWishlist = false
+        #expect(app.draft.priceLabel == "Prix payé")
+    }
+
+    @Test func theExampleShowsUnderAMalformedPriceOnly() {
+        app.newDraft()
+        #expect(app.draft.priceHint == nil)
+
+        app.draft.priceText = "12,"
+        #expect(app.draft.priceHint == "Exemple : 12,50")
+
+        app.draft.priceText = "12,5"
+        #expect(app.draft.priceHint == nil)
+    }
 }

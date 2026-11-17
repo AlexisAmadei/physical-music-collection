@@ -50,9 +50,12 @@ enum VinylColor: String, Codable, CaseIterable, Sendable {
         return 0.2126 * lin(16) + 0.7152 * lin(8) + 0.0722 * lin(0)
     }
 
+    /// A Vinyl color shows only on vinyl. A CD keeps its value hidden.
+    static func isShown(on format: Format) -> Bool { format == .vinyl }
+
     /// The Vinyl color as shown: only on vinyl. A CD keeps its value hidden.
     static func shown(_ color: VinylColor?, on format: Format) -> VinylColor? {
-        format == .vinyl ? color : nil
+        isShown(on: format) ? color : nil
     }
 }
 
@@ -86,6 +89,9 @@ extension Disc {
 extension Draft {
     /// The Vinyl color as shown: only on vinyl. A CD Draft keeps its value hidden.
     var shownVinylColor: VinylColor? { VinylColor.shown(vinylColor, on: format) }
+
+    /// The Draft form shows the "Vinyle couleur" field on vinyl Drafts only.
+    var showsVinylColorField: Bool { VinylColor.isShown(on: format) }
 
     /// The "Vinyle couleur" switch: turning it on picks Rouge, off means black (no Vinyl color).
     var coloredVinyl: Bool {

@@ -67,4 +67,11 @@ struct DraftVinylColorTests {
     @Test func coverOfAnUntitledDiscWithNoArtistIsReadSansTitre() {
         #expect(Disc(Draft(format: .cd)).coverLabel == "Sans titre, CD")
     }
+
+    @Test func theVinylColorFieldShowsOnVinylDraftsOnly() {
+        #expect(app.draft.showsVinylColorField)
+
+        app.draft.format = .cd
+        #expect(!app.draft.showsVinylColorField)
+    }
 }

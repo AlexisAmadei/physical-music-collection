@@ -22,6 +22,16 @@ extension Draft {
         set { if wishlist { seenPriceText = newValue } else { paidPriceText = newValue } }
     }
 
+    /// The label of the one price field: "Prix vu" in the Wishlist, "Prix payé" in the Collection.
+    var priceLabel: String {
+        wishlist ? String(localized: "Prix vu") : String(localized: "Prix payé")
+    }
+
+    /// Shown under the price field while its text is malformed; nil when the text is a price or blank.
+    var priceHint: String? {
+        Price.isValid(priceText) ? nil : String(localized: "Exemple : 12,50")
+    }
+
     /// The "In wishlist" switch. Leaving the Wishlist (bought) suggests the Seen price as the Paid price,
     /// when the Paid price is blank and the Seen price valid. It stays editable.
     var inWishlist: Bool {
