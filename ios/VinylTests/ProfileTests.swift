@@ -1,7 +1,7 @@
 import Testing
 @testable import Vinyl
 
-/// Profile name rules (port of the Android `ProfileName`) and the Profile through the app model.
+/// The Profile through the app model (the Profile name rules themselves: `ProfileNameTests`).
 @MainActor
 struct ProfileTests {
     let preferences = InMemoryProfilePreferences()
@@ -9,14 +9,6 @@ struct ProfileTests {
 
     init() throws {
         app = try AppModel(container: DiscStore.inMemoryContainer(), profilePreferences: preferences)
-    }
-
-    @Test func profileNameIsTrimmedAndCutTo24Characters() {
-        #expect(ProfileName.clean("  Alexis  ") == "Alexis")
-        #expect(ProfileName.clean("Jean-Baptiste de la Fontaine") == "Jean-Baptiste de la Font")
-        #expect(ProfileName.clean(" \n ") == "")
-        // Cut, then trimmed again: the cut leaves no trailing space.
-        #expect(ProfileName.clean("Jean-Baptiste de la      Fontaine") == "Jean-Baptiste de la")
     }
 
     @Test func profileNameIsUnsetUntilTyped() {

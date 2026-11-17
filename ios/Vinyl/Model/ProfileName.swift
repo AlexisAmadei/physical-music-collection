@@ -9,6 +9,16 @@ enum ProfileName {
         String(raw.trimmingCharacters(in: .whitespacesAndNewlines).prefix(max))
             .trimmingCharacters(in: .whitespacesAndNewlines)
     }
+
+    /// The "Ton nom" field while typing: stops at `max` characters, spaces kept (`clean` trims on OK).
+    static func typed(_ text: String) -> String {
+        String(text.prefix(max))
+    }
+
+    /// The counter under the "Ton nom" field: "7 / 24".
+    static func counter(_ text: String) -> String {
+        "\(text.count) / \(max)"
+    }
 }
 
 /// Where the Profile name is kept: on-device preferences only, never synced. nil = unset.

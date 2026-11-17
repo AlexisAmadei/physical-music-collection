@@ -58,12 +58,13 @@ struct ProfileNameSheet: View {
                     .focused($focused)
                     .onSubmit { onDone(text) }
                     .onChange(of: text) { _, new in
-                        if new.count > ProfileName.max { text = String(new.prefix(ProfileName.max)) }
+                        let typed = ProfileName.typed(new)
+                        if typed != new { text = typed }
                     }
                     .padding(.horizontal, 16)
                     .frame(height: 56)
                     .overlay { RoundedRectangle(cornerRadius: 4).strokeBorder(Palette.ink, lineWidth: 1) }
-                Text(verbatim: "\(text.count) / \(ProfileName.max)")
+                Text(verbatim: ProfileName.counter(text))
                     .textStyle(Typography.label)
                     .foregroundStyle(Palette.muted)
                     .padding(.leading, 16)
