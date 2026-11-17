@@ -5,11 +5,7 @@ struct MusicBrainzSource: CatalogSource {
     var transport: any CatalogTransport
 
     func lookup(barcode: String) async throws -> [Draft] {
-        try await query("barcode:\(barcode)").map { draft in
-            var draft = draft
-            draft.barcode = barcode
-            return draft
-        }
+        try await query("barcode:\(barcode)")
     }
 
     func search(_ text: String) async throws -> [Draft] {
@@ -29,12 +25,8 @@ struct MusicBrainzSource: CatalogSource {
             "VinylCollectionApp/0.1 ( https://github.com )",
             forHTTPHeaderField: "User-Agent"
         )
-        let (data, response) = try await transport.data(for: request)
         // 503 when busy or rate limited…: no answer.
-        guard let status = (response as? HTTPURLResponse)?.statusCode, (200..<300).contains(status) else {
-            throw URLError(.badServerResponse)
-        }
-        return try JSONDecoder().decode(Page.self, from: data).releases.map(\.draft)
+        return try JSONDecoder().decode(Page.self, from: try await transport.okData(for: request)).releases.map(\.draft)
     }
 
     private struct Page: Decodable {

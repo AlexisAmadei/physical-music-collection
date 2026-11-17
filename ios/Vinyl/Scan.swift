@@ -20,15 +20,14 @@ extension AppModel {
         let results = await catalog.lookup(barcode: code)
         // The user left Scan meanwhile ("Enter manually", back): the answer no longer has a screen to replace.
         guard path.last == .scan, scanState == .lookingUp(code) else { return }
-        guard var hit = results.first else {
+        guard let hit = results.first else {
             // Search replaces Scan, as a fresh search for this barcode.
             searchState = SearchState(notFoundBarcode: code)
             tab = .search
             path = []
             return
         }
-        hit.barcode = code
-        draft = hit
+        draft = hit // the Catalog stamps the scanned barcode
         replaceScan(with: .draft)
     }
 

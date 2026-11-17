@@ -23,11 +23,7 @@ struct DiscogsSource: CatalogSource {
     var credentials: DiscogsCredentials?
 
     func lookup(barcode: String) async throws -> [Draft] {
-        try await query("barcode", barcode).map { draft in
-            var draft = draft
-            draft.barcode = barcode
-            return draft
-        }
+        try await query("barcode", barcode)
     }
 
     func search(_ text: String) async throws -> [Draft] {
@@ -46,12 +42,8 @@ struct DiscogsSource: CatalogSource {
         if let credentials, !credentials.key.isEmpty {
             request.setValue("Discogs key=\(credentials.key), secret=\(credentials.secret)", forHTTPHeaderField: "Authorization")
         }
-        let (data, response) = try await transport.data(for: request)
         // Bad credentials, 429 rate limit…: no answer, so the Catalog asks the next Source.
-        guard let status = (response as? HTTPURLResponse)?.statusCode, (200..<300).contains(status) else {
-            throw URLError(.badServerResponse)
-        }
-        let page = try JSONDecoder().decode(Page.self, from: data)
+        let page = try JSONDecoder().decode(Page.self, from: try await transport.okData(for: request))
         return Self.onePressingPerAlbum(page.results.compactMap(\.draft))
     }
 

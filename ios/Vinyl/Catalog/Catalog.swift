@@ -2,7 +2,7 @@ import Foundation
 
 /// One provider the Catalog asks (Discogs, MusicBrainz). Throwing means "no answer": the Catalog asks the next Source.
 protocol CatalogSource: Sendable {
-    /// Releases with this barcode, as prefilled Drafts.
+    /// Releases with this barcode, as prefilled Drafts. The Catalog stamps the scanned barcode on them.
     func lookup(barcode: String) async throws -> [Draft]
     /// Releases matching the text, as prefilled Drafts.
     func search(_ text: String) async throws -> [Draft]
@@ -15,9 +15,13 @@ struct Catalog: Sendable {
     /// How long one Source may take before it counts as empty.
     var timeout: Duration = .seconds(8)
 
-    /// Prefilled Drafts for a scanned barcode; empty when no Source knows it.
+    /// Prefilled Drafts for a scanned barcode, each carrying that barcode as scanned; empty when no Source knows it.
     func lookup(barcode: String) async -> [Draft] {
-        await firstAnswer { try await $0.lookup(barcode: barcode) }
+        await firstAnswer { try await $0.lookup(barcode: barcode) }.map { draft in
+            var draft = draft
+            draft.barcode = barcode
+            return draft
+        }
     }
 
     /// Prefilled Drafts for a text search; empty when no Source finds anything.
