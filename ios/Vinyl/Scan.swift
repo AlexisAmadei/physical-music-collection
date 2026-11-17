@@ -22,7 +22,7 @@ extension AppModel {
         guard path.last == .scan, scanState == .lookingUp(code) else { return }
         guard var hit = results.first else {
             // Search replaces Scan, as a fresh search for this barcode.
-            searchState = SearchState(notFound: code)
+            searchState = SearchState(notFoundBarcode: code)
             tab = .search
             path = []
             return

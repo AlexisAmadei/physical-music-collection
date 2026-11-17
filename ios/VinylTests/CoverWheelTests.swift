@@ -38,12 +38,12 @@ struct HomeDiscsTests {
     }
 }
 
-/// The wheel as an endless tape: ten cards around the front, each showing Disc `k mod n`.
-struct WheelTapeTests {
+/// The wheel as an endless loop of cards: ten around the front, each showing Disc `k mod n`.
+struct WheelLoopTests {
     @Test func atRestTheFrontCardIsTheNewestDisc() {
         let wheel = WheelMotion()
         #expect(wheel.front == 0)
-        #expect(wheel.disc(atCard: wheel.front, count: 3) == 0)
+        #expect(wheel.discIndex(atCard: wheel.front, count: 3) == 0)
     }
 
     @Test func turningTheWheelUpOneCardBringsTheNextDiscToTheFront() {
@@ -56,11 +56,11 @@ struct WheelTapeTests {
         #expect(wheel.front == 2)
     }
 
-    @Test func theTapeWrapsSoTheOldestDiscSitsJustBeforeTheNewest() {
+    @Test func theLoopWrapsSoTheOldestDiscSitsJustBeforeTheNewest() {
         let wheel = WheelMotion()
-        #expect(wheel.disc(atCard: -1, count: 3) == 2)
-        #expect(wheel.disc(atCard: 3, count: 3) == 0)
-        #expect(wheel.disc(atCard: -7, count: 3) == 2)
+        #expect(wheel.discIndex(atCard: -1, count: 3) == 2)
+        #expect(wheel.discIndex(atCard: 3, count: 3) == 0)
+        #expect(wheel.discIndex(atCard: -7, count: 3) == 2)
     }
 
     @Test func onlyTheTenCardsAroundTheFrontAreDrawn() {
@@ -78,7 +78,7 @@ struct WheelIndicatorTests {
         #expect(WheelMotion.indicator(front: 4, count: 5) == 1)
     }
 
-    @Test func itFollowsTheTapeAroundBothWays() {
+    @Test func itFollowsTheLoopAroundBothWays() {
         #expect(WheelMotion.indicator(front: -1, count: 5) == 1)
         #expect(WheelMotion.indicator(front: 6, count: 5) == 0.25)
         #expect(WheelMotion.indicator(front: 251, count: 201) == 0.25)
@@ -159,7 +159,7 @@ struct WheelStepTests {
         var wheel = WheelMotion()
         wheel.step(by: -1)
         run(&wheel, seconds: 3)
-        #expect(wheel.disc(atCard: wheel.front, count: 4) == 3)
+        #expect(wheel.discIndex(atCard: wheel.front, count: 4) == 3)
     }
 
     @Test func aStepKnowsAtOnceWhichCardItWillLandOn() {

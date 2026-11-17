@@ -135,7 +135,7 @@ struct ScanTests {
 
         #expect(app.path.isEmpty)
         #expect(app.tab == .search)
-        #expect(app.searchState.notFound == "0000000000000")
+        #expect(app.searchState.notFoundBarcode == "0000000000000")
         #expect(app.searchState.text.isEmpty)
         #expect(app.searchState.catalogResults.isEmpty)
         #expect(network.requests.map { $0.url?.host() } == ["api.discogs.com", "musicbrainz.org"])
@@ -175,7 +175,7 @@ struct ScanTests {
         await app.scanned("0000000000000")
         app.select(.home)
         app.select(.search)
-        #expect(app.searchState.notFound == nil)
+        #expect(app.searchState.notFoundBarcode == nil)
 
         app.searchState.text = "ok computer"
         await app.searchCatalog()

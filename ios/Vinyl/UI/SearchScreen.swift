@@ -9,7 +9,7 @@ struct SearchScreen: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
-                if let code = app.searchState.notFound {
+                if let code = app.searchState.notFoundBarcode {
                     Text("Barcode \(code) not found. Search by name.")
                         .textStyle(Typography.body)
                         .foregroundStyle(Palette.error)
@@ -49,7 +49,7 @@ struct SearchScreen: View {
                     }
                     .buttonStyle(.plain)
                 }
-                if app.searchState.notFound != nil {
+                if app.searchState.notFoundBarcode != nil {
                     Button { app.addManually() } label: { OutlinedButtonLabel(text: "Add manually") }
                         .buttonStyle(.plain)
                 }

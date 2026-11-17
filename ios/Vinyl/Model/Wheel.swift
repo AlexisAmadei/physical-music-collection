@@ -40,7 +40,7 @@ struct WheelPlacement: Equatable, Sendable {
 
 /// Home's cover wheel position, as pure logic (Android `WheelState` in `ui/Wheel.kt`).
 ///
-/// The wheel is an endless tape: card `k` sits at `k · spacing + angle` degrees and shows Disc `k mod n`.
+/// The wheel loops endlessly: card `k` sits at `k · spacing + angle` degrees and shows Disc `k mod n`.
 /// Only the `slots` cards around the front are drawn, so a Collection of any size scrolls through in order.
 struct WheelMotion: Equatable, Sendable {
     /// Cards on the wheel.
@@ -165,7 +165,7 @@ struct WheelMotion: Equatable, Sendable {
     private static func nearest(_ a: Double) -> Double { (a / spacing).rounded() * spacing }
 
     /// The index of the Disc card `k` shows, in a list of `count` Discs.
-    func disc(atCard k: Int, count: Int) -> Int {
+    func discIndex(atCard k: Int, count: Int) -> Int {
         Self.floorMod(k, count)
     }
 

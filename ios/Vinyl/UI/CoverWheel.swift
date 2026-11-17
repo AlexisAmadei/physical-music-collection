@@ -25,7 +25,7 @@ struct CoverWheel: View {
                     .simultaneousGesture(drag)
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel("Ma collection")
-                    .accessibilityValue(Text(verbatim: discs[driver.motion.disc(atCard: driver.motion.front, count: discs.count)].coverLabel))
+                    .accessibilityValue(Text(verbatim: discs[driver.motion.discIndex(atCard: driver.motion.front, count: discs.count)].coverLabel))
                     .accessibilityAction(named: "Disque suivant") { step(by: 1) }
                     .accessibilityAction(named: "Disque précédent") { step(by: -1) }
                     .accessibilityAction(named: "Retourner") { tap(driver.motion.front) }
@@ -61,7 +61,7 @@ struct CoverWheel: View {
         return ZStack {
             ForEach(motion.cards, id: \.self) { k in
                 let place = WheelPlacement(theta: motion.theta(card: k))
-                let disc = discs[motion.disc(atCard: k, count: discs.count)]
+                let disc = discs[motion.discIndex(atCard: k, count: discs.count)]
                 card(k, disc: disc, veil: place.veil)
                     .modifier(WheelTilt(degrees: -place.theta))
                     .scaleEffect(place.scale)
@@ -84,7 +84,7 @@ struct CoverWheel: View {
     /// The Disc whose sleeve is open (not closing), if any.
     private var openDisc: Disc? {
         guard driver.sleeve.holding, let k = driver.sleeve.card else { return nil }
-        return discs[driver.motion.disc(atCard: k, count: discs.count)]
+        return discs[driver.motion.discIndex(atCard: k, count: discs.count)]
     }
 
     /// Tapping the front card flips its sleeve open; tapping the open sleeve closes it. Any other card turns
@@ -98,7 +98,7 @@ struct CoverWheel: View {
     private func step(by cards: Int) {
         driver.sleeve.close()
         driver.motion.step(by: cards)
-        let disc = discs[driver.motion.disc(atCard: driver.motion.heading, count: discs.count)]
+        let disc = discs[driver.motion.discIndex(atCard: driver.motion.heading, count: discs.count)]
         AccessibilityNotification.Announcement(disc.coverLabel).post()
     }
 
