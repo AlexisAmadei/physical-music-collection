@@ -14,7 +14,7 @@ struct HomeScreen: View {
                     .padding(.trailing, 72)
                     .frame(maxHeight: .infinity)
             } else {
-                CoverWheel(discs: discs)
+                CoverWheel(discs: discs) { app.open($0) }
             }
             ChromeLayout { bottom in
                 Text("Welcome home...")
