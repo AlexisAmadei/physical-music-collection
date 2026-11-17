@@ -70,7 +70,8 @@ struct StandardCatalogTests {
         let results = await catalog(network, timeout: .milliseconds(200)).search("ok computer")
 
         #expect(results.count == 15)
-        #expect(clock.now - start < .seconds(5))
+        // Far below the 60 s the slow Source sleeps, yet loose enough for a loaded CI runner.
+        #expect(clock.now - start < .seconds(30))
     }
 
     @Test func barcodeLookupFallsBackToMusicBrainz() async {

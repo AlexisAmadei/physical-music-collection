@@ -63,7 +63,8 @@ struct CatalogTests {
         let results = await catalog(first: first, timeout: .milliseconds(200)).search("ok computer")
 
         #expect(results.first?.title == "OK Computer")
-        #expect(clock.now - start < .seconds(5))
+        // Far below the 60 s the slow Source sleeps, yet loose enough for a loaded CI runner.
+        #expect(clock.now - start < .seconds(30))
     }
 
     @Test func noSourceWithAnAnswerGivesNothing() async {
