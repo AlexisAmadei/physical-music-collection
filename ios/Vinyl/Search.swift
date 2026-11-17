@@ -13,7 +13,7 @@ struct SearchState: Equatable, Sendable {
     /// "Search catalog" is enabled: some text, and no search running.
     var canSearchCatalog: Bool { !isBlank && !isSearchingCatalog }
 
-    var isBlank: Bool { text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    var isBlank: Bool { text.isBlank }
 }
 
 extension AppModel {

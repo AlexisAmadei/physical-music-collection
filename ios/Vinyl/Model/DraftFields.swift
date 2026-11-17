@@ -16,6 +16,6 @@ extension Draft {
     /// The barcode as typed: blank means no barcode.
     var barcodeText: String {
         get { barcode ?? "" }
-        set { barcode = newValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : newValue }
+        set { barcode = newValue.isBlank ? nil : newValue }
     }
 }

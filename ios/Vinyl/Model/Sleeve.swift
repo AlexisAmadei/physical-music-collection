@@ -23,11 +23,9 @@ struct SleeveBack: Equatable, Sendable {
             disc.paidPrice.map { String(localized: "Payé \(Price.format($0))") }
         }
         showsRating = !disc.wishlist
-        func blank(_ s: String) -> Bool { s.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
-        title = blank(disc.title) ? String(localized: "Sans titre") : disc.title
-        artist = blank(disc.artist) ? nil : disc.artist
-        let format = disc.format == .cd ? String(localized: "CD") : String(localized: "Vinyle")
-        details = [disc.year.map(String.init), format].compactMap { $0 }.joined(separator: " · ")
+        title = disc.shownTitle
+        artist = disc.shownArtist
+        details = [disc.year.map(String.init), disc.format.label].compactMap { $0 }.joined(separator: " · ")
         addedOn = String(localized: "Ajouté le \(Self.dateText(disc.addedAt, timeZone: timeZone))")
     }
 

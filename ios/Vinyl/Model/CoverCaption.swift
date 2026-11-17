@@ -16,9 +16,8 @@ struct CoverCaption: Equatable, Sendable {
     }
 
     init(_ disc: Disc) {
-        func blank(_ s: String) -> Bool { s.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
-        title = blank(disc.title) ? String(localized: "Sans titre") : disc.title
-        artist = disc.wishlist || blank(disc.artist) ? nil : disc.artist
+        title = disc.shownTitle
+        artist = disc.wishlist ? nil : disc.shownArtist
         showsRating = !disc.wishlist
     }
 }

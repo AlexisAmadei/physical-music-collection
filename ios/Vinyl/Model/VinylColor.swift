@@ -69,15 +69,14 @@ extension Disc {
     /// What VoiceOver reads for its cover: title, artist, Format ("CD", "Vinyle" or "Vinyle couleur <color>"), year.
     /// Mirrors the Android `Disc.a11yLabel()`.
     var coverLabel: String {
-        func blank(_ s: String) -> Bool { s.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
-        let formatLabel = switch (format, shownVinylColor) {
-        case (.cd, _): String(localized: "CD")
-        case (.vinyl, nil): String(localized: "Vinyle")
-        case (.vinyl, let color?): String(localized: "Vinyle couleur \(color.label.lowercased())")
+        let formatLabel = if let color = shownVinylColor {
+            String(localized: "Vinyle couleur \(color.label.lowercased())")
+        } else {
+            format.label
         }
         return [
-            blank(title) ? String(localized: "Sans titre") : title,
-            blank(artist) ? nil : artist,
+            shownTitle,
+            shownArtist,
             formatLabel,
             year.map(String.init),
         ]

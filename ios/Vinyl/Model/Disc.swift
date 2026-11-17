@@ -5,6 +5,19 @@ import SwiftData
 enum Format: String, Codable, CaseIterable, Sendable {
     case cd = "CD"
     case vinyl = "VINYL"
+
+    /// "CD" or "Vinyle", as shown and read by VoiceOver.
+    var label: String {
+        switch self {
+        case .cd: String(localized: "CD")
+        case .vinyl: String(localized: "Vinyle")
+        }
+    }
+}
+
+extension String {
+    /// Empty or only spaces and line breaks: what every Disc field treats as "not set".
+    var isBlank: Bool { trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
 }
 
 /// One physical release the user owns (Collection) or wants (Wishlist). Mirrors the Android `Disc` entity.
@@ -86,6 +99,13 @@ struct Draft: Equatable, Sendable {
     var paidPriceEdit: String?
 
     var isNew: Bool { id == nil }
+}
+
+extension Disc {
+    /// The title as shown: "Sans titre" when blank.
+    var shownTitle: String { title.isBlank ? String(localized: "Sans titre") : title }
+    /// The artist as shown: nil when blank.
+    var shownArtist: String? { artist.isBlank ? nil : artist }
 }
 
 extension Draft {

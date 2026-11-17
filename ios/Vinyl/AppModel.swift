@@ -64,8 +64,7 @@ final class AppModel {
 
     /// Whether Save is enabled: the Draft needs a title and a valid shown price.
     var canSaveDraft: Bool {
-        !draft.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            && Price.isValid(draft.priceText)
+        !draft.title.isBlank && Price.isValid(draft.priceText)
     }
 
     /// Saves the current Draft as a new or updated Disc. Refused (does nothing) when `canSaveDraft` is false.
