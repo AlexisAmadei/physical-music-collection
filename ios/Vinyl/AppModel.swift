@@ -27,8 +27,6 @@ final class AppModel {
     @ObservationIgnored private let profilePreferences: any ProfilePreferences
 
     @ObservationIgnored private let store: DiscStore
-    /// The network the Catalog uses.
-    @ObservationIgnored let catalogTransport: any CatalogTransport
     /// Asked by Search (and Scan) to prefill a Draft.
     @ObservationIgnored let catalog: Catalog
     /// The Search screen's text and Catalog results (see `Search.swift`).
@@ -45,7 +43,6 @@ final class AppModel {
         profilePreferences: any ProfilePreferences = UserDefaultsProfilePreferences()
     ) {
         store = DiscStore(container: container)
-        self.catalogTransport = catalogTransport
         catalog = .standard(transport: catalogTransport)
         self.profilePreferences = profilePreferences
         profileName = profilePreferences.name ?? ""

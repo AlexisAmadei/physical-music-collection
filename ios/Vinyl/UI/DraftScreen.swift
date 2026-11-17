@@ -1,10 +1,9 @@
 import SwiftUI
 
-/// The Draft form: add or edit a Disc. Edits `app.draft`; Save and Delete hand it to the app model.
-/// `onDone` runs after Save or Delete: the presenter uses it to go back to the previous screen.
+/// The Draft form: add or edit a Disc. Edits `app.draft`; Save and Delete hand it to the app model,
+/// then go back to the previous screen.
 struct DraftScreen: View {
     @Bindable var app: AppModel
-    var onDone: () -> Void = {}
 
     var body: some View {
         Form {
@@ -25,13 +24,13 @@ struct DraftScreen: View {
             Section {
                 Button("Save") {
                     app.saveDraft()
-                    onDone()
+                    app.back()
                 }
                 .disabled(!app.canSaveDraft)
                 if !app.draft.isNew {
                     Button("Delete", role: .destructive) {
                         app.deleteDraft()
-                        onDone()
+                        app.back()
                     }
                 }
             }

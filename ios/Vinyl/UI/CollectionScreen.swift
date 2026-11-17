@@ -1,9 +1,8 @@
 import SwiftUI
 
-/// "Ma collection": owned Discs as a two-column grid of cover cards.
+/// "Ma collection": owned Discs as a two-column grid of cover cards. Tapping one opens its Draft.
 struct CollectionScreen: View {
     let app: AppModel
-    var onEdit: (Disc) -> Void = { _ in }
 
     private let columns = [GridItem(.flexible(), spacing: 20), GridItem(.flexible(), spacing: 20)]
 
@@ -12,7 +11,7 @@ struct CollectionScreen: View {
             LazyVGrid(columns: columns, alignment: .leading, spacing: 28) {
                 Section {
                     ForEach(app.shownCollection) { disc in
-                        Button { onEdit(disc) } label: { CoverCard(disc: disc) }
+                        Button { app.open(disc) } label: { CoverCard(disc: disc) }
                             .buttonStyle(.plain)
                     }
                 } header: {

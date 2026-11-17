@@ -12,18 +12,19 @@ struct RootView: View {
                 .navigationDestination(for: Route.self) { route in
                     switch route {
                     case .scan: ScanScreen(app: app)
-                    case .draft: DraftScreen(app: app) { app.back() }
+                    case .draft: DraftScreen(app: app)
                     }
                 }
         }
         .overlay {
             if app.showsChrome { Chrome(app: app) }
-        }    }
+        }
+    }
 
     @ViewBuilder private var main: some View {
         switch app.tab {
         case .home: HomeScreen(app: app)
-        case .collection: CollectionScreen(app: app) { app.open($0) }
+        case .collection: CollectionScreen(app: app)
         case .wishlist: WishlistScreen(app: app)
         case .search: SearchScreen(app: app)
         case .profile: ProfileScreen(app: app)
