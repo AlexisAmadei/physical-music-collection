@@ -15,7 +15,7 @@ struct MusicBrainzCatalogTests {
         return Dictionary(items.map { ($0.name, $0.value ?? "") }, uniquingKeysWith: { $1 })
     }
 
-    /// MusicBrainz asks every client for a User-Agent naming the app and a contact.
+    /// MusicBrainz asks every client for a User-Agent naming the app and a contact (the same as on Android).
     @Test func searchAsksForFifteenReleasesAsJSONWithAUserAgent() async {
         let transport = FakeTransport(fixture: "musicbrainz-search-empty")
         _ = await catalog(transport).search("kid a")
@@ -25,7 +25,7 @@ struct MusicBrainzCatalogTests {
         #expect(request?.url?.path() == "/ws/2/release/")
         #expect(query(of: transport) == ["fmt": "json", "limit": "15", "query": "kid a"])
         #expect(request?.value(forHTTPHeaderField: "User-Agent")
-            == "VinylCollectionApp/0.1 ( https://github.com/AlexisAmadei/physical-vinyle-collection )")
+            == "VinylCollectionApp/0.1 ( https://github.com )")
     }
 
     /// A scanner reads the 12-digit UPC "724385522918" as the EAN-13 "0724385522918": the Disc keeps what was scanned.

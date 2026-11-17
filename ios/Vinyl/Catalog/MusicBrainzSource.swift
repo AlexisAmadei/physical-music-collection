@@ -24,9 +24,9 @@ struct MusicBrainzSource: CatalogSource {
             URLQueryItem(name: "query", value: query),
         ]
         var request = URLRequest(url: url.url!)
-        // MusicBrainz rejects clients that don't name themselves with a contact.
+        // MusicBrainz rejects clients that don't name themselves with a contact. Same contact as the Android app.
         request.setValue(
-            "VinylCollectionApp/0.1 ( https://github.com/AlexisAmadei/physical-vinyle-collection )",
+            "VinylCollectionApp/0.1 ( https://github.com )",
             forHTTPHeaderField: "User-Agent"
         )
         let (data, response) = try await transport.data(for: request)
