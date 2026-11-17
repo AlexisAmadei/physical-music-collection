@@ -10,6 +10,8 @@ enum Palette {
     static let thumb = Color.black
     static let placeholder = Color(hex: 0xEEEEEE)
     static let tint = Color(hex: 0xF6F4F4)
+    /// Error text (Material 3 default `error`, which Android's theme keeps), e.g. "Barcode … not found".
+    static let error = Color(hex: 0xB3261E)
 }
 
 /// A text style token: Lexend at a size, weight, line height and letter spacing (all in points).

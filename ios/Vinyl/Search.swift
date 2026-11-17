@@ -7,6 +7,8 @@ struct SearchState: Equatable, Sendable {
     var catalogResults: [Draft] = []
     /// The Catalog is being asked: the button shows "Searching…".
     var isSearchingCatalog = false
+    /// The scanned barcode the Catalog did not know: Search says so, and the Disc added from here keeps it.
+    var notFound: String?
 
     /// "Search catalog" is enabled: some text, and no search running.
     var canSearchCatalog: Bool { !isBlank && !isSearchingCatalog }
@@ -29,9 +31,16 @@ extension AppModel {
         searchState.isSearchingCatalog = false
     }
 
-    /// Tapping a Catalog result: opens its prefilled Draft.
+    /// Tapping a Catalog result: opens its prefilled Draft. After a not-found scan it keeps the scanned barcode.
     func pick(_ result: Draft) {
         draft = result
+        if let code = searchState.notFound { draft.barcode = code }
+        path.append(.draft)
+    }
+
+    /// "Add manually", shown after a not-found scan: a new Draft with the scanned barcode and the typed text as title.
+    func addManually() {
+        draft = Draft(title: searchState.text, barcode: searchState.notFound)
         path.append(.draft)
     }
 }

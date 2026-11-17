@@ -16,10 +16,13 @@ extension AppModel {
     func select(_ tab: Tab) {
         self.tab = tab
         path = []
+        // The not-found barcode belongs to the Search that replaced Scan, not to Search reached from the pill.
+        searchState.notFound = nil
     }
 
     /// Scan glass button: opens the Scan screen over the current one.
     func scan() {
+        scanState = .scanning
         path.append(.scan)
     }
 

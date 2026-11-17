@@ -10,6 +10,9 @@
     "Add disc" : {
 
     },
+    "Add manually" : {
+
+    },
     "Ajoute les disques que tu cherches." : {
 
     },
@@ -31,6 +34,9 @@
     "Barcode" : {
 
     },
+    "Barcode %@ not found. Search by name." : {
+
+    },
     "Blanc" : {
 
     },
@@ -38,6 +44,9 @@
 
     },
     "CD" : {
+
+    },
+    "Camera permission needed" : {
 
     },
     "Collection" : {
@@ -53,6 +62,9 @@
 
     },
     "Edit disc" : {
+
+    },
+    "Enter manually" : {
 
     },
     "Exemple : 12,50" : {
@@ -74,6 +86,9 @@
 
     },
     "Looking for something?" : {
+
+    },
+    "Looking up %@…" : {
 
     },
     "MON PROFIL" : {

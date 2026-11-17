@@ -88,17 +88,6 @@ struct ProfileScreen: View {
     }
 }
 
-/// Placeholder until the Scan ticket.
-struct ScanScreen: View {
-    var body: some View {
-        Text("Scanner un code-barres")
-            .textStyle(Typography.title)
-            .foregroundStyle(Palette.ink)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Palette.surface)
-    }
-}
-
 /// A main screen's uppercase title.
 struct ScreenTitle: View {
     let text: LocalizedStringKey

@@ -28,6 +28,8 @@ final class AppModel {
     @ObservationIgnored let catalog: Catalog
     /// The Search screen's text and Catalog results (see `Search.swift`).
     var searchState = SearchState()
+    /// The Scan screen: scanning, or looking up the barcode it read (see `Scan.swift`).
+    var scanState = ScanState.scanning
 
     /// - Parameters:
     ///   - container: `DiscStore.persistentContainer()` in the app, `DiscStore.inMemoryContainer()` in tests.
