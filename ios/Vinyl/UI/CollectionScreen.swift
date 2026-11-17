@@ -41,21 +41,26 @@ struct CollectionScreen: View {
     }
 }
 
-/// A cover with the Disc's title and artist under it.
+/// A cover with the Disc's title and artist under it, and its rating unless `showsRating` is false (Wishlist).
 struct CoverCard: View {
     let disc: Disc
+    var showsRating = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Cover(url: disc.coverURL)
                 .aspectRatio(176 / 177, contentMode: .fit)
+                .colorSticker(disc.shownVinylColor)
+                .accessibilityElement()
+                .accessibilityLabel(disc.coverLabel)
             HStack(spacing: 6) {
                 Text(disc.title.isEmpty ? "Sans titre" : disc.title)
                     .textStyle(Typography.title)
                     .foregroundStyle(Palette.ink)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                StarRating(rating: disc.rating)
+                    .accessibilityHidden(true)
+                if showsRating { StarRating(rating: disc.rating) }
             }
             .padding(.top, 8)
             if !disc.artist.isEmpty {
@@ -63,6 +68,7 @@ struct CoverCard: View {
                     .textStyle(Typography.body)
                     .foregroundStyle(Palette.muted)
                     .lineLimit(1)
+                    .accessibilityHidden(true)
             }
         }
         .accessibilityElement(children: .combine)

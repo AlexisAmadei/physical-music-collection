@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "fr",
   "strings" : {
+    "€" : {
+
+    },
     "Accueil" : {
 
     },
@@ -28,6 +31,12 @@
     "Barcode" : {
 
     },
+    "Blanc" : {
+
+    },
+    "Bleu" : {
+
+    },
     "CD" : {
 
     },
@@ -46,7 +55,16 @@
     "Edit disc" : {
 
     },
+    "Exemple : 12,50" : {
+
+    },
     "Format" : {
+
+    },
+    "In wishlist" : {
+
+    },
+    "Jaune" : {
 
     },
     "Ma collection" : {
@@ -64,6 +82,15 @@
     "Note : %lld sur 5" : {
 
     },
+    "Orange" : {
+
+    },
+    "Prix payé" : {
+
+    },
+    "Prix vu" : {
+
+    },
     "Profil" : {
 
     },
@@ -77,6 +104,12 @@
 
     },
     "Rien ici pour l’instant." : {
+
+    },
+    "Rose" : {
+
+    },
+    "Rouge" : {
 
     },
     "Saisie manuelle" : {
@@ -97,10 +130,25 @@
     "Title" : {
 
     },
+    "Transparent" : {
+
+    },
+    "Vert" : {
+
+    },
     "VINYL" : {
 
     },
     "Vinyle" : {
+
+    },
+    "Vinyle couleur" : {
+
+    },
+    "Vinyle couleur %@" : {
+
+    },
+    "Violet" : {
 
     },
     "Welcome home..." : {

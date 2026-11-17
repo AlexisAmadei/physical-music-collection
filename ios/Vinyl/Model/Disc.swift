@@ -7,13 +7,6 @@ enum Format: String, Codable, CaseIterable, Sendable {
     case vinyl = "VINYL"
 }
 
-/// The color of a vinyl Disc's wax. No value (nil) means black.
-/// Labels, wax colors and display rules come with the Vinyl color ticket.
-enum VinylColor: String, Codable, CaseIterable, Sendable {
-    case red = "RED", orange = "ORANGE", yellow = "YELLOW", green = "GREEN", blue = "BLUE"
-    case purple = "PURPLE", pink = "PINK", white = "WHITE", clear = "CLEAR"
-}
-
 /// One physical release the user owns (Collection) or wants (Wishlist). Mirrors the Android `Disc` entity.
 /// Screens never edit a Disc in place: they edit a `Draft` and the app model saves it.
 @Model
@@ -88,6 +81,9 @@ struct Draft: Equatable, Sendable {
     var seenPrice: Int?
     var paidPrice: Int?
     var vinylColor: VinylColor?
+    /// Price texts as typed in the Draft form; nil = not typed. Read them through `DraftPrice.swift`.
+    var seenPriceEdit: String?
+    var paidPriceEdit: String?
 
     var isNew: Bool { id == nil }
 }
