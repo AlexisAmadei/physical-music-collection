@@ -101,4 +101,31 @@ struct SearchTests {
         app.saveDraft()
         #expect(app.collection.map(\.title) == ["OK Computer"])
     }
+    /// Android makes a fresh Search entry each time: the nav pill and "Rechercher un album" open Search blank.
+    @Test(arguments: [false, true])
+    func searchOpensBlankEachTimeItIsEntered(fromAddChoices: Bool) async throws {
+        let app = try app()
+        app.select(.search)
+        app.searchState.text = "ok computer"
+        await app.searchCatalog()
+        app.select(.home)
+
+        if fromAddChoices { app.choose(.search) } else { app.select(.search) }
+
+        #expect(app.tab == .search)
+        #expect(app.searchState == SearchState())
+    }
+
+    @Test func goingBackFromAPickedResultKeepsTheSearch() async throws {
+        let app = try app()
+        app.select(.search)
+        app.searchState.text = "ok computer"
+        await app.searchCatalog()
+
+        app.pick(app.searchState.catalogResults[0])
+        app.back()
+
+        #expect(app.searchState.text == "ok computer")
+        #expect(app.searchState.catalogResults.count == 3)
+    }
 }

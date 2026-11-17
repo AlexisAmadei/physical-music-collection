@@ -13,11 +13,12 @@ extension AppModel {
     var showsChrome: Bool { path.isEmpty }
 
     /// Nav pill: shows a main screen, always at a single level (no stack).
+    /// Search opens blank each time, as a fresh Search (Android): no text, no results, no not-found barcode.
+    /// (Search that replaces Scan after a not-found barcode is set up by `scanned(_:)`, not here.)
     func select(_ tab: Tab) {
         self.tab = tab
         path = []
-        // The not-found barcode belongs to the Search that replaced Scan, not to Search reached from the pill.
-        searchState.notFound = nil
+        if tab == .search { searchState = SearchState() }
     }
 
     /// Scan glass button: opens the Scan screen over the current one.
