@@ -4,6 +4,18 @@
     "€" : {
 
     },
+    "%lld disque" : {
+
+    },
+    "%lld disques" : {
+
+    },
+    "%lld disques sans prix" : {
+
+    },
+    "1 disque sans prix" : {
+
+    },
     "Accueil" : {
 
     },
@@ -73,6 +85,9 @@
     "Ma wishlist" : {
 
     },
+    "Modifier ton nom" : {
+
+    },
     "MON PROFIL" : {
 
     },
@@ -82,7 +97,13 @@
     "Note : %lld sur 5" : {
 
     },
+    "OK" : {
+
+    },
     "Orange" : {
+
+    },
+    "Par format" : {
 
     },
     "Prix payé" : {
@@ -130,7 +151,13 @@
     "Title" : {
 
     },
+    "Ton nom" : {
+
+    },
     "Transparent" : {
+
+    },
+    "Valeur de la collection" : {
 
     },
     "Vert" : {
