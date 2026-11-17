@@ -1,0 +1,469 @@
+{
+ "pagination": {
+  "page": 1,
+  "pages": 333,
+  "per_page": 30,
+  "items": 101036,
+  "urls": {
+   "last": "https://api.discogs.com/database/search?type=release&per_page=30&q=greatest+hits&page=333",
+   "next": "https://api.discogs.com/database/search?type=release&per_page=30&q=greatest+hits&page=2"
+  }
+ },
+ "results": [
+  {
+   "id": 9371072,
+   "type": "release",
+   "title": "Queen - Greatest Hits",
+   "year": "2016",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Reissue",
+    "Remastered",
+    "Stereo"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/9371072-Queen-Greatest-Hits"
+  },
+  {
+   "id": 8829120,
+   "type": "release",
+   "title": "Tom Petty & The Heartbreakers* - Greatest Hits",
+   "year": "2016",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Reissue",
+    "Remastered",
+    "Stereo"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/8829120-Tom-Petty-The-Heartbreakers-Greatest-Hits"
+  },
+  {
+   "id": 376152,
+   "type": "release",
+   "title": "Queen - Greatest Hits",
+   "year": "1981",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Stereo"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/376152-Queen-Greatest-Hits"
+  },
+  {
+   "id": 1120137,
+   "type": "release",
+   "title": "Elton John - Greatest Hits",
+   "year": "1974",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/1120137-Elton-John-Greatest-Hits"
+  },
+  {
+   "id": 9376862,
+   "type": "release",
+   "title": "Queen - Greatest Hits",
+   "year": "2016",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Reissue"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/9376862-Queen-Greatest-Hits"
+  },
+  {
+   "id": 4174124,
+   "type": "release",
+   "title": "The Doors - Greatest Hits",
+   "year": "1980",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Stereo"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/4174124-The-Doors-Greatest-Hits"
+  },
+  {
+   "id": 2050680,
+   "type": "release",
+   "title": "Foo Fighters - Greatest Hits",
+   "year": "2009",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/2050680-Foo-Fighters-Greatest-Hits"
+  },
+  {
+   "id": 16262240,
+   "type": "release",
+   "title": "Queen - Greatest Hits",
+   "year": "2020",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Limited Edition",
+    "Reissue",
+    "Stereo"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/16262240-Queen-Greatest-Hits"
+  },
+  {
+   "id": 2067455,
+   "type": "release",
+   "title": "Foo Fighters - Greatest Hits",
+   "year": "2009",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/2067455-Foo-Fighters-Greatest-Hits"
+  },
+  {
+   "id": 9370710,
+   "type": "release",
+   "title": "Queen - Greatest Hits II",
+   "year": "2016",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Reissue",
+    "Remastered",
+    "Stereo"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/9370710-Queen-Greatest-Hits-II"
+  },
+  {
+   "id": 398759,
+   "type": "release",
+   "title": "ABBA - Greatest Hits",
+   "year": "1976",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Reissue",
+    "Stereo"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/398759-ABBA-Greatest-Hits"
+  },
+  {
+   "id": 15886799,
+   "type": "release",
+   "title": "Fleetwood Mac - Greatest Hits",
+   "year": "2020",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Reissue"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/15886799-Fleetwood-Mac-Greatest-Hits"
+  },
+  {
+   "id": 10505746,
+   "type": "release",
+   "title": "The Cure - Greatest Hits",
+   "year": "2017",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Reissue",
+    "Remastered"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/10505746-The-Cure-Greatest-Hits"
+  },
+  {
+   "id": 5240392,
+   "type": "release",
+   "title": "Elton John - Greatest Hits",
+   "year": "1974",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Stereo"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/5240392-Elton-John-Greatest-Hits"
+  },
+  {
+   "id": 652936,
+   "type": "release",
+   "title": "Leonard Cohen - Greatest Hits",
+   "year": "1975",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Stereo"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/652936-Leonard-Cohen-Greatest-Hits"
+  },
+  {
+   "id": 1218116,
+   "type": "release",
+   "title": "Sly & The Family Stone - Greatest Hits",
+   "year": "1970",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/1218116-Sly-The-Family-Stone-Greatest-Hits"
+  },
+  {
+   "id": 531009,
+   "type": "release",
+   "title": "Cat Stevens - Greatest Hits",
+   "year": "1975",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Stereo"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/531009-Cat-Stevens-Greatest-Hits"
+  },
+  {
+   "id": 15964384,
+   "type": "release",
+   "title": "Guns N' Roses - Greatest Hits",
+   "year": "2020",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/15964384-Guns-N-Roses-Greatest-Hits"
+  },
+  {
+   "id": 22111126,
+   "type": "release",
+   "title": "ABBA - Gold (Greatest Hits)",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Reissue",
+    "Remastered"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/22111126-ABBA-Gold-Greatest-Hits"
+  },
+  {
+   "id": 22840832,
+   "type": "release",
+   "title": "The Police - Greatest Hits",
+   "year": "2022",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Reissue",
+    "Remastered"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/22840832-The-Police-Greatest-Hits"
+  },
+  {
+   "id": 1371973,
+   "type": "release",
+   "title": "Queen - Greatest Hits",
+   "year": "1981",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Stereo"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/1371973-Queen-Greatest-Hits"
+  },
+  {
+   "id": 11603586,
+   "type": "release",
+   "title": "Foo Fighters - Greatest Hits",
+   "year": "2009",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Reissue"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/11603586-Foo-Fighters-Greatest-Hits"
+  },
+  {
+   "id": 783640,
+   "type": "release",
+   "title": "Fleetwood Mac - Greatest Hits",
+   "year": "1988",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Stereo"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/783640-Fleetwood-Mac-Greatest-Hits"
+  },
+  {
+   "id": 2304264,
+   "type": "release",
+   "title": "Kenny Rogers - Greatest Hits",
+   "year": "1980",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Stereo"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/2304264-Kenny-Rogers-Greatest-Hits"
+  },
+  {
+   "id": 579651,
+   "type": "release",
+   "title": "War - Greatest Hits",
+   "year": "1976",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Stereo"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/579651-War-Greatest-Hits"
+  },
+  {
+   "id": 1626359,
+   "type": "release",
+   "title": "Waylon* - Greatest Hits",
+   "year": "1979",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/1626359-Waylon-Greatest-Hits"
+  },
+  {
+   "id": 10498840,
+   "type": "release",
+   "title": "The Cure - Greatest Hits",
+   "year": "2017",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Reissue",
+    "Remastered"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/10498840-The-Cure-Greatest-Hits"
+  },
+  {
+   "id": 2161265,
+   "type": "release",
+   "title": "Al Green - Greatest Hits",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Limited Edition",
+    "Reissue"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/2161265-Al-Green-Greatest-Hits"
+  },
+  {
+   "id": 700536,
+   "type": "release",
+   "title": "Air Supply - Greatest Hits",
+   "year": "1983",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/700536-Air-Supply-Greatest-Hits"
+  },
+  {
+   "id": 1103537,
+   "type": "release",
+   "title": "The Marshall Tucker Band - Greatest Hits",
+   "year": "1978",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Compilation",
+    "Stereo"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/1103537-The-Marshall-Tucker-Band-Greatest-Hits"
+  }
+ ]
+}

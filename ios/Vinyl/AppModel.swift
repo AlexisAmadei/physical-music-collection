@@ -22,8 +22,12 @@ final class AppModel {
     var shownCollection: [Disc] { collectionFilter.apply(to: collection) }
 
     @ObservationIgnored private let store: DiscStore
-    /// The network the Catalog will use. Unused until the Catalog ticket.
+    /// The network the Catalog uses.
     @ObservationIgnored let catalogTransport: any CatalogTransport
+    /// Asked by Search (and Scan) to prefill a Draft.
+    @ObservationIgnored let catalog: Catalog
+    /// The Search screen's text and Catalog results (see `Search.swift`).
+    var searchState = SearchState()
 
     /// - Parameters:
     ///   - container: `DiscStore.persistentContainer()` in the app, `DiscStore.inMemoryContainer()` in tests.
@@ -31,6 +35,7 @@ final class AppModel {
     init(container: ModelContainer, catalogTransport: any CatalogTransport = URLSessionTransport()) {
         store = DiscStore(container: container)
         self.catalogTransport = catalogTransport
+        catalog = .standard(transport: catalogTransport)
         refresh()
     }
 
