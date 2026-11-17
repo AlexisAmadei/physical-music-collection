@@ -9,10 +9,14 @@ struct ScanTests {
         try AppModel(container: DiscStore.inMemoryContainer(), catalogTransport: transport)
     }
 
-    /// The Catalog knows OK Computer by this barcode.
-    var hit: FakeTransport { FakeTransport(fixture: "discogs-barcode-724385522918") }
-    /// No Source knows the barcode.
-    var miss: FakeTransport { FakeTransport(fixture: "discogs-search-empty") }
+    /// Discogs knows OK Computer by this barcode (MusicBrainz, never asked then, would not).
+    var hit: FakeTransport {
+        .network(discogs: FakeTransport.recorded("discogs-barcode-724385522918"), musicBrainz: noRelease)
+    }
+    /// No Source knows the barcode: both answer an empty list.
+    var miss: FakeTransport { .network(discogs: FakeTransport.recorded("discogs-search-empty"), musicBrainz: noRelease) }
+    /// MusicBrainz finding nothing.
+    var noRelease: FakeTransport.Answer { FakeTransport.recorded("musicbrainz-search-empty") }
 
     @Test func aKnownBarcodeOpensADraftPrefilledFromTheFirstResultWithTheBarcode() async throws {
         let app = try app(hit)
@@ -32,10 +36,13 @@ struct ScanTests {
     /// A hit that waits until the test lets it answer.
     func heldHit() -> (FakeTransport, AsyncStream<Void>.Continuation) {
         let (opened, open) = AsyncStream.makeStream(of: Void.self)
-        let transport = FakeTransport { request in
-            for await _ in opened { break }
-            return (Fixture.data("discogs-barcode-724385522918"), .ok(request))
-        }
+        let transport = FakeTransport.network(
+            discogs: { request in
+                for await _ in opened { break }
+                return (Fixture.data("discogs-barcode-724385522918"), .ok(request))
+            },
+            musicBrainz: noRelease
+        )
         return (transport, open)
     }
 
@@ -118,7 +125,8 @@ struct ScanTests {
     }
 
     @Test func anUnknownBarcodeReplacesScanWithSearchSayingItWasNotFound() async throws {
-        let app = try app(miss)
+        let network = miss
+        let app = try app(network)
         app.select(.collection)
         app.searchState.text = "earlier search"
         app.scan()
@@ -130,14 +138,18 @@ struct ScanTests {
         #expect(app.searchState.notFound == "0000000000000")
         #expect(app.searchState.text.isEmpty)
         #expect(app.searchState.catalogResults.isEmpty)
+        #expect(network.requests.map { $0.url?.host() } == ["api.discogs.com", "musicbrainz.org"])
     }
 
-    /// The barcode lookup misses, then the text search finds OK Computer.
+    /// The barcode lookup misses in both Sources, then the text search finds OK Computer on Discogs.
     var missThenTextHit: FakeTransport {
-        FakeTransport { request in
-            let byBarcode = request.url?.query()?.contains("barcode=") == true
-            return (Fixture.data(byBarcode ? "discogs-search-empty" : "discogs-search-ok-computer"), .ok(request))
-        }
+        .network(
+            discogs: { request in
+                let byBarcode = request.url?.query()?.contains("barcode=") == true
+                return (Fixture.data(byBarcode ? "discogs-search-empty" : "discogs-search-ok-computer"), .ok(request))
+            },
+            musicBrainz: noRelease
+        )
     }
 
     @Test func aCatalogResultPickedAfterAnUnknownBarcodeKeepsTheScannedBarcode() async throws {

@@ -5,8 +5,13 @@ import Testing
 /// The Search screen through the app model: "My discs", "Search catalog" and picking a Catalog result.
 @MainActor
 struct SearchTests {
-    func app(_ transport: FakeTransport = FakeTransport(fixture: "discogs-search-ok-computer")) throws -> AppModel {
+    func app(_ transport: FakeTransport = SearchTests.okComputer) throws -> AppModel {
         try AppModel(container: DiscStore.inMemoryContainer(), catalogTransport: transport)
+    }
+
+    /// Discogs finds three OK Computer Pressings; MusicBrainz, never asked then, would find nothing.
+    static var okComputer: FakeTransport {
+        .network(discogs: FakeTransport.recorded("discogs-search-ok-computer"), musicBrainz: FakeTransport.recorded("musicbrainz-search-empty"))
     }
 
     func add(_ title: String, by artist: String, wishlist: Bool = false, to app: AppModel) {
@@ -39,7 +44,7 @@ struct SearchTests {
     }
 
     @Test func searchCatalogShowsTheCatalogResults() async throws {
-        let transport = FakeTransport(fixture: "discogs-search-ok-computer")
+        let transport = Self.okComputer
         let app = try app(transport)
 
         app.searchState.text = "ok computer"
@@ -50,7 +55,7 @@ struct SearchTests {
     }
 
     @Test func searchCatalogIsDisabledForBlankText() async throws {
-        let transport = FakeTransport(fixture: "discogs-search-ok-computer")
+        let transport = Self.okComputer
         let app = try app(transport)
 
         #expect(!app.searchState.canSearchCatalog)
@@ -65,10 +70,13 @@ struct SearchTests {
 
     @Test func searchCatalogIsDisabledWhileSearching() async throws {
         let (opened, open) = AsyncStream.makeStream(of: Void.self)
-        let transport = FakeTransport { request in
-            for await _ in opened { break }
-            return (Fixture.data("discogs-search-ok-computer"), .ok(request))
-        }
+        let transport = FakeTransport.network(
+            discogs: { request in
+                for await _ in opened { break }
+                return (Fixture.data("discogs-search-ok-computer"), .ok(request))
+            },
+            musicBrainz: FakeTransport.recorded("musicbrainz-search-empty")
+        )
         let app = try app(transport)
         app.searchState.text = "ok computer"
 
@@ -84,7 +92,7 @@ struct SearchTests {
     }
 
     @Test func pickingACatalogResultOpensItsPrefilledDraft() async throws {
-        let app = try app(FakeTransport(fixture: "discogs-search-ok-computer"))
+        let app = try app()
         app.select(.search)
         app.searchState.text = "ok computer"
         await app.searchCatalog()

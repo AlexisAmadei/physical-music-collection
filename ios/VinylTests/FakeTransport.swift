@@ -22,6 +22,20 @@ final class FakeTransport: CatalogTransport {
         self.init { request in (data, HTTPURLResponse.status(status, for: request)) }
     }
 
+    /// A recorded fixture as one Source's answer, for `network(discogs:musicBrainz:)`.
+    static func recorded(_ name: String, status: Int = 200) -> Answer {
+        let data = Fixture.data(name)
+        return { request in (data, HTTPURLResponse.status(status, for: request)) }
+    }
+
+    /// The app's network, where each Source answers for itself (by host): Discogs answers `discogs`,
+    /// MusicBrainz answers `musicBrainz`. Use it wherever `Catalog.standard` (the app model) asks both Sources.
+    static func network(discogs: @escaping Answer, musicBrainz: @escaping Answer) -> FakeTransport {
+        FakeTransport { request in
+            request.url?.host() == "musicbrainz.org" ? try await musicBrainz(request) : try await discogs(request)
+        }
+    }
+
     func data(for request: URLRequest) async throws -> (Data, URLResponse) {
         sent.withLock { $0.append(request) }
         return try await answer(request)

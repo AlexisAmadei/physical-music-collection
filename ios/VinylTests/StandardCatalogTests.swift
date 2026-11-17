@@ -5,21 +5,16 @@ import Testing
 /// The app's Catalog (`Catalog.standard`): Discogs first, MusicBrainz when Discogs finds nothing or fails.
 /// One fake network answers both, by host, with recorded JSON.
 struct StandardCatalogTests {
-    typealias Answer = @Sendable (URLRequest) async throws -> (Data, URLResponse)
+    typealias Answer = FakeTransport.Answer
 
-    static func recorded(_ name: String, status: Int = 200) -> Answer {
-        let data = Fixture.data(name)
-        return { request in (data, HTTPURLResponse.status(status, for: request)) }
-    }
+    static func recorded(_ name: String, status: Int = 200) -> Answer { FakeTransport.recorded(name, status: status) }
 
     /// A network where Discogs answers `discogs` and MusicBrainz answers `musicBrainz`.
     static func network(
         discogs: @escaping Answer,
         musicBrainz: @escaping Answer = recorded("musicbrainz-search-ok-computer")
     ) -> FakeTransport {
-        FakeTransport { request in
-            request.url?.host() == "musicbrainz.org" ? try await musicBrainz(request) : try await discogs(request)
-        }
+        FakeTransport.network(discogs: discogs, musicBrainz: musicBrainz)
     }
 
     func catalog(_ network: FakeTransport, timeout: Duration = .seconds(8)) -> Catalog {
