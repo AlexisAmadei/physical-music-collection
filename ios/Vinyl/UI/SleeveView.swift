@@ -163,7 +163,7 @@ private struct Barcode: View {
     }
 }
 
-/// The record out of its sleeve: a 188 pt disc in its wax (`VinylWax`), grooves, the round cover as its label and
+/// The vinyl Disc out of its sleeve: a 188 pt disc in its wax (`VinylWax`), grooves, the round cover as its label and
 /// an 8 pt hole. Turns by `spin` degrees; the highlight stays fixed.
 struct VinylView: View {
     let disc: Disc

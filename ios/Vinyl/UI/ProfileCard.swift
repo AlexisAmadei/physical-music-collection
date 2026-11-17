@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// The Profile card: round-brushed silver, like the grooves of a record, with the Profile name, the Collection value
+/// The Profile card: round-brushed silver, like the grooves of a vinyl Disc, with the Profile name, the Collection value
 /// and the number of Collection Discs. Mirrors Android `ProfileCard`. Tapping it edits the Profile name.
 ///
 /// Tilts (10° at most) with the phone, and with the finger while it touches; the light sits where the card is
@@ -240,7 +240,7 @@ private struct BrushedRings: View {
                 context.stroke(ring(r), with: .color(color), lineWidth: pixel)
                 r += 1.4 * pixel
             }
-            // A few soft dark bands, like the gaps between tracks on a record.
+            // A few soft dark bands, like the gaps between tracks on a vinyl Disc.
             for _ in 0..<5 {
                 context.stroke(ring(max * (0.3 + 0.7 * random.nextUnit())), with: .color(.black.opacity(0.05)), lineWidth: 2.5)
             }
