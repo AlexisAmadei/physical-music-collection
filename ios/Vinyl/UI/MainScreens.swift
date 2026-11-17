@@ -40,7 +40,7 @@ struct WishlistScreen: View {
             LazyVGrid(columns: columns, alignment: .leading, spacing: 12) {
                 Section {
                     ForEach(app.wishlist) { disc in
-                        Button { app.open(disc) } label: { CoverCard(disc: disc) }
+                        Button { app.open(disc) } label: { CoverCard(disc: disc, showsRating: false) }
                             .buttonStyle(.plain)
                     }
                 } header: {

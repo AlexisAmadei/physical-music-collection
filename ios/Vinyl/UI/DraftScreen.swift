@@ -18,8 +18,10 @@ struct DraftScreen: View {
                 Text("VINYL").tag(Format.vinyl)
             }
             .pickerStyle(.segmented)
+            if app.draft.format == .vinyl { VinylColorField(draft: $app.draft) }
             StarPicker(draft: $app.draft)
             TextField("Comment", text: $app.draft.comment, axis: .vertical)
+            DraftPriceFields(draft: $app.draft)
             Section {
                 Button("Save") {
                     app.saveDraft()
