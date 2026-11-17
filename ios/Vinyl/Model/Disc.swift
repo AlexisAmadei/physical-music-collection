@@ -24,16 +24,17 @@ extension String {
 /// Screens never edit a Disc in place: they edit a `Draft` and the app model saves it.
 @Model
 final class Disc {
-    var title: String
-    var artist: String
+    // The defaults only exist so `init(_:)` can hand every field to `update(from:)`: a Disc is always built from a Draft.
+    var title = ""
+    var artist = ""
     var year: Int?
-    var format: Format
+    var format = Format.vinyl
     var barcode: String?
     /// 0 = not rated, else 1 to 5.
-    var rating: Int
-    var comment: String
-    var wishlist: Bool
-    var addedAt: Date
+    var rating = 0
+    var comment = ""
+    var wishlist = false
+    var addedAt = Date.now
     var coverURL: URL?
     /// Seen price in euro cents: kept while in the Wishlist, hidden (not cleared) once owned.
     var seenPrice: Int?
@@ -43,22 +44,10 @@ final class Disc {
     var vinylColor: VinylColor?
 
     init(_ draft: Draft) {
-        title = draft.title
-        artist = draft.artist
-        year = draft.year
-        format = draft.format
-        barcode = draft.barcode
-        rating = draft.rating
-        comment = draft.comment
-        wishlist = draft.wishlist
-        addedAt = draft.addedAt
-        coverURL = draft.coverURL
-        seenPrice = draft.seenPrice
-        paidPrice = draft.paidPrice
-        vinylColor = draft.vinylColor
+        update(from: draft)
     }
 
-    /// Copies every field of the Draft except the identity.
+    /// Copies every field of the Draft except the identity. `Draft.init(_ disc:)` is the way back: add a field to both.
     func update(from draft: Draft) {
         title = draft.title
         artist = draft.artist
