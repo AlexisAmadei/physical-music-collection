@@ -18,15 +18,14 @@ struct RootView: View {
         }
         .overlay {
             if app.showsChrome { Chrome(app: app) }
-        }
-    }
+        }    }
 
     @ViewBuilder private var main: some View {
         switch app.tab {
         case .home: HomeScreen(app: app)
         case .collection: CollectionScreen(app: app) { app.open($0) }
         case .wishlist: WishlistScreen(app: app)
-        case .search: SearchScreen()
+        case .search: SearchScreen(app: app)
         case .profile: ProfileScreen(app: app)
         }
     }

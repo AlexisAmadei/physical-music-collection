@@ -84,18 +84,6 @@ struct ProfileScreen: View {
     }
 }
 
-/// Placeholder until the Search ticket.
-struct SearchScreen: View {
-    var body: some View {
-        ScrollView {
-            ScreenTitle(text: "Rechercher")
-                .padding(.horizontal, 20)
-                .padding(.top, 44)
-        }
-        .background(Palette.surface)
-    }
-}
-
 /// Placeholder until the Scan ticket.
 struct ScanScreen: View {
     var body: some View {
