@@ -135,24 +135,49 @@ enum Glyphs {
     }
 }
 
-/// Draws a glyph at 44 × 44 pt.
+/// Draws a glyph, 44 × 44 pt unless `size` says otherwise (strokes scale with it). `tint` repaints every layer
+/// in one color, like an Android `Icon(tint =)`.
 struct GlyphView: View {
     let glyph: Glyph
+    var tint: Color?
+    var size = Glyph.side
 
     var body: some View {
         Canvas { context, _ in
+            context.scaleBy(x: size / Glyph.side, y: size / Glyph.side)
             context.translateBy(x: -glyph.origin.x, y: -glyph.origin.y)
             for layer in glyph.layers {
-                if let fill = layer.fill { context.fill(layer.path, with: .color(fill)) }
+                if let fill = layer.fill { context.fill(layer.path, with: .color(tint ?? fill)) }
                 if let stroke = layer.stroke {
                     context.stroke(
-                        layer.path, with: .color(stroke),
+                        layer.path, with: .color(tint ?? stroke),
                         style: StrokeStyle(lineWidth: layer.width, lineCap: layer.cap, lineJoin: .round)
                     )
                 }
             }
         }
-        .frame(width: Glyph.side, height: Glyph.side)
+        .frame(width: size, height: size)
         .accessibilityHidden(true)
     }
 }
+
+/// Android `Glyphs.Pencil`: "M4 20l1-4L16 5a2.1 2.1 0 0 1 3 3L8 19l-4 1zM14 7l3 3" on a 24 × 24 grid.
+struct PencilShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        let s = min(rect.width, rect.height) / 24
+        func p(_ x: Double, _ y: Double) -> CGPoint { CGPoint(x: rect.minX + x * s, y: rect.minY + y * s) }
+        var path = Path()
+        path.move(to: p(4, 20))
+        path.addLine(to: p(5, 16))
+        path.addLine(to: p(16, 5))
+        // The rounded tip: half a circle from (16, 5) to (19, 8), round its top right.
+        path.addArc(center: p(17.5, 6.5), radius: 2.1213 * s, startAngle: .degrees(-135), endAngle: .degrees(45), clockwise: false)
+        path.addLine(to: p(8, 19))
+        path.addLine(to: p(4, 20))
+        path.closeSubpath()
+        path.move(to: p(14, 7))
+        path.addLine(to: p(17, 10))
+        return path
+    }
+}
+

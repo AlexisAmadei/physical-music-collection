@@ -73,10 +73,7 @@ struct ProfileCard: View {
                 .padding(.horizontal, 6)
                 .frame(minHeight: 44)
                 Spacer(minLength: 8)
-                DiscMark()
-                    .stroke(Self.ink, lineWidth: 1.5 * 40 / 44)
-                    .frame(width: 40, height: 40)
-                    .accessibilityHidden(true)
+                GlyphView(glyph: Glyphs.disc, tint: Self.ink, size: 40)
             }
             Spacer(minLength: 0)
             HStack(alignment: .bottom, spacing: 0) {
@@ -249,57 +246,6 @@ private struct BrushedRings: View {
             }
         }
         .drawingGroup()
-    }
-}
-
-/// SplitMix64: a tiny random generator with a fixed seed, so the brush lines never change.
-private struct SeededRandom {
-    var state: UInt64
-
-    init(seed: UInt64) { state = seed }
-
-    mutating func next() -> UInt64 {
-        state &+= 0x9E37_79B9_7F4A_7C15
-        var z = state
-        z = (z ^ (z >> 30)) &* 0xBF58_476D_1CE4_E5B9
-        z = (z ^ (z >> 27)) &* 0x94D0_49BB_1331_11EB
-        return z ^ (z >> 31)
-    }
-
-    /// In 0..<1.
-    mutating func nextUnit() -> CGFloat { CGFloat(next() >> 11) / CGFloat(1 << 53) }
-    mutating func nextBool() -> Bool { next() >> 63 == 1 }
-}
-
-/// Android `Glyphs.Pencil`, 24 × 24 viewBox scaled to the frame: "M4 20l1-4L16 5a2.1 2.1 0 0 1 3 3L8 19l-4 1zM14 7l3 3".
-private struct PencilShape: Shape {
-    func path(in rect: CGRect) -> Path {
-        var p = Path()
-        p.move(to: CGPoint(x: 4, y: 20))
-        p.addLine(to: CGPoint(x: 5, y: 16))
-        p.addLine(to: CGPoint(x: 16, y: 5))
-        // The SVG arc's radius is a touch under half the chord, so it is drawn as the half circle.
-        p.addArc(
-            center: CGPoint(x: 17.5, y: 6.5), radius: hypot(1.5, 1.5),
-            startAngle: .degrees(-135), endAngle: .degrees(45), clockwise: false
-        )
-        p.addLine(to: CGPoint(x: 8, y: 19))
-        p.addLine(to: CGPoint(x: 4, y: 20))
-        p.closeSubpath()
-        p.move(to: CGPoint(x: 14, y: 7))
-        p.addLine(to: CGPoint(x: 17, y: 10))
-        return p.applying(CGAffineTransform(scaleX: rect.width / 24, y: rect.height / 24))
-    }
-}
-
-/// Android `Glyphs.Disc` (two rings in a 44 × 44 box), scaled to the frame.
-private struct DiscMark: Shape {
-    func path(in rect: CGRect) -> Path {
-        let k = rect.width / 44
-        var p = Path()
-        p.addEllipse(in: CGRect(x: 12 * k, y: 12 * k, width: 20 * k, height: 20 * k))
-        p.addEllipse(in: CGRect(x: 20 * k, y: 20 * k, width: 4 * k, height: 4 * k))
-        return p
     }
 }
 

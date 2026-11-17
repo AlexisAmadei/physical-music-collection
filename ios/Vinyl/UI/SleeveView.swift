@@ -135,33 +135,13 @@ private struct PencilButton: View {
     }
 }
 
-/// Android `Glyphs.Pencil`: "M4 20l1-4L16 5a2.1 2.1 0 0 1 3 3L8 19l-4 1zM14 7l3 3" on a 24 × 24 grid.
-private struct PencilShape: Shape {
-    func path(in rect: CGRect) -> Path {
-        let s = min(rect.width, rect.height) / 24
-        func p(_ x: Double, _ y: Double) -> CGPoint { CGPoint(x: rect.minX + x * s, y: rect.minY + y * s) }
-        var path = Path()
-        path.move(to: p(4, 20))
-        path.addLine(to: p(5, 16))
-        path.addLine(to: p(16, 5))
-        // The rounded tip: half a circle from (16, 5) to (19, 8), round its top right.
-        path.addArc(center: p(17.5, 6.5), radius: 2.1213 * s, startAngle: .degrees(-135), endAngle: .degrees(45), clockwise: false)
-        path.addLine(to: p(8, 19))
-        path.addLine(to: p(4, 20))
-        path.closeSubpath()
-        path.move(to: p(14, 7))
-        path.addLine(to: p(17, 10))
-        return path
-    }
-}
-
 /// Decorative barcode, stable per Disc.
 private struct Barcode: View {
     let seed: UInt64
 
     var body: some View {
         Canvas { context, size in
-            var random = SplitMix64(seed: seed)
+            var random = SeededRandom(seed: seed)
             var x = 0.0
             while x < size.width {
                 let w = 0.8 + Double(random.next() % 3) * 0.8
@@ -180,19 +160,6 @@ private struct Barcode: View {
             hash = (hash ^ UInt64(byte)) &* 0x100_0000_01B3
         }
         return hash
-    }
-}
-
-private struct SplitMix64 {
-    var state: UInt64
-    init(seed: UInt64) { state = seed }
-
-    mutating func next() -> UInt64 {
-        state &+= 0x9E37_79B9_7F4A_7C15
-        var z = state
-        z = (z ^ (z >> 30)) &* 0xBF58_476D_1CE4_E5B9
-        z = (z ^ (z >> 27)) &* 0x94D0_49BB_1331_11EB
-        return z ^ (z >> 31)
     }
 }
 
