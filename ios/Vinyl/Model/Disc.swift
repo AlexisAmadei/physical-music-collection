@@ -88,6 +88,9 @@ struct Draft: Equatable, Sendable {
     var seenPrice: Int?
     var paidPrice: Int?
     var vinylColor: VinylColor?
+    /// Price texts as typed in the Draft form; nil = not typed. Read them through `DraftPrice.swift`.
+    var seenPriceEdit: String?
+    var paidPriceEdit: String?
 
     var isNew: Bool { id == nil }
 }

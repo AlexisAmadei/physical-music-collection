@@ -41,9 +41,10 @@ struct CollectionScreen: View {
     }
 }
 
-/// A cover with the Disc's title and artist under it.
+/// A cover with the Disc's title and artist under it, and its rating unless `showsRating` is false (Wishlist).
 struct CoverCard: View {
     let disc: Disc
+    var showsRating = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -55,7 +56,7 @@ struct CoverCard: View {
                     .foregroundStyle(Palette.ink)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                StarRating(rating: disc.rating)
+                if showsRating { StarRating(rating: disc.rating) }
             }
             .padding(.top, 8)
             if !disc.artist.isEmpty {

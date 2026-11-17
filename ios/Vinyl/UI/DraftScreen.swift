@@ -20,6 +20,7 @@ struct DraftScreen: View {
             .pickerStyle(.segmented)
             StarPicker(draft: $app.draft)
             TextField("Comment", text: $app.draft.comment, axis: .vertical)
+            DraftPriceFields(draft: $app.draft)
             Section {
                 Button("Save") {
                     app.saveDraft()
