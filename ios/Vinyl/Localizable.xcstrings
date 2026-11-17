@@ -25,6 +25,9 @@
     "Add manually" : {
 
     },
+    "Ajouté le %@" : {
+
+    },
     "Ajoute les disques que tu cherches." : {
 
     },
@@ -73,6 +76,12 @@
     "Delete" : {
 
     },
+    "Disque précédent" : {
+
+    },
+    "Disque suivant" : {
+
+    },
     "Edit disc" : {
 
     },
@@ -103,6 +112,9 @@
     "Looking up %@…" : {
 
     },
+    "Modifier le disque" : {
+
+    },
     "Modifier ton nom" : {
 
     },
@@ -127,6 +139,9 @@
     "Par format" : {
 
     },
+    "Payé %@" : {
+
+    },
     "Prix payé" : {
 
     },
@@ -143,6 +158,9 @@
 
     },
     "Rechercher un album" : {
+
+    },
+    "Retourner" : {
 
     },
     "Rien ici pour l’instant." : {
@@ -203,6 +221,9 @@
 
     },
     "Violet" : {
+
+    },
+    "Vu à %@" : {
 
     },
     "Welcome home..." : {

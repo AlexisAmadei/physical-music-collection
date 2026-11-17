@@ -10,7 +10,7 @@ struct DraftPriceFields: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Text(draft.priceLabel)
-                TextField("", text: $draft.priceText)
+                TextField(String(), text: $draft.priceText) // no title: the label sits beside it
                     .keyboardType(.decimalPad)
                     .multilineTextAlignment(.trailing)
                 Text("€")

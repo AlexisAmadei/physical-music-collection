@@ -42,7 +42,7 @@ enum DebugSeed {
                         colors: [Color(hue: hue, saturation: 0.7, brightness: 0.9), Color(hue: hue, saturation: 0.9, brightness: 0.35)],
                         startPoint: .topLeading, endPoint: .bottomTrailing
                     )
-                    Text("\(i + 1)").font(.system(size: 120, weight: .black)).foregroundStyle(.white.opacity(0.85))
+                    Text(verbatim: "\(i + 1)").font(.system(size: 120, weight: .black)).foregroundStyle(.white.opacity(0.85))
                 }
                 .frame(width: 600, height: 600)
                 if let png = ImageRenderer(content: art).uiImage?.pngData() { try? png.write(to: url) }
