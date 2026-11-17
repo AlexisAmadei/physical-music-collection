@@ -11,7 +11,7 @@ struct RootView: View {
                 .toolbar(.hidden, for: .navigationBar)
                 .navigationDestination(for: Route.self) { route in
                     switch route {
-                    case .scan: ScanScreen()
+                    case .scan: ScanScreen(app: app)
                     case .draft: DraftScreen(app: app) { app.back() }
                     }
                 }

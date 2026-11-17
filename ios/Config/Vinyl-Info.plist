@@ -6,6 +6,8 @@
 	<string>$(DISCOGS_KEY)</string>
 	<key>DiscogsSecret</key>
 	<string>$(DISCOGS_SECRET)</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Vinyl utilise l’appareil photo pour scanner le code-barres de tes disques.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>lexend_regular.ttf</string>
