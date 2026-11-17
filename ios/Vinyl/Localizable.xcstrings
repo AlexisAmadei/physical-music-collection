@@ -4,10 +4,25 @@
     "€" : {
 
     },
+    "%lld disque" : {
+
+    },
+    "%lld disques" : {
+
+    },
+    "%lld disques sans prix" : {
+
+    },
+    "1 disque sans prix" : {
+
+    },
     "Accueil" : {
 
     },
     "Add disc" : {
+
+    },
+    "Add manually" : {
 
     },
     "Ajoute les disques que tu cherches." : {
@@ -31,6 +46,9 @@
     "Barcode" : {
 
     },
+    "Barcode %@ not found. Search by name." : {
+
+    },
     "Blanc" : {
 
     },
@@ -38,6 +56,9 @@
 
     },
     "CD" : {
+
+    },
+    "Camera permission needed" : {
 
     },
     "Collection" : {
@@ -53,6 +74,9 @@
 
     },
     "Edit disc" : {
+
+    },
+    "Enter manually" : {
 
     },
     "Exemple : 12,50" : {
@@ -76,6 +100,12 @@
     "Looking for something?" : {
 
     },
+    "Looking up %@…" : {
+
+    },
+    "Modifier ton nom" : {
+
+    },
     "MON PROFIL" : {
 
     },
@@ -88,7 +118,13 @@
     "Note : %lld sur 5" : {
 
     },
+    "OK" : {
+
+    },
     "Orange" : {
+
+    },
+    "Par format" : {
 
     },
     "Prix payé" : {
@@ -142,7 +178,13 @@
     "Title" : {
 
     },
+    "Ton nom" : {
+
+    },
     "Transparent" : {
+
+    },
+    "Valeur de la collection" : {
 
     },
     "Vert" : {

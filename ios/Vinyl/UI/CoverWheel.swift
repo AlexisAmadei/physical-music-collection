@@ -6,6 +6,8 @@ import SwiftUI
 struct CoverWheel: View {
     /// The Collection, newest first (`AppModel.homeDiscs`). Never empty: Home shows the empty state instead.
     let discs: [Disc]
+    /// The pencil on an open sleeve: opens that Disc's Draft.
+    let onEdit: (Disc) -> Void
 
     @State private var driver = WheelDriver()
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -26,6 +28,12 @@ struct CoverWheel: View {
                     .accessibilityValue(Text(verbatim: discs[driver.motion.disc(atCard: driver.motion.front, count: discs.count)].coverLabel))
                     .accessibilityAction(named: "Disque suivant") { step(by: 1) }
                     .accessibilityAction(named: "Disque précédent") { step(by: -1) }
+                    .accessibilityAction(named: "Retourner") { tap(driver.motion.front) }
+                    .accessibilityActions {
+                        if let disc = openDisc {
+                            Button("Modifier le disque") { onEdit(disc) }
+                        }
+                    }
                     .accessibilityAdjustableAction { direction in
                         switch direction {
                         case .increment: step(by: 1)
@@ -54,7 +62,7 @@ struct CoverWheel: View {
             ForEach(motion.cards, id: \.self) { k in
                 let place = WheelPlacement(theta: motion.theta(card: k))
                 let disc = discs[motion.disc(atCard: k, count: discs.count)]
-                WheelCard(disc: disc, veil: place.veil)
+                card(k, disc: disc, veil: place.veil)
                     .modifier(WheelTilt(degrees: -place.theta))
                     .scaleEffect(place.scale)
                     .position(x: size.width / 2, y: size.height / 2 + place.offsetY)
@@ -64,12 +72,31 @@ struct CoverWheel: View {
         }
     }
 
-    /// Tapping a card turns it to the front. The flip of the front card comes with the flip ticket.
+    /// The open sleeve stays on its card, so it rides along when the wheel turns.
+    @ViewBuilder private func card(_ k: Int, disc: Disc, veil: Double) -> some View {
+        if driver.sleeve.card == k {
+            SleeveView(disc: disc, sleeve: driver.sleeve, veil: veil) { onEdit(disc) }
+        } else {
+            WheelCard(disc: disc, veil: veil)
+        }
+    }
+
+    /// The Disc whose sleeve is open (not closing), if any.
+    private var openDisc: Disc? {
+        guard driver.sleeve.holding, let k = driver.sleeve.card else { return nil }
+        return discs[driver.motion.disc(atCard: k, count: discs.count)]
+    }
+
+    /// Tapping the front card flips its sleeve open; tapping the open sleeve closes it. Any other card turns
+    /// to the front, closing an open sleeve on the way (closing never blocks the wheel).
     private func tap(_ k: Int) {
-        driver.motion.focus(card: k)
+        if driver.sleeve.tap(card: k, front: driver.motion.front, reduceMotion: reduceMotion) {
+            driver.motion.focus(card: k)
+        }
     }
 
     private func step(by cards: Int) {
+        driver.sleeve.close()
         driver.motion.step(by: cards)
         let disc = discs[driver.motion.disc(atCard: driver.motion.heading, count: discs.count)]
         AccessibilityNotification.Announcement(disc.coverLabel).post()
@@ -83,6 +110,7 @@ struct CoverWheel: View {
                 let dy = value.translation.height - driver.lastDragY
                 if !driver.motion.dragging {
                     guard abs(value.translation.height) > 10 else { return }
+                    driver.sleeve.close()
                     driver.motion.startDrag()
                     driver.lastDragY = value.translation.height
                     return
@@ -106,7 +134,7 @@ struct CoverWheel: View {
 }
 
 /// One cover on the wheel, veiled in white towards the back.
-/// The flip ticket swaps the front card for the sleeve; every other card stays a `WheelCard`.
+/// An open sleeve's card is a `SleeveView` instead.
 struct WheelCard: View {
     let disc: Disc
     let veil: Double
@@ -178,12 +206,14 @@ private struct PositionIndicator: View {
 @Observable
 final class WheelDriver: NSObject {
     var motion = WheelMotion()
+    /// The open sleeve, if any.
+    var sleeve = SleeveMotion()
     /// A finger is down on the wheel: no drift.
     @ObservationIgnored var touching = false
     /// Reduce Motion or VoiceOver turn the idle drift off.
     @ObservationIgnored var driftAllowed = true
-    /// Holds the wheel still (no drift), e.g. while a sleeve is open (flip ticket).
-    @ObservationIgnored var frozen = false
+    /// Holds the wheel still (no drift) while a sleeve is open.
+    var frozen: Bool { sleeve.holding }
     /// The drag's last vertical translation, points.
     @ObservationIgnored var lastDragY: CGFloat = 0
 
@@ -209,5 +239,8 @@ final class WheelDriver: NSObject {
         var next = motion
         next.tick(dt: dt, canDrift: driftAllowed && !frozen && !touching)
         if next != motion { motion = next } // a still wheel redraws nothing
+        var nextSleeve = sleeve
+        nextSleeve.tick(dt: dt)
+        if nextSleeve != sleeve { sleeve = nextSleeve }
     }
 }

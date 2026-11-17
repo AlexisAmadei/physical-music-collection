@@ -14,7 +14,7 @@ struct HomeScreen: View {
                     .padding(.trailing, 72)
                     .frame(maxHeight: .infinity)
             } else {
-                CoverWheel(discs: discs)
+                CoverWheel(discs: discs) { app.open($0) }
             }
             ChromeLayout { bottom in
                 Text("Welcome home...")
@@ -67,17 +67,32 @@ struct WishlistScreen: View {
     }
 }
 
-/// "MON PROFIL". The Profile card and the value by Format come with the Profile ticket.
+/// "MON PROFIL": the Profile card, then the Collection value by Format (or the empty state).
 struct ProfileScreen: View {
     let app: AppModel
+    @State private var editingName = false
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 ScreenTitle(text: "MON PROFIL")
+                ProfileCard(
+                    name: app.profileName, value: app.collectionValue.total, discs: app.collection.count,
+                    onEditName: { editingName = true }
+                )
+                .padding(.top, 24)
                 if app.collection.isEmpty {
                     EmptyState(app: app)
                         .padding(.top, 35)
+                } else {
+                    ValueByFormat(value: app.collectionValue)
+                        .padding(.top, 35)
+                }
+            }
+            .sheet(isPresented: $editingName) {
+                ProfileNameSheet(current: app.profileName) { name in
+                    app.setProfileName(name)
+                    editingName = false
                 }
             }
             .padding(.horizontal, 20)
@@ -85,17 +100,6 @@ struct ProfileScreen: View {
             .padding(.bottom, 119)
         }
         .background(Palette.surface)
-    }
-}
-
-/// Placeholder until the Scan ticket.
-struct ScanScreen: View {
-    var body: some View {
-        Text("Scanner un code-barres")
-            .textStyle(Typography.title)
-            .foregroundStyle(Palette.ink)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Palette.surface)
     }
 }
 
