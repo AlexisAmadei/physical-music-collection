@@ -28,6 +28,12 @@
     "Barcode" : {
 
     },
+    "Blanc" : {
+
+    },
+    "Bleu" : {
+
+    },
     "CD" : {
 
     },
@@ -49,6 +55,9 @@
     "Format" : {
 
     },
+    "Jaune" : {
+
+    },
     "Ma collection" : {
 
     },
@@ -64,6 +73,9 @@
     "Note : %lld sur 5" : {
 
     },
+    "Orange" : {
+
+    },
     "Profil" : {
 
     },
@@ -77,6 +89,12 @@
 
     },
     "Rien ici pour l’instant." : {
+
+    },
+    "Rose" : {
+
+    },
+    "Rouge" : {
 
     },
     "Saisie manuelle" : {
@@ -97,10 +115,25 @@
     "Title" : {
 
     },
+    "Transparent" : {
+
+    },
+    "Vert" : {
+
+    },
     "VINYL" : {
 
     },
     "Vinyle" : {
+
+    },
+    "Vinyle couleur" : {
+
+    },
+    "Vinyle couleur %@" : {
+
+    },
+    "Violet" : {
 
     },
     "Welcome home..." : {

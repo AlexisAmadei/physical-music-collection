@@ -49,12 +49,16 @@ struct CoverCard: View {
         VStack(alignment: .leading, spacing: 0) {
             Cover(url: disc.coverURL)
                 .aspectRatio(176 / 177, contentMode: .fit)
+                .colorSticker(disc.shownVinylColor)
+                .accessibilityElement()
+                .accessibilityLabel(disc.coverLabel)
             HStack(spacing: 6) {
                 Text(disc.title.isEmpty ? "Sans titre" : disc.title)
                     .textStyle(Typography.title)
                     .foregroundStyle(Palette.ink)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityHidden(true)
                 StarRating(rating: disc.rating)
             }
             .padding(.top, 8)
@@ -63,6 +67,7 @@ struct CoverCard: View {
                     .textStyle(Typography.body)
                     .foregroundStyle(Palette.muted)
                     .lineLimit(1)
+                    .accessibilityHidden(true)
             }
         }
         .accessibilityElement(children: .combine)
