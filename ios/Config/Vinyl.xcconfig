@@ -1,0 +1,9 @@
+// Build settings of the Vinyl app target.
+//
+// The Discogs key and secret are empty here and come from the git-ignored Secrets.xcconfig next to this file
+// (copy Secrets.example.xcconfig). Vinyl-Info.plist hands them to the app. Without them Catalog search still works,
+// without covers and at a lower rate limit.
+DISCOGS_KEY =
+DISCOGS_SECRET =
+
+#include? "Secrets.xcconfig"

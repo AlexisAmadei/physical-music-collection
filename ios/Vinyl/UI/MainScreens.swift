@@ -1,17 +1,20 @@
 import SwiftUI
 
-/// Home. Empty: the empty state; the cover wheel comes with the Home ticket. "Welcome home..." at the bottom.
+/// Home: the cover wheel, or the empty state when the Collection is empty. "Welcome home..." at the bottom.
 struct HomeScreen: View {
     let app: AppModel
 
     var body: some View {
+        let discs = app.homeDiscs
         ZStack(alignment: .bottomTrailing) {
             Palette.surface.ignoresSafeArea()
-            if app.collection.isEmpty {
+            if discs.isEmpty {
                 EmptyState(app: app)
                     .padding(.leading, 20)
                     .padding(.trailing, 72)
                     .frame(maxHeight: .infinity)
+            } else {
+                CoverWheel(discs: discs)
             }
             ChromeLayout { bottom in
                 Text("Welcome home...")
@@ -21,6 +24,7 @@ struct HomeScreen: View {
                     .padding(.bottom, bottom + 8)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
             }
+            .allowsHitTesting(false) // touches go through to the wheel
         }
     }
 }
@@ -94,18 +98,6 @@ struct ProfileScreen: View {
             .padding(.horizontal, 20)
             .padding(.top, 44)
             .padding(.bottom, 119)
-        }
-        .background(Palette.surface)
-    }
-}
-
-/// Placeholder until the Search ticket.
-struct SearchScreen: View {
-    var body: some View {
-        ScrollView {
-            ScreenTitle(text: "Rechercher")
-                .padding(.horizontal, 20)
-                .padding(.top, 44)
         }
         .background(Palette.surface)
     }

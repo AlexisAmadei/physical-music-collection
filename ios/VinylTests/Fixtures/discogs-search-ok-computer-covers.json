@@ -1,0 +1,99 @@
+{
+ "pagination": {
+  "page": 1,
+  "pages": 1,
+  "per_page": 30,
+  "items": 6,
+  "urls": {}
+ },
+ "results": [
+  {
+   "id": 8664384,
+   "type": "release",
+   "title": "Radiohead - OK Computer",
+   "year": "2016",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Album",
+    "Reissue"
+   ],
+   "thumb": "",
+   "cover_image": "https://st.discogs.com/f6a3ff1e1f2cf1b0d1a3f1c6a1b7f1c7/images/spacer.gif",
+   "uri": "/release/8664384-Radiohead-OK-Computer"
+  },
+  {
+   "id": 1587168,
+   "type": "release",
+   "title": "Radiohead - OK Computer",
+   "year": "2008",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Album",
+    "Limited Edition",
+    "Reissue"
+   ],
+   "thumb": "",
+   "cover_image": "https://i.discogs.com/vinyl-2008/rs:fit/g:sm/q:90/h:600/w:600/R-1587168.jpeg",
+   "uri": "/release/1587168-Radiohead-OK-Computer"
+  },
+  {
+   "id": 4950798,
+   "type": "release",
+   "title": "Radiohead - OK Computer",
+   "year": "1997",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Album"
+   ],
+   "thumb": "",
+   "cover_image": "https://i.discogs.com/vinyl-1997/rs:fit/g:sm/q:90/h:600/w:600/R-4950798.jpeg",
+   "uri": "/release/4950798-Radiohead-OK-Computer"
+  },
+  {
+   "id": 8690850,
+   "type": "release",
+   "title": "Radiohead - OK Computer",
+   "year": "2016",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Album",
+    "Reissue",
+    "Stereo"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/8690850-Radiohead-OK-Computer"
+  },
+  {
+   "id": 105704,
+   "type": "release",
+   "title": "Radiohead - OK Computer",
+   "year": "1997",
+   "format": [
+    "CD",
+    "Album"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/105704-Radiohead-OK-Computer"
+  },
+  {
+   "id": 83182,
+   "type": "release",
+   "title": "Radiohead - OK Computer",
+   "year": "1997",
+   "format": [
+    "CD",
+    "Album",
+    "Stereo"
+   ],
+   "thumb": "",
+   "cover_image": "https://i.discogs.com/cd-1997/rs:fit/g:sm/q:90/h:600/w:600/R-83182.jpeg",
+   "uri": "/release/83182-Radiohead-OK-Computer"
+  }
+ ]
+}

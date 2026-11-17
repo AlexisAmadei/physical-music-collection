@@ -7,7 +7,13 @@ struct VinylApp: App {
 
     init() {
         do {
-            _app = State(initialValue: AppModel(container: try DiscStore.persistentContainer()))        } catch {
+            #if DEBUG
+            let container = try DebugSeed.containerIfRequested() ?? DiscStore.persistentContainer()
+            #else
+            let container = try DiscStore.persistentContainer()
+            #endif
+            _app = State(initialValue: AppModel(container: container))
+        } catch {
             fatalError("Cannot open the Disc store: \(error)")
         }
     }

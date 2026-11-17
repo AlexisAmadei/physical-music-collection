@@ -8,10 +8,25 @@ no project file edit needed.
 | --- | --- |
 | `Vinyl/AppModel.swift` | The app model: the one object screens talk to |
 | `Vinyl/Model/` | SwiftData `Disc`, the `Draft` value, `DiscStore` (the Android DAO queries) |
-| `Vinyl/Catalog/` | `CatalogTransport`: the network seam the Catalog uses (fake in tests) |
+| `Vinyl/Catalog/` | The Catalog (Sources asked in order), the Discogs Source, `CatalogTransport` (the network seam, fake in tests) |
+| `Config/` | `Vinyl.xcconfig` (app target build settings), `Secrets.example.xcconfig`, `Vinyl-Info.plist` |
 | `Vinyl/UI/` | `Theme.swift` (Palette, Typography = Android `Type`), screens |
 | `Vinyl/Fonts/` | Lexend, registered through `Config/Vinyl-Info.plist` (`UIAppFonts`) |
-| `VinylTests/` | Swift Testing tests, hosted in the app |
+| `VinylTests/` | Swift Testing tests, hosted in the app; recorded Catalog JSON in `VinylTests/Fixtures/` |
+
+## Discogs key and secret
+
+The Catalog asks Discogs with the app's key and secret (the same ones as the Android app). They never go in git:
+
+```sh
+cp Config/Secrets.example.xcconfig Config/Secrets.xcconfig   # git-ignored
+# then fill DISCOGS_KEY and DISCOGS_SECRET in Config/Secrets.xcconfig
+```
+
+`Config/Vinyl.xcconfig` includes `Secrets.xcconfig` when it exists, `Vinyl-Info.plist` passes the two build settings
+to the app (`DiscogsKey`, `DiscogsSecret`), and `DiscogsCredentials.bundled` reads them. Without the file the app
+builds and Catalog search still works, without covers and at 25 requests a minute instead of 60.
+Rebuild after changing the file. Do not put `//` in a value: xcconfig reads it as a comment.
 
 ## Commands
 
@@ -38,6 +53,9 @@ xcrun simctl delete "$UDID"
 
 One test or suite: add `-only-testing:VinylTests/AppModelTests` (or `.../AppModelTests/savedDraftShowsInTheCollectionInStoreOrder()`).
 
+Large Collection, debug builds only: `xcrun simctl launch "$UDID" dev.kiwi.vinyl -seedDiscs 240` opens the app on an
+in-memory store with 240 generated Collection Discs (`Vinyl/DebugSeed.swift`, not compiled into release). The real store is untouched.
+
 If `xcrun simctl list runtimes` shows no iOS runtime, install it with `xcodebuild -downloadPlatform iOS`.
 
 ## Seams for tests
@@ -52,4 +70,14 @@ app.saveDraft()
 #expect(app.collection.map(\.title) == ["Kid A"])
 ```
 
-`catalogTransport` defaults to `URLSessionTransport()`; tests pass a fake conforming to `CatalogTransport`.
+`catalogTransport` defaults to `URLSessionTransport()`; tests pass a fake conforming to `CatalogTransport`
+(`VinylTests/FakeTransport.swift`, e.g. `FakeTransport(fixture: "discogs-search-ok-computer")`). Tests never touch
+the real network.
+
+The Catalog is a list of Sources asked in order (`Catalog.standard` in `Vinyl/Catalog/Catalog.swift`); any failure,
+non-2xx status or timeout counts as empty and the next Source is asked. Test it directly:
+
+```swift
+let catalog = Catalog(sources: [DiscogsSource(transport: FakeTransport(fixture: "discogs-search-empty"), credentials: nil)])
+#expect(await catalog.search("kid a").isEmpty)
+```

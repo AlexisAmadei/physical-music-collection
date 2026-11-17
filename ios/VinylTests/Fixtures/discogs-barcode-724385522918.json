@@ -1,0 +1,219 @@
+{
+ "pagination": {
+  "page": 1,
+  "pages": 1,
+  "per_page": 30,
+  "items": 14,
+  "urls": {}
+ },
+ "results": [
+  {
+   "id": 1587168,
+   "type": "release",
+   "title": "Radiohead - OK Computer",
+   "year": "2008",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Album",
+    "Limited Edition",
+    "Reissue"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/1587168-Radiohead-OK-Computer"
+  },
+  {
+   "id": 36339292,
+   "type": "release",
+   "title": "Radiohead - OK Computer",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Unofficial Release"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/36339292-Radiohead-OK-Computer"
+  },
+  {
+   "id": 32040452,
+   "type": "release",
+   "title": "Radiohead - OK Computer",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Album",
+    "Reissue"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/32040452-Radiohead-OK-Computer"
+  },
+  {
+   "id": 8313216,
+   "type": "release",
+   "title": "Radiohead - OK Computer",
+   "year": "2015",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Album",
+    "Reissue"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/8313216-Radiohead-OK-Computer"
+  },
+  {
+   "id": 7389413,
+   "type": "release",
+   "title": "Radiohead - OK Computer",
+   "year": "2015",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Album",
+    "Reissue"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/7389413-Radiohead-OK-Computer"
+  },
+  {
+   "id": 3339642,
+   "type": "release",
+   "title": "Radiohead - OK Computer",
+   "year": "2013",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Album",
+    "Reissue",
+    "Repress"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/3339642-Radiohead-OK-Computer"
+  },
+  {
+   "id": 7540273,
+   "type": "release",
+   "title": "Radiohead - OK Computer",
+   "year": "2008",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Album",
+    "Reissue"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/7540273-Radiohead-OK-Computer"
+  },
+  {
+   "id": 7062143,
+   "type": "release",
+   "title": "Radiohead - OK Computer",
+   "year": "2013",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Album",
+    "Reissue",
+    "Repress"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/7062143-Radiohead-OK-Computer"
+  },
+  {
+   "id": 216593,
+   "type": "release",
+   "title": "Radiohead - OK Computer",
+   "year": "1998",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Album",
+    "Repress"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/216593-Radiohead-OK-Computer"
+  },
+  {
+   "id": 26649779,
+   "type": "release",
+   "title": "Radiohead - OK Computer",
+   "year": "1998",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Album",
+    "Repress"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/26649779-Radiohead-OK-Computer"
+  },
+  {
+   "id": 8229597,
+   "type": "release",
+   "title": "Radiohead - OK Computer",
+   "year": "1998",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Album",
+    "Repress"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/8229597-Radiohead-OK-Computer"
+  },
+  {
+   "id": 4950798,
+   "type": "release",
+   "title": "Radiohead - OK Computer",
+   "year": "1997",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Album"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/4950798-Radiohead-OK-Computer"
+  },
+  {
+   "id": 20904106,
+   "type": "release",
+   "title": "Radiohead - OK Computer",
+   "year": "2007",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Album",
+    "Repress"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/20904106-Radiohead-OK-Computer"
+  },
+  {
+   "id": 10294802,
+   "type": "release",
+   "title": "Radiohead - OK Computer",
+   "format": [
+    "Vinyl",
+    "LP",
+    "Album",
+    "Reissue"
+   ],
+   "thumb": "",
+   "cover_image": "",
+   "uri": "/release/10294802-Radiohead-OK-Computer"
+  }
+ ]
+}
