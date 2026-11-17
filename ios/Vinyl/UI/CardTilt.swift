@@ -7,7 +7,7 @@ import UIKit
 /// intro starts lit from the top right and settles slowly (first 1.4 s).
 @MainActor
 @Observable
-final class CardTiltDriver: NSObject {
+final class CardTiltDriver {
     /// The intro starts lit from here (Android `IntroStart`).
     static let introStart = CGPoint(x: 0.62, y: -0.55)
 
@@ -15,30 +15,26 @@ final class CardTiltDriver: NSObject {
     /// Finger position on the card as a tilt while it touches, else nil.
     @ObservationIgnored var finger: Tilt?
 
-    @ObservationIgnored private var link: CADisplayLink?
+    @ObservationIgnored private lazy var loop = FrameLoop { [weak self] in self?.frame(at: $0) }
     @ObservationIgnored private var started: CFTimeInterval = 0
     @ObservationIgnored private var last: CFTimeInterval = 0
 
     func start() {
-        guard link == nil else { return }
+        guard !loop.isRunning else { return }
         shown = Self.introStart
         started = 0
         HoloLight.shared.addReader()
-        let link = CADisplayLink(target: self, selector: #selector(frame(_:)))
-        link.add(to: .main, forMode: .common)
-        self.link = link
+        loop.start()
     }
 
     func stop() {
-        guard let link else { return }
-        link.invalidate()
-        self.link = nil
+        guard loop.isRunning else { return }
+        loop.stop()
         finger = nil
         HoloLight.shared.removeReader()
     }
 
-    @objc private func frame(_ link: CADisplayLink) {
-        let now = link.timestamp
+    private func frame(at now: CFTimeInterval) {
         guard started != 0 else {
             started = now
             last = now

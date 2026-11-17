@@ -204,7 +204,7 @@ private struct PositionIndicator: View {
 /// Runs `WheelMotion` once per screen frame.
 @MainActor
 @Observable
-final class WheelDriver: NSObject {
+final class WheelDriver {
     var motion = WheelMotion()
     /// The open sleeve, if any.
     var sleeve = SleeveMotion()
@@ -217,25 +217,22 @@ final class WheelDriver: NSObject {
     /// The drag's last vertical translation, points.
     @ObservationIgnored var lastDragY: CGFloat = 0
 
-    @ObservationIgnored private var link: CADisplayLink?
+    @ObservationIgnored private lazy var loop = FrameLoop { [weak self] in self?.frame(at: $0) }
     @ObservationIgnored private var last: CFTimeInterval = 0
 
     func start() {
-        guard link == nil else { return }
+        guard !loop.isRunning else { return }
         last = 0
-        let link = CADisplayLink(target: self, selector: #selector(frame(_:)))
-        link.add(to: .main, forMode: .common)
-        self.link = link
+        loop.start()
     }
 
     func stop() {
-        link?.invalidate()
-        link = nil
+        loop.stop()
     }
 
-    @objc private func frame(_ link: CADisplayLink) {
-        let dt = last == 0 ? 1.0 / 60 : link.timestamp - last
-        last = link.timestamp
+    private func frame(at now: CFTimeInterval) {
+        let dt = last == 0 ? 1.0 / 60 : now - last
+        last = now
         var next = motion
         next.tick(dt: dt, canDrift: driftAllowed && !frozen && !touching)
         if next != motion { motion = next } // a still wheel redraws nothing
