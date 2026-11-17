@@ -60,6 +60,10 @@ in-memory store with 240 generated Collection Discs (`Vinyl/DebugSeed.swift`, no
 
 If `xcrun simctl list runtimes` shows no iOS runtime, install it with `xcodebuild -downloadPlatform iOS`.
 
+CI: `.github/workflows/ios.yml` runs the same test command on GitHub's `xcode-27` runner (Xcode 27.2, iPhone 17 simulator)
+for pull requests and pushes to `main` that touch `ios/`. It needs no secrets: `Secrets.xcconfig` is optional and tests never
+call the network.
+
 ## Seams for tests
 
 Build the app model with an in-memory store and drive it like a screen does:
