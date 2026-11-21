@@ -8,10 +8,10 @@ struct VinylColorTests {
         #expect(light == [.yellow, .white, .clear])
     }
 
-    @Test func colorStickerOnlyOnColoredVinyl() {
-        #expect(Disc(Draft(format: .vinyl, vinylColor: .red)).hasColorSticker)
-        #expect(!Disc(Draft(format: .vinyl)).hasColorSticker)
-        // A CD keeps its hidden Vinyl color, but shows no sticker.
-        #expect(!Disc(Draft(format: .cd, vinylColor: .red)).hasColorSticker)
+    @Test func colorBandOnlyOnColoredVinyl() {
+        #expect(Disc(Draft(format: .vinyl, vinylColor: .red)).hasColorBand)
+        #expect(!Disc(Draft(format: .vinyl)).hasColorBand)
+        // A CD keeps its hidden Vinyl color, but shows no band.
+        #expect(!Disc(Draft(format: .cd, vinylColor: .red)).hasColorBand)
     }
 }

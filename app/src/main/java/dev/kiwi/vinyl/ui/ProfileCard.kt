@@ -199,7 +199,7 @@ private fun CacheDrawScope.brushedRings(): ImageBitmap {
     return img
 }
 
-/** [p]: shown tilt. Light sits where the card is pushed away. No [rings] on small things (Color sticker). */
+/** [p]: shown tilt. Light sits where the card is pushed away. */
 internal fun DrawScope.drawSilver(p: Offset, rings: ImageBitmap? = null) {
     val w = size.width
     val h = size.height

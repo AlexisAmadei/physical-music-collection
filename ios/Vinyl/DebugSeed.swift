@@ -21,7 +21,7 @@ enum DebugSeed {
             draft.artist = "Artist \(i % 37 + 1)"
             draft.year = 1960 + i % 60
             draft.format = i % 3 == 0 ? .cd : .vinyl
-            if i % 4 == 1 { draft.vinylColor = VinylColor.allCases[i % VinylColor.allCases.count] } // Color stickers
+            if i % 4 == 1 { draft.vinylColor = VinylColor.allCases[i % VinylColor.allCases.count] } // Color bands
             draft.addedAt = start.addingTimeInterval(-Double(i) * 3_600) // Disc 1 is the newest
             draft.coverURL = i % 7 == 6 ? nil : covers[i % covers.count] // some placeholders too
             _ = store.upsert(draft)

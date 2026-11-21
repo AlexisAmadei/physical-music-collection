@@ -378,7 +378,7 @@ private fun DiscRow(d: Disc, onClick: () -> Unit) = ListItem(
     leadingContent = {
         Box(Modifier.size(56.dp)) {
             Cover(d.coverUrl, Modifier.matchParentSize().clip(RoundedCornerShape(4.dp)))
-            ColorStickerOf(d)
+            ColorBandOf(d)
         }
     },
     headlineContent = { Text(d.title) },

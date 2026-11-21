@@ -11,10 +11,10 @@ class VinylColorTest {
         assertEquals(setOf(VinylColor.YELLOW, VinylColor.WHITE, VinylColor.CLEAR), light)
     }
 
-    @Test fun colorStickerOnlyOnColoredVinyl() {
-        assertTrue(Disc(format = Format.VINYL, vinylColor = VinylColor.RED).hasColorSticker)
-        assertFalse(Disc(format = Format.VINYL).hasColorSticker)
-        // A CD keeps its hidden Vinyl color, but shows no sticker.
-        assertFalse(Disc(format = Format.CD, vinylColor = VinylColor.RED).hasColorSticker)
+    @Test fun colorBandOnlyOnColoredVinyl() {
+        assertTrue(Disc(format = Format.VINYL, vinylColor = VinylColor.RED).hasColorBand)
+        assertFalse(Disc(format = Format.VINYL).hasColorBand)
+        // A CD keeps its hidden Vinyl color, but shows no band.
+        assertFalse(Disc(format = Format.CD, vinylColor = VinylColor.RED).hasColorBand)
     }
 }

@@ -27,7 +27,7 @@ import kotlin.math.exp
 import kotlin.math.min
 
 /**
- * Phone tilt shared by all holo silver (Profile card, Color stickers): one sensor for the app.
+ * Phone tilt shared by all holo silver (Profile card): one sensor for the app.
  * The sensor runs only while something on screen reads it, the app is resumed and motion is on.
  */
 @Stable

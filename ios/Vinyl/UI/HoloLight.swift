@@ -41,7 +41,7 @@ final class CoreMotionPoses: PoseSource {
     }
 }
 
-/// Phone tilt shared by all holo silver (Profile card, Color stickers): one sensor for the app, as on Android.
+/// Phone tilt shared by all holo silver (Profile card): one sensor for the app, as on Android.
 /// The sensor runs only while something on screen reads it, the app is active and Reduce Motion is off.
 @MainActor
 @Observable

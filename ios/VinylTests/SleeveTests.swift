@@ -32,7 +32,7 @@ struct SleeveBackTests {
     @Test func detailsWithoutYearShowTheFormatOnly() {
         #expect(back(Draft(format: .cd)).details == "CD")
         #expect(back(Draft(year: 1997, format: .cd)).details == "1997 · CD")
-        // Colored wax still reads "Vinyle" here; the Color sticker is on the front.
+        // Colored wax still reads "Vinyle" here; the Color band is on the front.
         #expect(back(Draft(format: .vinyl, vinylColor: .red)).details == "Vinyle")
     }
 

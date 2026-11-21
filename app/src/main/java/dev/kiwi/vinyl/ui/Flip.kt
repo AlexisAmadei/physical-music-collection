@@ -110,7 +110,7 @@ fun FlipFaces(
                     .clickable(onClickLabel = "Retourner", role = Role.Button, onClick = onTap)
                     .semantics { contentDescription = d.a11yLabel() },
             )
-            ColorStickerOf(d)
+            ColorBandOf(d)
         } else {
             Box(Modifier.fillMaxSize().graphicsLayer { rotationY = 180f }) { BackFace(d, onTap, onEdit, large) }
         }

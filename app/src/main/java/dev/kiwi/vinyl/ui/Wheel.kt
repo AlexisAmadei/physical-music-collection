@@ -298,7 +298,7 @@ private fun WheelCard(d: Disc, theta: () -> Float, onClick: () -> Unit, modifier
             .semantics { contentDescription = d.a11yLabel() },
     ) {
         Cover(d.coverUrl, Modifier.matchParentSize())
-        ColorStickerOf(d)
+        ColorBandOf(d)
         // White veil, stronger towards the back of the wheel.
         Box(Modifier.matchParentSize().drawBehind {
             val facing = cos(theta() * PI.toFloat() / 180)

@@ -24,7 +24,7 @@ struct DraftVinylColorTests {
 
         app.saveDraft()
         #expect(app.collection.first?.vinylColor == nil)
-        #expect(app.collection.first?.hasColorSticker == false)
+        #expect(app.collection.first?.hasColorBand == false)
     }
 
     @Test func switchingToCDKeepsTheVinylColorHiddenAndSwitchingBackShowsIt() throws {
@@ -37,14 +37,14 @@ struct DraftVinylColorTests {
 
         let saved = try #require(app.collection.first)
         #expect(saved.vinylColor == .green)
-        #expect(!saved.hasColorSticker)
+        #expect(!saved.hasColorBand)
 
         app.edit(saved)
         app.draft.format = .vinyl
         #expect(app.draft.shownVinylColor == .green)
         #expect(app.draft.coloredVinyl)
         app.saveDraft()
-        #expect(app.collection.first?.hasColorSticker == true)
+        #expect(app.collection.first?.hasColorBand == true)
     }
 
     @Test func coverIsReadAsTitleArtistAndFormatWithTheVinylColor() throws {

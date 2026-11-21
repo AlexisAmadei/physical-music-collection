@@ -63,8 +63,8 @@ extension Disc {
     /// The Vinyl color as shown: only on vinyl. A CD keeps its value hidden.
     var shownVinylColor: VinylColor? { VinylColor.shown(vinylColor, on: format) }
 
-    /// Shows the Color sticker on its cover.
-    var hasColorSticker: Bool { shownVinylColor != nil }
+    /// Shows the Color band on its cover.
+    var hasColorBand: Bool { shownVinylColor != nil }
 
     /// What VoiceOver reads for its cover: title, artist, Format ("CD", "Vinyle" or "Vinyle couleur <color>"), year.
     /// Mirrors the Android `Disc.a11yLabel()`.

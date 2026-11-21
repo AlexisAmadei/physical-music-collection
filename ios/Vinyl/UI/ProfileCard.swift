@@ -124,8 +124,8 @@ private extension View {
 }
 
 /// Brushed silver as Android `drawSilver`: soft bands, two bright lobes turning with the tilt, a slight rainbow
-/// kept around the light, and glare. `rings`: the fine concentric brush lines (off on small things, like the
-/// Color sticker). The lines never depend on the tilt, so they are not redrawn when it changes.
+/// kept around the light, and glare. `rings`: the fine concentric brush lines. The lines never depend on the tilt,
+/// so they are not redrawn when it changes.
 struct SilverSheen: View {
     /// Shown tilt, x and y in -1...1.
     let tilt: CGPoint

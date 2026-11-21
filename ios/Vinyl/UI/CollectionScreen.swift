@@ -50,7 +50,7 @@ struct CoverCard: View {
         VStack(alignment: .leading, spacing: 0) {
             Cover(url: disc.coverURL)
                 .aspectRatio(176 / 177, contentMode: .fit)
-                .colorSticker(disc.shownVinylColor)
+                .colorBand(disc.shownVinylColor)
                 .accessibilityElement()
                 .accessibilityLabel(disc.coverLabel)
             HStack(spacing: 6) {

@@ -28,7 +28,7 @@ struct SearchScreen: View {
                     Button { app.open(disc) } label: {
                         SearchRow(title: disc.title, artist: disc.artist, year: disc.year, format: disc.format) {
                             Cover(url: disc.coverURL)
-                                .colorSticker(disc.shownVinylColor)
+                                .colorBand(disc.shownVinylColor)
                                 .accessibilityElement()
                                 .accessibilityLabel(disc.coverLabel)
                         }

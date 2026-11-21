@@ -141,7 +141,7 @@ struct WheelCard: View {
 
     var body: some View {
         Cover(url: disc.coverURL)
-            .colorSticker(disc.shownVinylColor)
+            .colorBand(disc.shownVinylColor)
             .overlay(Color.white.opacity(veil))
             .frame(width: WheelPlacement.card, height: WheelPlacement.card)
             .background(Color.white.shadow(.drop(color: .black.opacity(0.25), radius: 5, y: 2)))
