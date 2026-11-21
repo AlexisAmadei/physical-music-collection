@@ -170,16 +170,24 @@ private struct FadeEdges: View {
     let height: CGFloat
 
     var body: some View {
+        LinearGradient(stops: Self.stops(height: height), startPoint: .top, endPoint: .bottom)
+    }
+
+    /// Stop locations must never decrease: on a short view the top fade-in (120 pt) would pass the bottom
+    /// fade-out (117 pt from the end), so each location is held at or above the previous one.
+    static func stops(height: CGFloat) -> [Gradient.Stop] {
+        guard height > 0 else { return [.init(color: .clear, location: 0), .init(color: .clear, location: 1)] }
         let top = { (pt: CGFloat) in min(max(pt / height, 0), 1) }
         let bottom = { (pt: CGFloat) in min(max(1 - pt / height, 0), 1) }
-        LinearGradient(
-            stops: [
-                .init(color: .clear, location: 0), .init(color: .clear, location: top(56)),
-                .init(color: .black, location: top(120)), .init(color: .black, location: bottom(117)),
-                .init(color: .clear, location: bottom(65)), .init(color: .clear, location: 1),
-            ],
-            startPoint: .top, endPoint: .bottom
-        )
+        let raw: [(Color, CGFloat)] = [
+            (.clear, 0), (.clear, top(56)), (.black, top(120)),
+            (.black, bottom(117)), (.clear, bottom(65)), (.clear, 1),
+        ]
+        var previous: CGFloat = 0
+        return raw.map { color, location in
+            previous = max(previous, location)
+            return .init(color: color, location: previous)
+        }
     }
 }
 
