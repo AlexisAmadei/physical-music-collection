@@ -17,8 +17,8 @@ android {
         applicationId = "dev.kiwi.vinyl"
         minSdk = 26
         targetSdk = 35
-        versionCode = 5
-        versionName = "1.2.0"
+        versionCode = 6
+        versionName = "1.2.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "DISCOGS_KEY", "\"${secret("discogs.key", "DISCOGS_KEY")}\"")
         buildConfigField("String", "DISCOGS_SECRET", "\"${secret("discogs.secret", "DISCOGS_SECRET")}\"")
