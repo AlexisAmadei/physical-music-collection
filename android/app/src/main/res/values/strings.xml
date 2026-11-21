@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- English is the default; values-fr/strings.xml is the French variant. Keep both in step (StringResourcesTest). -->
+<resources>
+    <!-- Language switch. Each language is named in its own language and never translated. -->
+    <string name="language_name_en" translatable="false">English</string>
+    <string name="language_name_fr" translatable="false">Français</string>
+    <string name="language_switch">Language</string>
+
+    <!-- Shared -->
+    <string name="ok">OK</string>
+    <string name="empty_title">Nothing here yet.</string>
+    <string name="add_scan">Scan a barcode</string>
+    <string name="add_search">Search for an album</string>
+    <string name="add_manual">Manual entry</string>
+
+    <!-- Profile -->
+    <string name="profile_title">MY PROFILE</string>
+    <string name="profile_name_placeholder">Your name</string>
+    <string name="profile_name_edit">Edit your name</string>
+    <string name="profile_collection_value">Collection value</string>
+    <string name="profile_empty_hint">Scan a barcode or search for an album to get started.</string>
+    <string name="profile_empty_action">Add my first disc</string>
+    <string name="profile_by_format">By format</string>
+    <string name="format_cd">CD</string>
+    <string name="format_vinyl">Vinyl</string>
+    <plurals name="disc_count">
+        <item quantity="one">%d disc</item>
+        <item quantity="other">%d discs</item>
+    </plurals>
+    <plurals name="discs_without_price">
+        <item quantity="one">%d disc without a price</item>
+        <item quantity="other">%d discs without a price</item>
+    </plurals>
+</resources>
