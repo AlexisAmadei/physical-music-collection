@@ -56,6 +56,7 @@ import dev.kiwi.vinyl.R as AppR
 import dev.kiwi.vinyl.data.Dates
 import dev.kiwi.vinyl.data.Disc
 import dev.kiwi.vinyl.data.Price
+import dev.kiwi.vinyl.data.upperCase
 import dev.kiwi.vinyl.data.shownVinylColor
 import dev.kiwi.vinyl.data.shownSpeed
 import kotlin.random.Random
@@ -136,7 +137,7 @@ private fun BackFace(d: Disc, onTap: () -> Unit, onEdit: () -> Unit, large: Bool
         Column(Modifier.fillMaxSize().padding(pad), verticalArrangement = Arrangement.spacedBy(3.dp)) {
             if (d.artist.isNotBlank()) {
                 Text(
-                    d.artist.uppercase(), maxLines = 1, overflow = TextOverflow.Ellipsis,
+                    d.artist.upperCase(), maxLines = 1, overflow = TextOverflow.Ellipsis,
                     style = Type.Label.copy(fontSize = if (large) 11.sp else 10.sp, fontWeight = FontWeight.Medium, letterSpacing = 0.6.sp),
                     color = Color(0xFF5A3A3A),
                 )

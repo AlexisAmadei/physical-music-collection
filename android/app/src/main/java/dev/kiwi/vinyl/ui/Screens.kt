@@ -57,8 +57,10 @@ import dev.kiwi.vinyl.data.Price
 import dev.kiwi.vinyl.data.ProfileName
 import dev.kiwi.vinyl.data.Speed
 import dev.kiwi.vinyl.data.VinylColor
+import dev.kiwi.vinyl.data.lowerCase
 import dev.kiwi.vinyl.data.shownVinylColor
 import dev.kiwi.vinyl.data.tapped
+import dev.kiwi.vinyl.data.upperCase
 import dev.kiwi.vinyl.R as AppR
 import dev.kiwi.vinyl.data.CollectionValue
 import dev.kiwi.vinyl.data.collectionValue
@@ -142,7 +144,8 @@ fun WishlistScreen(vm: AppVm, nav: NavHostController) {
 fun ProfileScreen(vm: AppVm, nav: NavHostController) {
     val all by vm.dao.byList(false).collectAsState(null)
     val name by vm.name.collectAsState()
-    val language by vm.language.collectAsState()
+    // What is rendered (the app locale), not a remembered pick: it also follows system Settings.
+    val language = currentLanguage()
     var editing by rememberSaveable { mutableStateOf(false) }
     val list = all ?: return
     val value = remember(list) { collectionValue(list) }
@@ -243,7 +246,7 @@ private fun CoverGrid(title: String, rowGap: Dp, headerGap: Dp, header: @Composa
     ) {
         item(span = { GridItemSpan(maxLineSpan) }) {
             Column(Modifier.padding(bottom = headerGap - rowGap)) {
-                Text(title.uppercase(), style = Type.Display)
+                Text(title.upperCase(), style = Type.Display)
                 header()
             }
         }
@@ -253,7 +256,7 @@ private fun CoverGrid(title: String, rowGap: Dp, headerGap: Dp, header: @Composa
 
 @Composable
 fun Disc.a11yLabel(): String {
-    val formatLabel = shownVinylColor?.let { stringResource(AppR.string.disc_a11y_vinyl_color, it.displayName().lowercase()) }
+    val formatLabel = shownVinylColor?.let { stringResource(AppR.string.disc_a11y_vinyl_color, it.displayName().lowerCase()) }
         ?: stringResource(format.labelRes)
     return listOfNotNull(title.ifBlank { stringResource(AppR.string.disc_untitled) }, artist.ifBlank { null }, formatLabel, year?.toString())
         .joinToString(", ")
@@ -474,8 +477,8 @@ fun EditScreen(vm: AppVm, nav: NavHostController) {
     var d by remember { mutableStateOf(vm.draft) }
     // Raw text so "12," survives while typing; parsed into the Disc on save.
     val language = currentLanguage()
-    var seen by remember { mutableStateOf(Price.input(vm.draft.seenPrice, language)) }
-    var paid by remember { mutableStateOf(Price.input(vm.draft.paidPrice, language)) }
+    var seen by remember(language) { mutableStateOf(Price.input(vm.draft.seenPrice, language)) }
+    var paid by remember(language) { mutableStateOf(Price.input(vm.draft.paidPrice, language)) }
     Column(Modifier.padding(16.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(stringResource(if (d.id == 0L) AppR.string.form_add_title else AppR.string.form_edit_title), style = MaterialTheme.typography.headlineSmall)
         OutlinedTextField(d.title, { d = d.copy(title = it) }, Modifier.fillMaxWidth(), label = { Text(stringResource(AppR.string.form_title)) })

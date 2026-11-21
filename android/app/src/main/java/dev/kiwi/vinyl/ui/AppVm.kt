@@ -33,14 +33,9 @@ class AppVm(app: Application) : AndroidViewModel(app) {
     }
 
     private val languageSettings = LanguageSettings(app)
-    private val _language = MutableStateFlow(languageSettings.effective())
-    /** The language shown: the stored choice, else the device language (English unless French). */
-    val language: StateFlow<Language> = _language
 
-    fun setLanguage(l: Language) {
-        languageSettings.choose(l)
-        _language.value = l
-    }
+    /** Picks [l] as the app language; the activity is recreated in it, so the UI reads it back from the configuration. */
+    fun setLanguage(l: Language) = languageSettings.choose(l)
 
     fun save(d: Disc) = viewModelScope.launch { dao.upsert(d) }
     fun delete(d: Disc) = viewModelScope.launch { dao.delete(d) }

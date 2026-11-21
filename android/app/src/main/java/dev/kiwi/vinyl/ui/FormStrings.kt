@@ -5,6 +5,7 @@ import androidx.compose.ui.res.stringResource
 import dev.kiwi.vinyl.R as AppR
 import dev.kiwi.vinyl.data.Format
 import dev.kiwi.vinyl.data.VinylColor
+import dev.kiwi.vinyl.data.upperCase
 
 /** The Vinyl color named in the active language. */
 @Composable
@@ -24,4 +25,4 @@ fun VinylColor.displayName(): String = stringResource(
 
 /** The Format label as an uppercase tag ("CD", "VINYL" / "VINYLE"), in the active language. */
 @Composable
-fun Format.tag(): String = stringResource(labelRes).uppercase()
+fun Format.tag(): String = stringResource(labelRes).upperCase()

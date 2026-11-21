@@ -20,18 +20,24 @@ class LanguageSettings(context: Context) {
     /** What the user picked, or null when they never did. */
     fun stored(): Language? = Language.fromTag(prefs.getString(KEY, null))
 
-    /** The language the app shows: the stored choice, else the device language, else English. */
-    fun effective(): Language = stored() ?: Language.forDevice(deviceLanguages())
-
     /** Remember [language] and re-render now: the activity is recreated in the new language. */
     fun choose(language: Language) {
         prefs.edit().putString(KEY, language.tag).apply()
         apply(language)
     }
 
-    /** At app start: put a stored choice back in force. With none, the device language applies untouched. */
-    fun applyStored() {
-        stored()?.let(::apply)
+    /**
+     * Brings the stored pick and the app's locale into agreement ([Language.reconcile]): a language picked
+     * later in system Settings is synced into the preference instead of being overwritten by it, and a
+     * stored pick is put back in force when the system holds no app locale. Called at app start and each
+     * time the activity is created, so a system pick made while the process lives is synced too.
+     */
+    fun reconcile() {
+        val r = Language.reconcile(stored(), appLocales(), deviceLanguages(), systemKeepsAppLocale = Build.VERSION.SDK_INT >= 33)
+        if (r.stored != stored()) {
+            prefs.edit().apply { r.stored?.let { putString(KEY, it.tag) } ?: remove(KEY) }.apply()
+        }
+        r.apply?.let(::apply)
     }
 
     /**
@@ -47,10 +53,17 @@ class LanguageSettings(context: Context) {
         }
     }
 
-    private fun deviceLanguages(): List<String> {
-        val locales = Resources.getSystem().configuration.locales
-        return (0 until locales.size()).map { locales[it].language }
-    }
+    /** The locale set for this app (by [choose] or system Settings), language codes; empty when none. */
+    private fun appLocales(): List<String> =
+        if (Build.VERSION.SDK_INT >= 33) {
+            appContext.getSystemService(LocaleManager::class.java).applicationLocales.languages()
+        } else {
+            AppCompatDelegate.getApplicationLocales().let { l -> (0 until l.size()).map { l[it]!!.language } }
+        }
+
+    private fun deviceLanguages(): List<String> = Resources.getSystem().configuration.locales.languages()
+
+    private fun LocaleList.languages() = (0 until size()).map { get(it).language }
 
     private companion object {
         const val KEY = "language"
