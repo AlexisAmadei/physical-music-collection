@@ -4,7 +4,7 @@ import VisionKit
 
 /// Scan (Android `ScanScreen`): asks for the camera, scans one barcode, then shows "Looking up <code>…" while the app
 /// model asks the Catalog. "Enter manually" skips scanning. The decisions live in `Scan.swift`; this view only shows
-/// `app.scanState` and hands it the barcode read. The words are still English, as on Android.
+/// `app.scanState` and hands it the barcode read.
 struct ScanScreen: View {
     @Bindable var app: AppModel
     @State private var camera = AVCaptureDevice.authorizationStatus(for: .video)
