@@ -2,7 +2,6 @@ import SwiftUI
 
 /// Search (Android `SearchScreen`): "My discs" whose title or artist contains the text, then "Search catalog" and
 /// its results. Tapping one of my Discs opens its Draft; tapping a Catalog result opens a prefilled Draft.
-/// The words are still English, as on Android.
 struct SearchScreen: View {
     @Bindable var app: AppModel
 

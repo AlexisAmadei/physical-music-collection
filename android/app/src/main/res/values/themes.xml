@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- AppCompat is required for per-app locales. Compose draws everything; this only sets the window. -->
+    <style name="Theme.Vinyl" parent="Theme.AppCompat.Light.NoActionBar" />
+</resources>

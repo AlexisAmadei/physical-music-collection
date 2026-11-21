@@ -3,7 +3,12 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
-    <application android:icon="@mipmap/ic_launcher" android:label="Vinyl" android:theme="@android:style/Theme.Material.Light.NoActionBar">
+    <application
+        android:name=".VinylApp"
+        android:icon="@mipmap/ic_launcher"
+        android:label="Vinyl"
+        android:localeConfig="@xml/locales_config"
+        android:theme="@style/Theme.Vinyl">
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
