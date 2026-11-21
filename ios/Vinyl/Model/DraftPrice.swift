@@ -3,17 +3,20 @@ import Foundation
 /// Price rules of the Draft form, kept out of the views. The prices are typed as text so "12," survives
 /// while typing; the app model parses them into cents on save (`withTypedPrices`).
 extension Draft {
-    /// The Seen price as typed. A Draft that edits a saved Disc starts with it as stored (`showingPrices(in:)`).
+    /// The Seen price as typed; before any typing, the stored price (with a "." separator: `showingPrices(in:)`
+    /// rewrites it with the language's own separator).
     var seenPriceText: String {
-        get { seenPriceEdit ?? "" }
+        get { seenPriceEdit ?? Price.input(seenPrice, locale: Self.neutralLocale) }
         set { seenPriceEdit = newValue }
     }
 
-    /// The Paid price as typed. A Draft that edits a saved Disc starts with it as stored (`showingPrices(in:)`).
+    /// The Paid price as typed; before any typing, the stored price (see `seenPriceText`).
     var paidPriceText: String {
-        get { paidPriceEdit ?? "" }
+        get { paidPriceEdit ?? Price.input(paidPrice, locale: Self.neutralLocale) }
         set { paidPriceEdit = newValue }
     }
+
+    private static let neutralLocale = Locale(identifier: "en")
 
     /// The Draft with its stored prices written as typed text, with the language's decimal separator:
     /// "12,50" in French, "12.50" in English.

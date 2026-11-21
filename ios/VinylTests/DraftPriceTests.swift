@@ -126,6 +126,20 @@ struct DraftPriceTests {
         #expect(app.collection.map(\.paidPrice) == [1250, 1250, 1250, 1250])
     }
 
+    @Test func aDraftBuiltStraightFromASavedDiscKeepsItsPricesOnSave() throws {
+        app.newDraft()
+        app.draft.title = "Homogenic"
+        app.draft.priceText = "12,50"
+        app.saveDraft()
+        let disc = try #require(app.collection.first)
+
+        // Not through `AppModel.edit`: the stored prices must not depend on `showingPrices(in:)`.
+        let draft = Draft(disc)
+
+        #expect(draft.paidPriceText == "12.50")
+        #expect(draft.withTypedPrices.paidPrice == 1250)
+    }
+
     @Test func theExampleShowsUnderAMalformedPriceOnly() {
         app.newDraft()
         #expect(app.draft.priceHint(in: app.language) == nil)
