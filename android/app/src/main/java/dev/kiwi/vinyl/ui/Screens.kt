@@ -173,7 +173,7 @@ private fun ValueByFormat(v: CollectionValue, modifier: Modifier = Modifier) {
         listOf(stringResource(AppR.string.format_cd) to v.cd, stringResource(AppR.string.format_vinyl) to v.vinyl).forEach { (label, cents) ->
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(label, style = Type.Body)
-                Text(Price.format(cents), style = Type.Body, fontWeight = FontWeight.Medium)
+                Text(Price.format(cents, currentLanguage()), style = Type.Body, fontWeight = FontWeight.Medium)
             }
         }
         if (v.unpriced > 0) {

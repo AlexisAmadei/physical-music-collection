@@ -152,7 +152,7 @@ fun ProfileCard(name: String, value: Long, discs: Int, onEditName: () -> Unit, m
             Row(Modifier.padding(start = 6.dp), verticalAlignment = Alignment.Bottom) {
                 Column(Modifier.weight(1f)) {
                     Text(stringResource(AppR.string.profile_collection_value), style = Type.Label.copy(shadow = Engraved), color = CardMuted)
-                    Text(Price.format(value), style = Type.Display.copy(shadow = Engraved), color = CardInk, maxLines = 1)
+                    Text(Price.format(value, currentLanguage()), style = Type.Display.copy(shadow = Engraved), color = CardInk, maxLines = 1)
                 }
                 Text(
                     pluralStringResource(AppR.plurals.disc_count, discs, discs), Modifier.padding(start = 8.dp, end = 6.dp, bottom = 5.dp),

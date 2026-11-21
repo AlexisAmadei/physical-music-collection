@@ -1,0 +1,14 @@
+package dev.kiwi.vinyl.ui
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalConfiguration
+import dev.kiwi.vinyl.data.Language
+
+/**
+ * The language the UI is rendered in. The chosen language is applied as the app locale, so the
+ * configuration already follows it (and recomposes on a live switch); with no choice it is the
+ * device language, English unless French. Formatters take this, never the device region.
+ */
+@Composable
+fun currentLanguage(): Language =
+    Language.resolve(stored = null, deviceLanguage = LocalConfiguration.current.locales[0].language)
