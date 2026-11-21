@@ -1,0 +1,108 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 5,
+    "identityHash": "e499f7ec43618af382d24463b155a843",
+    "entities": [
+      {
+        "tableName": "Disc",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `artist` TEXT NOT NULL, `year` INTEGER, `format` TEXT NOT NULL, `barcode` TEXT, `rating` INTEGER NOT NULL, `comment` TEXT NOT NULL, `wishlist` INTEGER NOT NULL, `addedAt` INTEGER NOT NULL, `coverUrl` TEXT, `seenPrice` INTEGER, `paidPrice` INTEGER, `vinylColor` TEXT, `speed` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "artist",
+            "columnName": "artist",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "year",
+            "columnName": "year",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "format",
+            "columnName": "format",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "barcode",
+            "columnName": "barcode",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "rating",
+            "columnName": "rating",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "comment",
+            "columnName": "comment",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wishlist",
+            "columnName": "wishlist",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "addedAt",
+            "columnName": "addedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "coverUrl",
+            "columnName": "coverUrl",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "seenPrice",
+            "columnName": "seenPrice",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "paidPrice",
+            "columnName": "paidPrice",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "vinylColor",
+            "columnName": "vinylColor",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "speed",
+            "columnName": "speed",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e499f7ec43618af382d24463b155a843')"
+    ]
+  }
+}

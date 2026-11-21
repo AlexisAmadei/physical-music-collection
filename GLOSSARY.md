@@ -5,7 +5,7 @@ A personal app to keep track of the physical records (vinyl and CD) someone owns
 ## Records
 
 **Disc**:
-One physical release (an album on vinyl or CD) as the user knows it: title, artist, year, format, rating, comment, Seen price, Paid price.
+One physical release (an album on vinyl or CD) as the user knows it: title, artist, year, format, Speed, rating, comment, Seen price, Paid price.
 _Avoid_: Record, album, item
 
 **Format**:
@@ -15,6 +15,10 @@ _Avoid_: Media, type
 **Vinyl color**:
 The color of a vinyl Disc's wax, picked from a short fixed list of solid colors (or clear). Black when not set. Kept but hidden if the Disc's Format is CD.
 _Avoid_: Colour, variant
+
+**Speed**:
+The RPM a vinyl Disc plays at: 33 or 45, nothing else. Optional and unset by default; existing Discs and Catalog results stay unset. Tapping the selected value in the form clears it. Kept but hidden if the Disc's Format is CD. Shown on the Disc detail as "33 tr/min" or "45 tr/min", only for a vinyl Disc with a Speed set.
+_Avoid_: RPM, size
 
 **Color band**:
 The flat band of a Disc's Vinyl color across the top-right corner of its cover, drawn only when the Disc shows a Vinyl color. Shown on the cover front everywhere a cover appears.

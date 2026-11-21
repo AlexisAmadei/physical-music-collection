@@ -19,6 +19,7 @@ android {
         targetSdk = 35
         versionCode = 5
         versionName = "1.2.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "DISCOGS_KEY", "\"${secret("discogs.key", "DISCOGS_KEY")}\"")
         buildConfigField("String", "DISCOGS_SECRET", "\"${secret("discogs.secret", "DISCOGS_SECRET")}\"")
     }
@@ -42,7 +43,10 @@ android {
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
     kotlinOptions { jvmTarget = "17" }
     buildFeatures { compose = true; buildConfig = true }
+    // Room schema history: the migration test opens the previous version from these files.
+    sourceSets.getByName("androidTest").assets.srcDir("$projectDir/schemas")
 }
+ksp { arg("room.schemaLocation", "$projectDir/schemas") }
 dependencies {
     val bom = platform("androidx.compose:compose-bom:2025.06.01")
     implementation(bom)
@@ -61,4 +65,7 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation("dev.chrisbanes.haze:haze:1.6.10")
     testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.room:room-testing:2.7.2")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test:runner:1.6.2")
 }

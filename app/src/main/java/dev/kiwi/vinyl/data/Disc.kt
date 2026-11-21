@@ -27,6 +27,8 @@ data class Disc(
     val paidPrice: Long? = null,
     /** Vinyl color, null = black. Kept (not cleared) if the Format becomes CD. */
     val vinylColor: VinylColor? = null,
+    /** Speed (33 or 45), null = not set. Kept (not cleared) if the Format becomes CD. */
+    val speed: Speed? = null,
 )
 
 @Dao
@@ -44,7 +46,7 @@ interface DiscDao {
     @Delete suspend fun delete(d: Disc)
 }
 
-@Database(entities = [Disc::class], version = 4)
+@Database(entities = [Disc::class], version = 5)
 abstract class AppDb : RoomDatabase() {
     abstract fun dao(): DiscDao
     companion object {
@@ -61,9 +63,14 @@ abstract class AppDb : RoomDatabase() {
         private val V3_4 = object : Migration(3, 4) {
             override fun migrate(db: SupportSQLiteDatabase) = db.execSQL("ALTER TABLE Disc ADD COLUMN vinylColor TEXT")
         }
+        private val V4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) = db.execSQL("ALTER TABLE Disc ADD COLUMN speed TEXT")
+        }
+        /** Every step from version 1; the migration test replays them from the schema history. */
+        val MIGRATIONS: Array<Migration> = arrayOf(V1_2, V2_3, V3_4, V4_5)
         fun get(c: Context) = db ?: synchronized(this) {
             db ?: Room.databaseBuilder(c.applicationContext, AppDb::class.java, "vinyl.db")
-                .addMigrations(V1_2, V2_3, V3_4).build().also { db = it }
+                .addMigrations(*MIGRATIONS).build().also { db = it }
         }
     }
 }

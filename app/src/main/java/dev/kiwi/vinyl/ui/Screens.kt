@@ -52,8 +52,10 @@ import dev.kiwi.vinyl.data.Disc
 import dev.kiwi.vinyl.data.Format
 import dev.kiwi.vinyl.data.Price
 import dev.kiwi.vinyl.data.ProfileName
+import dev.kiwi.vinyl.data.Speed
 import dev.kiwi.vinyl.data.VinylColor
 import dev.kiwi.vinyl.data.shownVinylColor
+import dev.kiwi.vinyl.data.tapped
 import dev.kiwi.vinyl.data.CollectionValue
 import dev.kiwi.vinyl.data.collectionValue
 import kotlinx.coroutines.launch
@@ -413,6 +415,21 @@ private fun VinylColorField(color: VinylColor?, onChange: (VinylColor?) -> Unit)
     }
 }
 
+/** "33 | 45" segmented control, nothing selected at first. Tapping the selected one clears it (null). */
+@Composable
+private fun SpeedField(speed: Speed?, onChange: (Speed?) -> Unit) {
+    Text("Vitesse", style = MaterialTheme.typography.labelLarge)
+    SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
+        Speed.entries.forEachIndexed { i, s ->
+            SegmentedButton(
+                selected = speed == s,
+                onClick = { onChange(speed.tapped(s)) },
+                shape = SegmentedButtonDefaults.itemShape(i, Speed.entries.size),
+            ) { Text(s.rpm.toString()) }
+        }
+    }
+}
+
 @Composable
 fun EditScreen(vm: AppVm, nav: NavHostController) {
     var d by remember { mutableStateOf(vm.draft) }
@@ -429,7 +446,10 @@ fun EditScreen(vm: AppVm, nav: NavHostController) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Format.entries.forEach { f -> FilterChip(d.format == f, { d = d.copy(format = f) }, { Text(f.name) }) }
         }
-        if (d.format == Format.VINYL) VinylColorField(d.vinylColor) { d = d.copy(vinylColor = it) }
+        if (d.format == Format.VINYL) {
+            VinylColorField(d.vinylColor) { d = d.copy(vinylColor = it) }
+            SpeedField(d.speed) { d = d.copy(speed = it) }
+        }
         Row {
             (1..5).forEach { i ->
                 IconButton({ d = d.copy(rating = if (d.rating == i) 0 else i) }) {
