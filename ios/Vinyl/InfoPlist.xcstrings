@@ -1,6 +1,30 @@
 {
   "sourceLanguage" : "fr",
   "strings" : {
+    "CFBundleDisplayName" : {
+      "comment" : "Bundle display name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Vinyl"
+          }
+        }
+      }
+    },
+    "CFBundleName" : {
+      "comment" : "Bundle name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Vinyl"
+          }
+        }
+      }
+    },
     "NSCameraUsageDescription" : {
       "comment" : "Camera permission prompt, shown by the OS in the device or per-app language (not the in-app switch).",
       "localizations" : {
