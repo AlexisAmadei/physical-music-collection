@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v1.2.2 - 2026-11-21
+
 ### Added
 - Android and iOS: the app is available in English and French. It follows the device Language by default (English when the device uses another one), and the user can pick a Language in the Profile view, which overrides the device Language. The Speed is shown as "33 tr/min" in French and "33 rpm" in English; "Wishlist" stays "Wishlist" in both.
 - Android: a Language picked in the system Settings (per-app language) is picked up by the app, and the Profile view shows the Language the app is actually displayed in.
