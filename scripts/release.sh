@@ -2,7 +2,7 @@
 # Usage: scripts/release.sh [major|minor|patch|X.Y.Z]  (default patch)
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
-F=app/build.gradle.kts
+F=android/app/build.gradle.kts
 P=ios/Vinyl.xcodeproj/project.pbxproj
 [ -z "$(git status --porcelain)" ] || { echo "Dirty tree. Commit first."; exit 1; }
 [ "$(git branch --show-current)" = main ] || { echo "Not on main."; exit 1; }
