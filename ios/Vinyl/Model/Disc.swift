@@ -14,6 +14,15 @@ enum Format: String, Codable, CaseIterable, Sendable {
         case .vinyl: language.string("Vinyle")
         }
     }
+
+    /// The label as an uppercase tag ("CD", "VINYL" / "VINYLE"): the Search rows and the Draft form.
+    @MainActor
+    func tag(in language: Language) -> String {
+        switch self {
+        case .cd: language.string("CD")
+        case .vinyl: language.string("VINYL")
+        }
+    }
 }
 
 extension String {

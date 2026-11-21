@@ -20,7 +20,7 @@ struct CollectionScreen: View {
                             .textCase(.uppercase)
                             .textStyle(Typography.display)
                             .foregroundStyle(Palette.ink)
-                        CollectionHeader(filter: Bindable(app).collectionFilter)
+                        CollectionHeader(filter: Bindable(app).collectionFilter, language: app.language)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 35 - 28)

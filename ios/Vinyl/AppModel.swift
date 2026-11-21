@@ -63,7 +63,7 @@ final class AppModel {
 
     /// Starts a Draft that edits a saved Disc.
     func edit(_ disc: Disc) {
-        draft = Draft(disc)
+        draft = Draft(disc).showingPrices(in: language.locale)
     }
 
     /// Whether Save is enabled: the Draft needs a title and a valid shown price.

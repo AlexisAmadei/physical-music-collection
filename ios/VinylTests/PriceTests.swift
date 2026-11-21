@@ -53,8 +53,9 @@ struct PriceTests {
 
     @Test func inputRoundTrips() {
         for cents in [2500, 1250, 5, 124000] {
-            #expect(Price.parse(Price.input(cents)) == cents)
+            #expect(Price.parse(Price.input(cents, locale: english)) == cents)
+            #expect(Price.parse(Price.input(cents, locale: french)) == cents)
         }
-        #expect(Price.input(nil) == "")
+        #expect(Price.input(nil, locale: Locale(identifier: "fr")) == "")
     }
 }

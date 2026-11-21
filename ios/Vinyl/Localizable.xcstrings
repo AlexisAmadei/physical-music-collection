@@ -2,7 +2,20 @@
   "sourceLanguage" : "fr",
   "strings" : {
     "€" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "€"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "€"
+          }
+        }
+      }
     },
     "%lld disques" : {
       "localizations" : {
@@ -91,6 +104,12 @@
             "state" : "translated",
             "value" : "%lld rpm"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld tr/min"
+          }
         }
       }
     },
@@ -100,6 +119,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Home"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accueil"
           }
         }
       }
@@ -143,6 +168,12 @@
             "state" : "translated",
             "value" : "Added on %@"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouté le %@"
+          }
         }
       }
     },
@@ -151,7 +182,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Add the discs you’re looking for."
+            "value" : "Add the discs you are looking for."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoute les disques que tu cherches."
           }
         }
       }
@@ -161,7 +198,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Add your first disc"
+            "value" : "Add my first disc"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter mon premier disque"
           }
         }
       }
@@ -173,6 +216,12 @@
             "state" : "translated",
             "value" : "Add a disc"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter un disque"
+          }
         }
       }
     },
@@ -183,6 +232,12 @@
             "state" : "translated",
             "value" : "Add to wishlist"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter à la wishlist"
+          }
         }
       }
     },
@@ -192,6 +247,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Year"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Année"
           }
         }
       }
@@ -251,6 +312,12 @@
             "state" : "translated",
             "value" : "White"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blanc"
+          }
         }
       }
     },
@@ -261,11 +328,30 @@
             "state" : "translated",
             "value" : "Blue"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bleu"
+          }
         }
       }
     },
     "CD" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CD"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CD"
+          }
+        }
+      }
     },
     "Camera permission needed" : {
       "localizations" : {
@@ -284,7 +370,20 @@
       }
     },
     "Collection" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collection"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collection"
+          }
+        }
+      }
     },
     "Comment" : {
       "localizations" : {
@@ -308,6 +407,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Date added"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date d’ajout"
           }
         }
       }
@@ -335,6 +440,12 @@
             "state" : "translated",
             "value" : "Previous disc"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disque précédent"
+          }
         }
       }
     },
@@ -344,6 +455,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Next disc"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disque suivant"
           }
         }
       }
@@ -387,11 +504,30 @@
             "state" : "translated",
             "value" : "Example: 12.50"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exemple : 12,50"
+          }
         }
       }
     },
     "Format" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Format"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Format"
+          }
+        }
+      }
     },
     "In wishlist" : {
       "localizations" : {
@@ -416,6 +552,12 @@
             "state" : "translated",
             "value" : "Yellow"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jaune"
+          }
         }
       }
     },
@@ -426,6 +568,12 @@
             "state" : "translated",
             "value" : "My collection"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ma collection"
+          }
         }
       }
     },
@@ -435,6 +583,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "My wishlist"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ma wishlist"
           }
         }
       }
@@ -478,6 +632,12 @@
             "state" : "translated",
             "value" : "Edit disc"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifier le disque"
+          }
         }
       }
     },
@@ -488,6 +648,12 @@
             "state" : "translated",
             "value" : "Edit your name"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifier ton nom"
+          }
         }
       }
     },
@@ -497,6 +663,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "MY PROFILE"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MON PROFIL"
           }
         }
       }
@@ -524,6 +696,12 @@
             "state" : "translated",
             "value" : "Not rated"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non noté"
+          }
         }
       }
     },
@@ -532,17 +710,42 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rating: %lld of 5"
+            "value" : "Rating: %lld out of 5"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note : %lld sur 5"
           }
         }
       }
     },
     "OK" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        }
+      }
     },
     "Orange" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orange"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Orange"
@@ -557,6 +760,12 @@
             "state" : "translated",
             "value" : "By format"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Par format"
+          }
         }
       }
     },
@@ -566,6 +775,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Paid %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Payé %@"
           }
         }
       }
@@ -577,6 +792,12 @@
             "state" : "translated",
             "value" : "Paid price"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prix payé"
+          }
         }
       }
     },
@@ -587,6 +808,12 @@
             "state" : "translated",
             "value" : "Seen price"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prix vu"
+          }
         }
       }
     },
@@ -596,6 +823,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Profile"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil"
           }
         }
       }
@@ -623,6 +856,12 @@
             "state" : "translated",
             "value" : "Search"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechercher"
+          }
         }
       }
     },
@@ -632,6 +871,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Search for an album"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechercher un album"
           }
         }
       }
@@ -643,6 +888,12 @@
             "state" : "translated",
             "value" : "Flip"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retourner"
+          }
         }
       }
     },
@@ -652,6 +903,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nothing here yet."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rien ici pour l’instant."
           }
         }
       }
@@ -663,6 +920,12 @@
             "state" : "translated",
             "value" : "Pink"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rose"
+          }
         }
       }
     },
@@ -672,6 +935,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Red"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rouge"
           }
         }
       }
@@ -683,6 +952,12 @@
             "state" : "translated",
             "value" : "Manual entry"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saisie manuelle"
+          }
         }
       }
     },
@@ -692,6 +967,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Untitled"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sans titre"
           }
         }
       }
@@ -719,6 +1000,12 @@
             "state" : "translated",
             "value" : "Scan a barcode or search for an album to get started."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scanne un code-barres ou cherche un album pour commencer."
+          }
         }
       }
     },
@@ -728,6 +1015,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Scan a barcode"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scanner un code-barres"
           }
         }
       }
@@ -787,6 +1080,12 @@
             "state" : "translated",
             "value" : "Your name"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton nom"
+          }
         }
       }
     },
@@ -796,6 +1095,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Clear"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transparent"
           }
         }
       }
@@ -807,6 +1112,12 @@
             "state" : "translated",
             "value" : "Collection value"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valeur de la collection"
+          }
         }
       }
     },
@@ -816,6 +1127,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Green"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vert"
           }
         }
       }
@@ -843,6 +1160,12 @@
             "state" : "translated",
             "value" : "Vinyl"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vinyle"
+          }
         }
       }
     },
@@ -869,6 +1192,12 @@
             "state" : "translated",
             "value" : "%@ vinyl"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vinyle couleur %@"
+          }
         }
       }
     },
@@ -878,6 +1207,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Purple"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Violet"
           }
         }
       }
@@ -905,6 +1240,12 @@
             "state" : "translated",
             "value" : "Seen at %@"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vu à %@"
+          }
         }
       }
     },
@@ -925,7 +1266,20 @@
       }
     },
     "Wishlist" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wishlist"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wishlist"
+          }
+        }
+      }
     },
     "Year" : {
       "localizations" : {
@@ -950,21 +1304,11 @@
             "state" : "translated",
             "value" : "Language"
           }
-        }
-      }
-    },
-    "collection.filter.vinyl" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vinyl"
-          }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vinyle"
+            "value" : "Langue"
           }
         }
       }

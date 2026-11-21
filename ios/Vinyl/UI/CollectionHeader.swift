@@ -4,10 +4,11 @@ import SwiftUI
 /// The rules live in `CollectionFilter`; this view only shows them and forwards taps.
 struct CollectionHeader: View {
     @Binding var filter: CollectionFilter
+    let language: Language
 
     var body: some View {
         HStack {
-            FormatChips(filter: $filter)
+            FormatChips(filter: $filter, language: language)
                 .padding(.leading, 5)
             Spacer()
             SortToggle(sort: $filter.sort)
@@ -20,18 +21,20 @@ struct CollectionHeader: View {
 /// CD / Vinyle chips. Tap selects; tapping the active chip goes back to every Format.
 private struct FormatChips: View {
     @Binding var filter: CollectionFilter
+    let language: Language
 
     var body: some View {
         HStack(spacing: 4) {
-            chip(.cd, "CD")
-            chip(.vinyl, "collection.filter.vinyl")
+            chip(.cd)
+            chip(.vinyl)
         }
     }
 
-    private func chip(_ format: Format, _ label: LocalizedStringKey) -> some View {
+    /// The chip reads the Format's own label, like the Profile rows.
+    private func chip(_ format: Format) -> some View {
         let on = filter.format == format
         return Button { filter.toggle(format) } label: {
-            Text(label)
+            Text(verbatim: format.label(in: language))
                 .textStyle(on ? Typography.chip.weight(.medium) : Typography.chip)
                 .foregroundStyle(Palette.accent)
                 .padding(.horizontal, 12)
@@ -86,5 +89,5 @@ private extension TextStyle {
 
 #Preview {
     @Previewable @State var filter = CollectionFilter(format: .vinyl)
-    CollectionHeader(filter: $filter).padding(.horizontal, 20)
+    CollectionHeader(filter: $filter, language: Language()).padding(.horizontal, 20)
 }

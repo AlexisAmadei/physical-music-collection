@@ -62,7 +62,7 @@ private struct Chrome: View {
         if app.plusOffersChoices {
             AddChoicesMenu(app: app) { GlassIcon(glyph: Glyphs.plus) }
                 .glassEffect(.regular.interactive(), in: .circle)
-                .accessibilityLabel("Ajouter un disque")
+                .accessibilityLabel(Text("Ajouter un disque"))
         } else {
             GlassIconButton(glyph: Glyphs.plus, label: "Ajouter à la wishlist") { app.addToWishlist() }
         }

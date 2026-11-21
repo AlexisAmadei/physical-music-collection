@@ -43,7 +43,7 @@ struct ProfileCard: View {
                 .contentShape(Self.shape)
         }
         .buttonStyle(CardPress())
-        .accessibilityHint("Modifier ton nom")
+        .accessibilityHint(Text("Modifier ton nom"))
         .gesture(FingerWatcher { [driver, frame, reduceMotion] point in
             driver.finger = reduceMotion ? nil : point.map { Tilt(finger: $0, on: frame) }
         })

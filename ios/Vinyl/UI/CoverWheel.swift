@@ -25,11 +25,11 @@ struct CoverWheel: View {
                     .contentShape(Rectangle())
                     .simultaneousGesture(drag)
                     .accessibilityElement(children: .ignore)
-                    .accessibilityLabel("Ma collection")
+                    .accessibilityLabel(Text("Ma collection"))
                     .accessibilityValue(Text(verbatim: discs[driver.motion.discIndex(atCard: driver.motion.front, count: discs.count)].coverLabel(in: language)))
-                    .accessibilityAction(named: "Disque suivant") { step(by: 1) }
-                    .accessibilityAction(named: "Disque précédent") { step(by: -1) }
-                    .accessibilityAction(named: "Retourner") { tap(driver.motion.front) }
+                    .accessibilityAction(named: Text("Disque suivant")) { step(by: 1) }
+                    .accessibilityAction(named: Text("Disque précédent")) { step(by: -1) }
+                    .accessibilityAction(named: Text("Retourner")) { tap(driver.motion.front) }
                     .accessibilityActions {
                         if let disc = openDisc {
                             Button("Modifier le disque") { onEdit(disc) }

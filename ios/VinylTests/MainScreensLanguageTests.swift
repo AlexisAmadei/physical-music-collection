@@ -27,11 +27,10 @@ struct MainScreensLanguageTests {
         Entry(key: "Ma collection", en: "My collection", fr: "Ma collection"),
         Entry(key: "Ma wishlist", en: "My wishlist", fr: "Ma wishlist"),
         Entry(
-            key: "Ajoute les disques que tu cherches.", en: "Add the discs you’re looking for.",
+            key: "Ajoute les disques que tu cherches.", en: "Add the discs you are looking for.",
             fr: "Ajoute les disques que tu cherches."
         ),
-        // Format chips and sort labels
-        Entry(key: "collection.filter.vinyl", en: "Vinyl", fr: "Vinyle"),
+        // Sort labels (the Format chips read the model's Format label, see LanguageTests)
         Entry(key: "Date d’ajout", en: "Date added", fr: "Date d’ajout"),
         Entry(key: "Année", en: "Year", fr: "Année"),
         // Cover wheel and flip card accessibility
@@ -41,7 +40,7 @@ struct MainScreensLanguageTests {
         Entry(key: "Modifier le disque", en: "Edit disc", fr: "Modifier le disque"),
         // Rating accessibility
         Entry(key: "Non noté", en: "Not rated", fr: "Non noté"),
-        Entry(key: "Note : \(3) sur 5", en: "Rating: 3 of 5", fr: "Note : 3 sur 5"),
+        Entry(key: "Note : \(3) sur 5", en: "Rating: 3 out of 5", fr: "Note : 3 sur 5"),
     ]
 
     @Test(arguments: entries)

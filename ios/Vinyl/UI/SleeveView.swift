@@ -138,7 +138,7 @@ private struct PencilButton: View {
                 .contentShape(Circle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Modifier le disque")
+        .accessibilityLabel(Text("Modifier le disque"))
     }
 }
 
