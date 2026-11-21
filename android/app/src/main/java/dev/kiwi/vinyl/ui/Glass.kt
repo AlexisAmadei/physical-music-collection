@@ -1,5 +1,6 @@
 package dev.kiwi.vinyl.ui
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -31,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -39,6 +41,7 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
+import dev.kiwi.vinyl.R as AppR
 
 /** Content that scrolls under the glass marks itself with `Modifier.hazeSource(LocalHaze.current)`. */
 val LocalHaze = staticCompositionLocalOf { HazeState() }
@@ -82,14 +85,14 @@ fun GlassIconButton(icon: ImageVector, label: String, onClick: () -> Unit, modif
     ) { Icon(icon, null, Modifier.size(44.dp), tint = Color.Unspecified) }
 }
 
-private class Tab(val route: String?, val label: String, val icon: ImageVector, val active: ImageVector = icon)
+private class Tab(val route: String?, @StringRes val labelRes: Int, val icon: ImageVector, val active: ImageVector = icon)
 
 private val pillTabs = listOf(
-    Tab(R.PROFILE, "Profil", Glyphs.Profile, Glyphs.ProfileOn),
-    Tab(R.WISH, "Wishlist", Glyphs.Heart, Glyphs.HeartOn),
-    Tab(R.COLL, "Collection", Glyphs.Disc, Glyphs.DiscOn),
-    Tab(R.SEARCH, "Rechercher", Glyphs.Search, Glyphs.SearchOn),
-    Tab(R.HOME, "Accueil", Glyphs.Home, Glyphs.HomeOn),
+    Tab(R.PROFILE, AppR.string.tab_profile, Glyphs.Profile, Glyphs.ProfileOn),
+    Tab(R.WISH, AppR.string.tab_wishlist, Glyphs.Heart, Glyphs.HeartOn),
+    Tab(R.COLL, AppR.string.tab_collection, Glyphs.Disc, Glyphs.DiscOn),
+    Tab(R.SEARCH, AppR.string.tab_search, Glyphs.Search, Glyphs.SearchOn),
+    Tab(R.HOME, AppR.string.tab_home, Glyphs.Home, Glyphs.HomeOn),
 )
 
 /** Vertical glass navigation pill, anchored right. Active tab: Accent fill + Ink outline. */
@@ -106,12 +109,13 @@ fun GlassNavPill(current: String?, onNavigate: (String) -> Unit, modifier: Modif
     ) {
         pillTabs.forEach { t ->
             val on = t.route != null && t.route == current
+            val label = stringResource(t.labelRes)
             Box(
                 Modifier
                     .size(44.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .selectable(on, enabled = t.route != null, role = Role.Tab) { t.route?.let(onNavigate) }
-                    .semantics { contentDescription = t.label },
+                    .semantics { contentDescription = label },
                 contentAlignment = Alignment.Center,
             ) { Icon(if (on) t.active else t.icon, null, tint = Color.Unspecified) }
         }

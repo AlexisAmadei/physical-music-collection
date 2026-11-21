@@ -3,14 +3,16 @@ import Testing
 @testable import Vinyl
 
 /// What the back of an open sleeve says (Android `BackFace` in `ui/Flip.kt`).
+@MainActor
 struct SleeveBackTests {
     let paris = TimeZone(identifier: "Europe/Paris")!
+    let language = Language.pinned(.french)
 
     /// 2024-11-03 12:00 in Paris.
     let november3 = Date(timeIntervalSince1970: 1_730_631_600)
 
     func back(_ draft: Draft) -> SleeveBack {
-        SleeveBack(Disc(draft), timeZone: paris)
+        SleeveBack(Disc(draft), language: language, timeZone: paris)
     }
 
     @Test func showsTitleArtistYearFormatAndDateAdded() {
@@ -46,6 +48,36 @@ struct SleeveBackTests {
         let face = back(Draft(wishlist: false, seenPrice: 1250, paidPrice: 124_000))
 
         #expect(face.price == "Payé 1\u{202F}240\u{A0}€")
+    }
+
+    @Test func theBackSpeaksEnglishInEnglish() {
+        language.select(.english)
+        let face = back(Draft(
+            title: "  ", format: .vinyl, wishlist: false, addedAt: november3, paidPrice: 900, speed: .rpm33
+        ))
+
+        #expect(face.title == "Untitled")
+        #expect(face.details == "Vinyl")
+        #expect(face.speed == "33 rpm")
+        #expect(face.addedOn == "Added on Nov 3, 2024")
+        #expect(face.price == "Paid €9")
+        #expect(back(Draft(wishlist: true, seenPrice: 1250)).price == "Seen at €12.50")
+    }
+
+    @Test func priceAndDateFollowALiveLanguageSwitch() {
+        let disc = Draft(wishlist: false, addedAt: november3, paidPrice: 124_050)
+        func face() -> SleeveBack { back(disc) }
+
+        #expect(face().price == "Payé 1\u{202F}240,50\u{A0}€")
+        #expect(face().addedOn == "Ajouté le 3 nov. 2024")
+
+        language.select(.english)
+        #expect(face().price == "Paid €1,240.50")
+        #expect(face().addedOn == "Added on Nov 3, 2024")
+
+        language.select(.french)
+        #expect(face().price == "Payé 1\u{202F}240,50\u{A0}€")
+        #expect(face().addedOn == "Ajouté le 3 nov. 2024")
     }
 
     @Test func noPriceLineWhenTheShownPriceIsUnset() {

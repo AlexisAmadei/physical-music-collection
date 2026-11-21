@@ -25,6 +25,8 @@ final class AppModel {
     /// Profile name; "" = unset. Change it with `setProfileName(_:)`.
     private(set) var profileName: String
     @ObservationIgnored private let profilePreferences: any ProfilePreferences
+    /// The language the app shows; screens read its locale (see `Language.swift`).
+    let language: Language
 
     @ObservationIgnored private let store: DiscStore
     /// Asked by Search (and Scan) to prefill a Draft.
@@ -38,14 +40,19 @@ final class AppModel {
     ///   - container: `DiscStore.persistentContainer()` in the app, `DiscStore.inMemoryContainer()` in tests.
     ///   - catalogTransport: the real network by default, a fake in tests.
     ///   - profilePreferences: where the Profile name is kept; `UserDefaults` by default, in memory in tests.
+    ///   - languagePreferences: where the language pick is kept; `UserDefaults` by default, in memory in tests.
+    ///   - deviceLanguages: the device's preferred languages, which decide the language until the user picks one.
     init(
         container: ModelContainer, catalogTransport: any CatalogTransport = URLSessionTransport(),
-        profilePreferences: any ProfilePreferences = UserDefaultsProfilePreferences()
+        profilePreferences: any ProfilePreferences = UserDefaultsProfilePreferences(),
+        languagePreferences: any LanguagePreferences = UserDefaultsLanguagePreferences(),
+        deviceLanguages: [String] = Locale.preferredLanguages
     ) {
         store = DiscStore(container: container)
         catalog = .standard(transport: catalogTransport)
         self.profilePreferences = profilePreferences
         profileName = profilePreferences.name ?? ""
+        language = Language(preferences: languagePreferences, deviceLanguages: deviceLanguages)
         refresh()
     }
 
@@ -56,7 +63,7 @@ final class AppModel {
 
     /// Starts a Draft that edits a saved Disc.
     func edit(_ disc: Disc) {
-        draft = Draft(disc)
+        draft = Draft(disc).showingPrices(in: language.locale)
     }
 
     /// Whether Save is enabled: the Draft needs a title and a valid shown price.

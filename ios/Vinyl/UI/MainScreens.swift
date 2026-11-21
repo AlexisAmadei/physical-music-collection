@@ -14,7 +14,7 @@ struct HomeScreen: View {
                     .padding(.trailing, 72)
                     .frame(maxHeight: .infinity)
             } else {
-                CoverWheel(discs: discs) { app.open($0) }
+                CoverWheel(discs: discs, language: app.language) { app.open($0) }
             }
             ChromeLayout { bottom in
                 Text("Welcome home...")
@@ -40,7 +40,7 @@ struct WishlistScreen: View {
             LazyVGrid(columns: columns, alignment: .leading, spacing: 12) {
                 Section {
                     ForEach(app.wishlist) { disc in
-                        Button { app.open(disc) } label: { CoverCard(disc: disc) }
+                        Button { app.open(disc) } label: { CoverCard(disc: disc, language: app.language) }
                             .buttonStyle(.plain)
                     }
                 } header: {
@@ -85,9 +85,11 @@ struct ProfileScreen: View {
                     EmptyState(app: app)
                         .padding(.top, 35)
                 } else {
-                    ValueByFormat(value: app.collectionValue)
+                    ValueByFormat(value: app.collectionValue, language: app.language)
                         .padding(.top, 35)
                 }
+                LanguagePicker(language: app.language)
+                    .padding(.top, 35)
             }
             .sheet(isPresented: $editingName) {
                 ProfileNameSheet(current: app.profileName) { name in

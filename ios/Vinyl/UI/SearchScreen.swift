@@ -2,7 +2,6 @@ import SwiftUI
 
 /// Search (Android `SearchScreen`): "My discs" whose title or artist contains the text, then "Search catalog" and
 /// its results. Tapping one of my Discs opens its Draft; tapping a Catalog result opens a prefilled Draft.
-/// The words are still English, as on Android.
 struct SearchScreen: View {
     @Bindable var app: AppModel
 
@@ -26,11 +25,11 @@ struct SearchScreen: View {
                     .foregroundStyle(Palette.ink)
                 ForEach(app.myDiscs) { disc in
                     Button { app.open(disc) } label: {
-                        SearchRow(title: disc.title, artist: disc.artist, year: disc.year, format: disc.format) {
+                        SearchRow(title: disc.title, artist: disc.artist, year: disc.year, format: disc.format, language: app.language) {
                             Cover(url: disc.coverURL)
                                 .colorBand(disc.shownVinylColor)
                                 .accessibilityElement()
-                                .accessibilityLabel(disc.coverLabel)
+                                .accessibilityLabel(disc.coverLabel(in: app.language))
                         }
                     }
                     .buttonStyle(.plain)
@@ -43,7 +42,7 @@ struct SearchScreen: View {
                 .disabled(!app.searchState.canSearchCatalog)
                 ForEach(Array(app.searchState.catalogResults.enumerated()), id: \.offset) { _, result in
                     Button { app.pick(result) } label: {
-                        SearchRow(title: result.title, artist: result.artist, year: result.year, format: result.format) {
+                        SearchRow(title: result.title, artist: result.artist, year: result.year, format: result.format, language: app.language) {
                             Cover(url: result.coverURL)
                         }
                     }
@@ -70,6 +69,7 @@ private struct SearchRow<Thumbnail: View>: View {
     let artist: String
     let year: Int?
     let format: Format
+    let language: Language
     @ViewBuilder var thumbnail: Thumbnail
 
     var body: some View {
@@ -82,7 +82,7 @@ private struct SearchRow<Thumbnail: View>: View {
                     .textStyle(Typography.body)
                     .foregroundStyle(Palette.ink)
                     .lineLimit(2)
-                Text(([artist, year.map(String.init), format.rawValue] as [String?]).compactMap(\.self).joined(separator: " · "))
+                Text(([artist, year.map(String.init), format.tag(in: language)] as [String?]).compactMap(\.self).joined(separator: " · "))
                     .textStyle(Typography.chip)
                     .foregroundStyle(Palette.muted)
                     .lineLimit(1)

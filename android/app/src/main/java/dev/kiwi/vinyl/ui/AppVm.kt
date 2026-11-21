@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import dev.kiwi.vinyl.data.AppDb
 import dev.kiwi.vinyl.data.Disc
 import dev.kiwi.vinyl.data.Discogs
+import dev.kiwi.vinyl.data.Language
+import dev.kiwi.vinyl.data.LanguageSettings
 import dev.kiwi.vinyl.data.MusicBrainz
 import dev.kiwi.vinyl.data.ProfileName
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,6 +31,11 @@ class AppVm(app: Application) : AndroidViewModel(app) {
         prefs.edit().apply { if (n.isEmpty()) remove("name") else putString("name", n) }.apply()
         _name.value = n
     }
+
+    private val languageSettings = LanguageSettings(app)
+
+    /** Picks [l] as the app language; the activity is recreated in it, so the UI reads it back from the configuration. */
+    fun setLanguage(l: Language) = languageSettings.choose(l)
 
     fun save(d: Disc) = viewModelScope.launch { dao.upsert(d) }
     fun delete(d: Disc) = viewModelScope.launch { dao.delete(d) }

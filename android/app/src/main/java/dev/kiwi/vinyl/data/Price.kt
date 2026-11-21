@@ -15,18 +15,27 @@ object Price {
     /** Blank means "no price", which is allowed. */
     fun isValid(text: String) = text.isBlank() || parse(text) != null
 
-    /** French display: "25 €", "12,50 €", "1 240 €" (narrow no-break space between thousands). */
-    fun format(cents: Long): String {
-        val euros = (cents / 100).toString().reversed().chunked(3).joinToString(" ").reversed()
+    /**
+     * Display in the in-app language, never the device region. Euros only; whole amounts drop the decimals.
+     * French "1\u202F240,50\u00A0\u20AC" (narrow no-break space grouping, no-break space before the sign),
+     * English "\u20AC1,240.50".
+     */
+    fun format(cents: Long, language: Language): String {
+        val fr = language == Language.FR
+        val euros = (cents / 100).toString().reversed().chunked(3).joinToString(if (fr) "\u202F" else ",").reversed()
         val rest = cents % 100
-        return (if (rest == 0L) euros else euros + "," + rest.toString().padStart(2, '0')) + " €"
+        val number = if (rest == 0L) euros else euros + (if (fr) "," else ".") + rest.toString().padStart(2, '0')
+        return if (fr) number + "\u00A0\u20AC" else "\u20AC" + number
     }
 
-    /** What the edit field shows for an existing price: "25", "12,50". */
-    fun input(cents: Long?): String = when {
+    /**
+     * What the edit field shows for an existing price, with the in-app language's decimal separator:
+     * "25", "12,50" in French, "12.50" in English. [parse] takes either separator.
+     */
+    fun input(cents: Long?, language: Language): String = when {
         cents == null -> ""
         cents % 100 == 0L -> (cents / 100).toString()
-        else -> "${cents / 100},${(cents % 100).toString().padStart(2, '0')}"
+        else -> "${cents / 100}${if (language == Language.FR) "," else "."}${(cents % 100).toString().padStart(2, '0')}"
     }
 }
 

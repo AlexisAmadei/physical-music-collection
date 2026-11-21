@@ -9,8 +9,9 @@ enum Speed: Int, Codable, CaseIterable, Sendable {
     /// "33" or "45", the text of its button in the form.
     var rpmText: String { String(rawValue) }
 
-    /// "33 tr/min" or "45 tr/min", as shown on the Disc detail.
-    var label: String { String(localized: "\(rawValue) tr/min") }
+    /// "33 tr/min" or "45 tr/min" ("33 rpm" in English), as shown on the Disc detail.
+    @MainActor
+    func label(in language: Language) -> String { language.string("\(rawValue) tr/min") }
 
     /// A Speed shows only on vinyl. A CD keeps its value hidden.
     static func shown(_ speed: Speed?, on format: Format) -> Speed? {
@@ -29,8 +30,9 @@ extension Disc {
     /// The Speed as shown: only on vinyl. A CD keeps its value hidden.
     var shownSpeed: Speed? { Speed.shown(speed, on: format) }
 
-    /// "33 tr/min" / "45 tr/min" for the Disc detail; nil when nothing should show.
-    var speedLabel: String? { shownSpeed?.label }
+    /// "33 tr/min" / "45 tr/min" ("33 rpm" / "45 rpm" in English) for the Disc detail; nil when nothing should show.
+    @MainActor
+    func speedLabel(in language: Language) -> String? { shownSpeed?.label(in: language) }
 }
 
 extension Draft {

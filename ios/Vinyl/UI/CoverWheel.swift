@@ -6,6 +6,7 @@ import SwiftUI
 struct CoverWheel: View {
     /// The Collection, newest first (`AppModel.homeDiscs`). Never empty: Home shows the empty state instead.
     let discs: [Disc]
+    let language: Language
     /// The pencil on an open sleeve: opens that Disc's Draft.
     let onEdit: (Disc) -> Void
 
@@ -24,11 +25,11 @@ struct CoverWheel: View {
                     .contentShape(Rectangle())
                     .simultaneousGesture(drag)
                     .accessibilityElement(children: .ignore)
-                    .accessibilityLabel("Ma collection")
-                    .accessibilityValue(Text(verbatim: discs[driver.motion.discIndex(atCard: driver.motion.front, count: discs.count)].coverLabel))
-                    .accessibilityAction(named: "Disque suivant") { step(by: 1) }
-                    .accessibilityAction(named: "Disque précédent") { step(by: -1) }
-                    .accessibilityAction(named: "Retourner") { tap(driver.motion.front) }
+                    .accessibilityLabel(Text("Ma collection"))
+                    .accessibilityValue(Text(verbatim: discs[driver.motion.discIndex(atCard: driver.motion.front, count: discs.count)].coverLabel(in: language)))
+                    .accessibilityAction(named: Text("Disque suivant")) { step(by: 1) }
+                    .accessibilityAction(named: Text("Disque précédent")) { step(by: -1) }
+                    .accessibilityAction(named: Text("Retourner")) { tap(driver.motion.front) }
                     .accessibilityActions {
                         if let disc = openDisc {
                             Button("Modifier le disque") { onEdit(disc) }
@@ -75,7 +76,7 @@ struct CoverWheel: View {
     /// The open sleeve stays on its card, so it rides along when the wheel turns.
     @ViewBuilder private func card(_ k: Int, disc: Disc, veil: Double) -> some View {
         if driver.sleeve.card == k {
-            SleeveView(disc: disc, sleeve: driver.sleeve, veil: veil) { onEdit(disc) }
+            SleeveView(disc: disc, language: language, sleeve: driver.sleeve, veil: veil) { onEdit(disc) }
         } else {
             WheelCard(disc: disc, veil: veil)
         }
@@ -99,7 +100,7 @@ struct CoverWheel: View {
         driver.sleeve.close()
         driver.motion.step(by: cards)
         let disc = discs[driver.motion.discIndex(atCard: driver.motion.heading, count: discs.count)]
-        AccessibilityNotification.Announcement(disc.coverLabel).post()
+        AccessibilityNotification.Announcement(disc.coverLabel(in: language)).post()
     }
 
     /// One finger: any touch pauses the drift; a vertical move turns the wheel; lifting flings it.

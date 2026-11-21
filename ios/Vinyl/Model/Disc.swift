@@ -6,11 +6,21 @@ enum Format: String, Codable, CaseIterable, Sendable {
     case cd = "CD"
     case vinyl = "VINYL"
 
-    /// "CD" or "Vinyle", as shown and read by VoiceOver.
-    var label: String {
+    /// "CD" or "Vinyle" ("Vinyl" in English), as shown and read by VoiceOver.
+    @MainActor
+    func label(in language: Language) -> String {
         switch self {
-        case .cd: String(localized: "CD")
-        case .vinyl: String(localized: "Vinyle")
+        case .cd: language.string("CD")
+        case .vinyl: language.string("Vinyle")
+        }
+    }
+
+    /// The label as an uppercase tag ("CD", "VINYL" / "VINYLE"): the Search rows and the Draft form.
+    @MainActor
+    func tag(in language: Language) -> String {
+        switch self {
+        case .cd: language.string("CD")
+        case .vinyl: language.string("VINYL")
         }
     }
 }
@@ -97,8 +107,9 @@ struct Draft: Equatable, Sendable {
 }
 
 extension Disc {
-    /// The title as shown: "Sans titre" when blank.
-    var shownTitle: String { title.isBlank ? String(localized: "Sans titre") : title }
+    /// The title as shown: "Sans titre" ("Untitled" in English) when blank.
+    @MainActor
+    func shownTitle(in language: Language) -> String { title.isBlank ? language.string("Sans titre") : title }
     /// The artist as shown: nil when blank.
     var shownArtist: String? { artist.isBlank ? nil : artist }
 }

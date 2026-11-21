@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -51,15 +52,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.kiwi.vinyl.R as AppR
+import dev.kiwi.vinyl.data.Dates
 import dev.kiwi.vinyl.data.Disc
-import dev.kiwi.vinyl.data.Format
 import dev.kiwi.vinyl.data.Price
+import dev.kiwi.vinyl.data.upperCase
 import dev.kiwi.vinyl.data.shownVinylColor
-import dev.kiwi.vinyl.data.speedLabel
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.Locale
+import dev.kiwi.vinyl.data.shownSpeed
 import kotlin.random.Random
 
 /** cubic-bezier(.3, 1.45, .55, 1): light overshoot (~5 %) at the end of the flip. */
@@ -94,6 +93,8 @@ fun FlipFaces(
     d: Disc, rotation: Float, onTap: () -> Unit, onEdit: () -> Unit, modifier: Modifier = Modifier,
     large: Boolean = false, elevation: Dp = 4.dp,
 ) {
+    val flipLabel = stringResource(AppR.string.disc_flip)
+    val coverLabel = d.a11yLabel()
     val m = ((rotation % 360f) + 360f) % 360f
     val back = m in 90f..270f
     Box(
@@ -108,8 +109,8 @@ fun FlipFaces(
             Cover(
                 d.coverUrl,
                 Modifier.fillMaxSize()
-                    .clickable(onClickLabel = "Retourner", role = Role.Button, onClick = onTap)
-                    .semantics { contentDescription = d.a11yLabel() },
+                    .clickable(onClickLabel = flipLabel, role = Role.Button, onClick = onTap)
+                    .semantics { contentDescription = coverLabel },
             )
             ColorBandOf(d)
         } else {
@@ -122,9 +123,12 @@ fun FlipFaces(
 private fun BackFace(d: Disc, onTap: () -> Unit, onEdit: () -> Unit, large: Boolean) {
     val pad = if (large) 18.dp else 14.dp
     val star = if (large) 13.dp else 12.dp
+    val language = currentLanguage()
     // Seen price in the Wishlist, Paid price in the Collection; the other one stays hidden.
-    val price = if (d.wishlist) d.seenPrice?.let { "Vu à ${Price.format(it)}" } else d.paidPrice?.let { "Payé ${Price.format(it)}" }
-    Box(Modifier.fillMaxSize().clipToBounds().clickable(onClickLabel = "Retourner", role = Role.Button, onClick = onTap)) {
+    val price = if (d.wishlist) d.seenPrice?.let { stringResource(AppR.string.disc_seen_at, Price.format(it, language)) }
+    else d.paidPrice?.let { stringResource(AppR.string.disc_paid, Price.format(it, language)) }
+    val speed = d.shownSpeed?.let { stringResource(AppR.string.speed_rpm, it.rpm) }
+    Box(Modifier.fillMaxSize().clipToBounds().clickable(onClickLabel = stringResource(AppR.string.disc_flip), role = Role.Button, onClick = onTap)) {
         Cover(
             d.coverUrl,
             Modifier.fillMaxSize().graphicsLayer { scaleX = 1.24f; scaleY = 1.24f }.saturate(1.6f).blur(14.dp),
@@ -133,22 +137,22 @@ private fun BackFace(d: Disc, onTap: () -> Unit, onEdit: () -> Unit, large: Bool
         Column(Modifier.fillMaxSize().padding(pad), verticalArrangement = Arrangement.spacedBy(3.dp)) {
             if (d.artist.isNotBlank()) {
                 Text(
-                    d.artist.uppercase(), maxLines = 1, overflow = TextOverflow.Ellipsis,
+                    d.artist.upperCase(), maxLines = 1, overflow = TextOverflow.Ellipsis,
                     style = Type.Label.copy(fontSize = if (large) 11.sp else 10.sp, fontWeight = FontWeight.Medium, letterSpacing = 0.6.sp),
                     color = Color(0xFF5A3A3A),
                 )
             }
             Text(
-                d.title.ifBlank { "Sans titre" }, maxLines = backTitleLines(large, hasPrice = price != null, hasSpeed = d.speedLabel != null), overflow = TextOverflow.Ellipsis,
+                d.title.ifBlank { stringResource(AppR.string.disc_untitled) }, maxLines = backTitleLines(large, hasPrice = price != null, hasSpeed = speed != null), overflow = TextOverflow.Ellipsis,
                 style = Type.Title.copy(fontSize = if (large) 17.sp else 15.sp, lineHeight = if (large) 21.sp else 19.sp),
                 color = Palette.Ink,
             )
             Text(
-                listOfNotNull(d.year?.toString(), if (d.format == Format.CD) "CD" else "Vinyle").joinToString(" · "),
+                listOfNotNull(d.year?.toString(), stringResource(d.format.labelRes)).joinToString(" · "),
                 style = Type.Label, color = Palette.Ink,
             )
-            d.speedLabel?.let { Text(it, style = Type.Label, color = Palette.Ink) }
-            Text("Ajouté le ${addedOn(d.addedAt)}", style = Type.Label.copy(fontSize = 11.sp), color = Palette.Ink.copy(alpha = 0.7f))
+            speed?.let { Text(it, style = Type.Label, color = Palette.Ink) }
+            Text(stringResource(AppR.string.disc_added_on, Dates.format(d.addedAt, language)), style = Type.Label.copy(fontSize = 11.sp), color = Palette.Ink.copy(alpha = 0.7f))
             if (price != null) Text(price, style = Type.Label, color = Palette.Ink)
             if (!d.wishlist) StarRating(d.rating, size = star)
         }
@@ -166,12 +170,10 @@ internal fun backTitleLines(large: Boolean, hasPrice: Boolean, hasSpeed: Boolean
     if (large) (if (hasSpeed) 2 else 3)
     else (3 - (if (hasPrice) 1 else 0) - (if (hasSpeed) 1 else 0)).coerceAtLeast(1)
 
-private val DateFmt = DateTimeFormatter.ofPattern("d MMM yyyy", Locale.FRENCH)
-private fun addedOn(ms: Long): String = DateFmt.format(Instant.ofEpochMilli(ms).atZone(ZoneId.systemDefault()))
-
 /** 44 dp glass-look round button (the haze backdrop does not follow a rotated layer, so a plain wash). */
 @Composable
 private fun PencilButton(onClick: () -> Unit, modifier: Modifier) {
+    val label = stringResource(AppR.string.disc_edit)
     Box(
         modifier
             .size(44.dp)
@@ -180,7 +182,7 @@ private fun PencilButton(onClick: () -> Unit, modifier: Modifier) {
             .background(Brush.linearGradient(listOf(Color.White.copy(alpha = 0.75f), Color(0xFFF0F0F0).copy(alpha = 0.5f))))
             .border(1.dp, Color.White.copy(alpha = 0.9f), CircleShape)
             .clickable(role = Role.Button, onClick = onClick)
-            .semantics { contentDescription = "Modifier le disque" },
+            .semantics { contentDescription = label },
         contentAlignment = Alignment.Center,
     ) { Icon(Glyphs.Pencil, null, Modifier.size(22.dp), tint = Palette.Ink) }
 }

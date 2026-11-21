@@ -17,11 +17,11 @@ struct DraftScreen: View {
                 Text("VINYL").tag(Format.vinyl)
             }
             .pickerStyle(.segmented)
-            if app.draft.showsVinylColorField { VinylColorField(draft: $app.draft) }
-            if app.draft.showsSpeedField { SpeedField(draft: $app.draft) }
+            if app.draft.showsVinylColorField { VinylColorField(draft: $app.draft, language: app.language) }
+            if app.draft.showsSpeedField { SpeedField(draft: $app.draft, language: app.language) }
             StarPicker(draft: $app.draft)
             TextField("Comment", text: $app.draft.comment, axis: .vertical)
-            DraftPriceFields(draft: $app.draft)
+            DraftPriceFields(draft: $app.draft, language: app.language)
             Section {
                 Button("Save") {
                     app.saveDraft()
@@ -36,6 +36,6 @@ struct DraftScreen: View {
                 }
             }
         }
-        .navigationTitle(app.draft.isNew ? "Add disc" : "Edit disc")
+        .navigationTitle(app.draft.isNew ? Text("Add disc") : Text("Edit disc"))
     }
 }

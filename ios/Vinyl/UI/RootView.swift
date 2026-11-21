@@ -19,6 +19,8 @@ struct RootView: View {
         .overlay {
             if app.showsChrome { Chrome(app: app) }
         }
+        // Every screen, sheet and menu reads its text in the current Language; switching applies at once.
+        .environment(\.locale, app.language.locale)
     }
 
     @ViewBuilder private var main: some View {
@@ -60,7 +62,7 @@ private struct Chrome: View {
         if app.plusOffersChoices {
             AddChoicesMenu(app: app) { GlassIcon(glyph: Glyphs.plus) }
                 .glassEffect(.regular.interactive(), in: .circle)
-                .accessibilityLabel("Ajouter un disque")
+                .accessibilityLabel(Text("Ajouter un disque"))
         } else {
             GlassIconButton(glyph: Glyphs.plus, label: "Ajouter à la wishlist") { app.addToWishlist() }
         }

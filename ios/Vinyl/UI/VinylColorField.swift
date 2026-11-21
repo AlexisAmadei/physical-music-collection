@@ -4,6 +4,7 @@ import SwiftUI
 /// Mirrors the Android `VinylColorField`. Shown on vinyl Drafts only.
 struct VinylColorField: View {
     @Binding var draft: Draft
+    let language: Language
 
     var body: some View {
         Toggle("Vinyle couleur", isOn: $draft.coloredVinyl)
@@ -24,7 +25,7 @@ struct VinylColorField: View {
                                 .contentShape(Circle())
                         }
                         .buttonStyle(.plain)
-                        .accessibilityLabel(color.label)
+                        .accessibilityLabel(color.label(in: language))
                         .accessibilityAddTraits(color == picked ? .isSelected : [])
                     }
                 }

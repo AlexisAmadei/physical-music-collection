@@ -36,7 +36,7 @@ object Discogs {
             val results = json.getJSONArray("results")
             (0 until results.length()).mapNotNull { parse(results.getJSONObject(it)) }
                 // One entry per album and format (Discogs lists every pressing), preferring one with a cover.
-                .groupBy { Triple(it.title.lowercase(), it.artist.lowercase(), it.format) }.values
+                .groupBy { Triple(it.title.lowerCase(), it.artist.lowerCase(), it.format) }.values
                 .map { pressings -> pressings.firstOrNull { it.coverUrl != null } ?: pressings.first() }
                 .take(15)
         }.getOrDefault(emptyList())

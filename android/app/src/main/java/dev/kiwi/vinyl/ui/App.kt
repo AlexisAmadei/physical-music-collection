@@ -6,12 +6,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
 import androidx.navigation.navArgument
 import dev.chrisbanes.haze.rememberHazeState
+import dev.kiwi.vinyl.R as AppR
 import dev.kiwi.vinyl.data.Disc
 
 object R { const val HOME = "home"; const val COLL = "collection"; const val WISH = "wishlist"; const val SEARCH = "search"; const val SCAN = "scan"; const val EDIT = "edit"; const val PROFILE = "profile" }
@@ -53,12 +55,12 @@ private fun BoxScope.Chrome(route: String?, vm: AppVm, nav: NavHostController) {
         Modifier.align(Alignment.BottomEnd).padding(end = 14.dp, bottom = bottom + 50.dp),
     )
     Row(Modifier.align(Alignment.BottomStart).padding(start = 21.dp, bottom = bottom), horizontalArrangement = Arrangement.spacedBy(11.dp)) {
-        GlassIconButton(Glyphs.Scan, "Scanner un code-barres", onClick = { nav.navigate(R.SCAN) }, shape = RoundedCornerShape(14.dp))
+        GlassIconButton(Glyphs.Scan, stringResource(AppR.string.add_scan), onClick = { nav.navigate(R.SCAN) }, shape = RoundedCornerShape(14.dp))
         if (route == R.WISH) {
-            GlassIconButton(Glyphs.Plus, "Ajouter à la wishlist", onClick = { nav.edit(vm, Disc(wishlist = true)) })
+            GlassIconButton(Glyphs.Plus, stringResource(AppR.string.add_to_wishlist), onClick = { nav.edit(vm, Disc(wishlist = true)) })
         } else Box {
             var adding by remember { mutableStateOf(false) }
-            GlassIconButton(Glyphs.Plus, "Ajouter un disque", onClick = { adding = true })
+            GlassIconButton(Glyphs.Plus, stringResource(AppR.string.add_disc), onClick = { adding = true })
             AddChoices(adding, { adding = false }, vm, nav)
         }
     }

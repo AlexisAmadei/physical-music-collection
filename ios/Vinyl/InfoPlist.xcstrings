@@ -1,0 +1,23 @@
+{
+  "sourceLanguage" : "fr",
+  "strings" : {
+    "NSCameraUsageDescription" : {
+      "comment" : "Camera permission prompt, shown by the OS in the device or per-app language (not the in-app switch).",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vinyl uses the camera to scan the barcodes of your discs."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vinyl utilise l’appareil photo pour scanner le code-barres de tes disques."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

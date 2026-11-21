@@ -48,9 +48,12 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import dev.kiwi.vinyl.R as AppR
 import dev.kiwi.vinyl.data.Price
 import kotlin.math.exp
 import kotlin.math.hypot
@@ -132,12 +135,12 @@ fun ProfileCard(name: String, value: Long, discs: Int, onEditName: () -> Unit, m
                         .weight(1f, fill = false)
                         .heightIn(min = 44.dp)
                         .clip(RoundedCornerShape(10.dp))
-                        .clickable(onClickLabel = "Modifier ton nom", role = Role.Button, onClick = onEditName)
+                        .clickable(onClickLabel = stringResource(AppR.string.profile_name_edit), role = Role.Button, onClick = onEditName)
                         .padding(horizontal = 6.dp),
                     horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        name.ifEmpty { "Ton nom" }, Modifier.weight(1f, fill = false),
+                        name.ifEmpty { stringResource(AppR.string.profile_name_placeholder) }, Modifier.weight(1f, fill = false),
                         style = Type.Title.copy(shadow = Engraved), color = if (name.isEmpty()) CardMuted else CardInk,
                         maxLines = 1, overflow = TextOverflow.Ellipsis,
                     )
@@ -148,11 +151,11 @@ fun ProfileCard(name: String, value: Long, discs: Int, onEditName: () -> Unit, m
             Spacer(Modifier.weight(1f))
             Row(Modifier.padding(start = 6.dp), verticalAlignment = Alignment.Bottom) {
                 Column(Modifier.weight(1f)) {
-                    Text("Valeur de la collection", style = Type.Label.copy(shadow = Engraved), color = CardMuted)
-                    Text(Price.format(value), style = Type.Display.copy(shadow = Engraved), color = CardInk, maxLines = 1)
+                    Text(stringResource(AppR.string.profile_collection_value), style = Type.Label.copy(shadow = Engraved), color = CardMuted)
+                    Text(Price.format(value, currentLanguage()), style = Type.Display.copy(shadow = Engraved), color = CardInk, maxLines = 1)
                 }
                 Text(
-                    if (discs <= 1) "$discs disque" else "$discs disques", Modifier.padding(start = 8.dp, end = 6.dp, bottom = 5.dp),
+                    pluralStringResource(AppR.plurals.disc_count, discs, discs), Modifier.padding(start = 8.dp, end = 6.dp, bottom = 5.dp),
                     style = Type.Body.copy(shadow = Engraved), color = CardInk,
                 )
             }

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="language_switch">Langue</string>
+
+    <!-- Shared -->
+    <string name="ok">OK</string>
+    <string name="empty_title">Rien ici pour l’instant.</string>
+    <string name="add_scan">Scanner un code-barres</string>
+    <string name="add_search">Rechercher un album</string>
+    <string name="add_manual">Saisie manuelle</string>
+
+    <!-- BEGIN #25: tabs, Home, Collection, Wishlist, disc card, enum labels -->
+    <string name="tab_profile">Profil</string>
+    <string name="tab_wishlist">Wishlist</string>
+    <string name="tab_collection">Collection</string>
+    <string name="tab_search">Rechercher</string>
+    <string name="tab_home">Accueil</string>
+    <string name="add_disc">Ajouter un disque</string>
+    <string name="add_to_wishlist">Ajouter à la wishlist</string>
+    <string name="home_welcome">Bienvenue à la maison...</string>
+    <string name="collection_title">Ma collection</string>
+    <string name="wishlist_title">Ma wishlist</string>
+    <string name="wishlist_empty_hint">Ajoute les disques que tu cherches.</string>
+    <string name="sort_added">Date d’ajout</string>
+    <string name="sort_year">Année</string>
+    <string name="disc_untitled">Sans titre</string>
+    <string name="disc_flip">Retourner</string>
+    <string name="disc_edit">Modifier le disque</string>
+    <string name="disc_seen_at">Vu à %1$s</string>
+    <string name="disc_paid">Payé %1$s</string>
+    <string name="disc_added_on">Ajouté le %1$s</string>
+    <string name="disc_a11y_vinyl_color">Vinyle couleur %1$s</string>
+    <string name="wheel_next">Disque suivant</string>
+    <string name="wheel_previous">Disque précédent</string>
+    <string name="rating_of_five">Note : %1$d sur 5</string>
+    <string name="rating_none">Non noté</string>
+    <!-- END #25 -->
+
+    <!-- Profile -->
+    <string name="profile_title">MON PROFIL</string>
+    <string name="profile_name_placeholder">Ton nom</string>
+    <string name="profile_name_edit">Modifier ton nom</string>
+    <string name="profile_collection_value">Valeur de la collection</string>
+    <string name="profile_empty_hint">Scanne un code-barres ou cherche un album pour commencer.</string>
+    <string name="profile_empty_action">Ajouter mon premier disque</string>
+    <string name="profile_by_format">Par format</string>
+    <string name="format_cd">CD</string>
+    <string name="format_vinyl">Vinyle</string>
+    <!-- French: 0 and 1 are singular. "many" is the CLDR category for round millions. -->
+    <plurals name="disc_count">
+        <item quantity="one">%d disque</item>
+        <item quantity="many">%d disques</item>
+        <item quantity="other">%d disques</item>
+    </plurals>
+    <plurals name="discs_without_price">
+        <item quantity="one">%d disque sans prix</item>
+        <item quantity="many">%d disques sans prix</item>
+        <item quantity="other">%d disques sans prix</item>
+    </plurals>
+
+    <!-- ===== Search, Scan and add/edit form (#26) ===== -->
+    <string name="search_not_found">Code-barres %1$s introuvable. Cherche par nom.</string>
+    <string name="search_hint">Tu cherches quelque chose ?</string>
+    <string name="search_my_discs">Mes disques</string>
+    <string name="search_catalog">Chercher dans le catalogue</string>
+    <string name="search_searching">Recherche…</string>
+    <string name="search_add_manually">Ajouter à la main</string>
+    <string name="scan_enter_manually">Saisie manuelle</string>
+    <string name="scan_camera_needed">Accès à l’appareil photo requis</string>
+    <string name="scan_looking_up">Recherche de %1$s…</string>
+    <string name="form_add_title">Ajouter un disque</string>
+    <string name="form_edit_title">Modifier le disque</string>
+    <string name="form_title">Titre</string>
+    <string name="form_artist">Artiste</string>
+    <string name="form_year">Année</string>
+    <string name="form_barcode">Code-barres</string>
+    <string name="form_comment">Commentaire</string>
+    <string name="form_vinyl_color">Vinyle couleur</string>
+    <string name="form_speed">Vitesse</string>
+    <string name="speed_rpm">%1$d tr/min</string>
+    <string name="form_rate">Noter %1$d</string>
+    <string name="form_in_wishlist">Dans la wishlist</string>
+    <string name="form_seen_price">Prix vu</string>
+    <string name="form_paid_price">Prix payé</string>
+    <string name="form_price_example">Exemple : 12,50</string>
+    <string name="form_save">Enregistrer</string>
+    <string name="form_delete">Supprimer</string>
+    <string name="vinyl_color_red">Rouge</string>
+    <string name="vinyl_color_orange">Orange</string>
+    <string name="vinyl_color_yellow">Jaune</string>
+    <string name="vinyl_color_green">Vert</string>
+    <string name="vinyl_color_blue">Bleu</string>
+    <string name="vinyl_color_purple">Violet</string>
+    <string name="vinyl_color_pink">Rose</string>
+    <string name="vinyl_color_white">Blanc</string>
+    <string name="vinyl_color_clear">Transparent</string>
+    <!-- ===== end #26 ===== -->
+</resources>

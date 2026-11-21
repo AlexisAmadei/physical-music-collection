@@ -17,7 +17,7 @@ The color of a vinyl Disc's wax, picked from a short fixed list of solid colors 
 _Avoid_: Colour, variant
 
 **Speed**:
-The RPM a vinyl Disc plays at: 33 or 45, nothing else. Optional and unset by default; existing Discs and Catalog results stay unset. Tapping the selected value in the form clears it. Kept but hidden if the Disc's Format is CD. Shown on the Disc detail as "33 tr/min" or "45 tr/min", only for a vinyl Disc with a Speed set.
+The RPM a vinyl Disc plays at: 33 or 45, nothing else. Optional and unset by default; existing Discs and Catalog results stay unset. Tapping the selected value in the form clears it. Kept but hidden if the Disc's Format is CD. Shown on the Disc detail only for a vinyl Disc with a Speed set, as "33 tr/min" or "45 tr/min" in French and "33 rpm" or "45 rpm" in English.
 _Avoid_: RPM, size
 
 **Color band**:
@@ -34,6 +34,24 @@ _Avoid_: Wantlist
 
 **Draft**:
 A Disc being added or edited, not yet saved.
+
+## Language
+
+The app is available in English and French. Domain terms keep the same meaning in both; only the words shown to the user change. Both platforms use the mapping below.
+
+| English | French |
+| --- | --- |
+| Disc | Disque |
+| Collection | Collection |
+| Wishlist | Wishlist |
+| Profile | Profil |
+| Vinyl color | Couleur vinyle |
+| Speed | Vitesse ("33 tr/min") in French, "33 rpm" in English |
+| Format | Format |
+
+**Language**:
+The language the app is shown in: English or French. It follows the device language by default, with English as the fallback when the device language is neither. Once the user picks a Language in the Profile view, that choice overrides the device language.
+_Avoid_: Locale, translation
 
 ## Prices
 
