@@ -88,6 +88,8 @@ struct ProfileScreen: View {
                     ValueByFormat(value: app.collectionValue)
                         .padding(.top, 35)
                 }
+                LanguagePicker(language: app.language)
+                    .padding(.top, 35)
             }
             .sheet(isPresented: $editingName) {
                 ProfileNameSheet(current: app.profileName) { name in

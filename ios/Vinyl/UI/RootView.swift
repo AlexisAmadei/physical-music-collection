@@ -19,6 +19,8 @@ struct RootView: View {
         .overlay {
             if app.showsChrome { Chrome(app: app) }
         }
+        // Every screen, sheet and menu reads its text in the current Language; switching applies at once.
+        .environment(\.locale, app.language.locale)
     }
 
     @ViewBuilder private var main: some View {

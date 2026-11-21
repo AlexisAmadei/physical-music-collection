@@ -89,7 +89,7 @@ struct ProfileCard: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 Group {
-                    if discs <= 1 { Text("\(discs) disque") } else { Text("\(discs) disques") }
+                    Text("\(discs) disques")
                 }
                 .textStyle(Typography.body)
                 .foregroundStyle(Self.ink)

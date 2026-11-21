@@ -4,19 +4,87 @@
     "€" : {
 
     },
-    "%lld disque" : {
-
-    },
     "%lld disques" : {
-
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld disc"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld discs"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld disque"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld disques"
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "%lld disques sans prix" : {
-
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld disc without a price"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld discs without a price"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld disque sans prix"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld disques sans prix"
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "%lld tr/min" : {
-
-    },
-    "1 disque sans prix" : {
 
     },
     "Accueil" : {
@@ -35,7 +103,14 @@
 
     },
     "Ajouter mon premier disque" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add your first disc"
+          }
+        }
+      }
     },
     "Ajouter un disque" : {
 
@@ -119,10 +194,24 @@
 
     },
     "Modifier ton nom" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit your name"
+          }
+        }
+      }
     },
     "MON PROFIL" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MY PROFILE"
+          }
+        }
+      }
     },
     "My discs" : {
 
@@ -140,7 +229,14 @@
 
     },
     "Par format" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "By format"
+          }
+        }
+      }
     },
     "Payé %@" : {
 
@@ -161,13 +257,27 @@
 
     },
     "Rechercher un album" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search for an album"
+          }
+        }
+      }
     },
     "Retourner" : {
 
     },
     "Rien ici pour l’instant." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing here yet."
+          }
+        }
+      }
     },
     "Rose" : {
 
@@ -176,7 +286,14 @@
 
     },
     "Saisie manuelle" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manual entry"
+          }
+        }
+      }
     },
     "Sans titre" : {
 
@@ -185,10 +302,24 @@
 
     },
     "Scanne un code-barres ou cherche un album pour commencer." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scan a barcode or search for an album to get started."
+          }
+        }
+      }
     },
     "Scanner un code-barres" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scan a barcode"
+          }
+        }
+      }
     },
     "Search catalog" : {
 
@@ -200,13 +331,27 @@
 
     },
     "Ton nom" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your name"
+          }
+        }
+      }
     },
     "Transparent" : {
 
     },
     "Valeur de la collection" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collection value"
+          }
+        }
+      }
     },
     "Vert" : {
 
@@ -226,6 +371,22 @@
     "Violet" : {
 
     },
+    "valueByFormat.vinyl" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vinyl"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vinyle"
+          }
+        }
+      }
+    },
     "Vitesse" : {
 
     },
@@ -240,6 +401,16 @@
     },
     "Year" : {
 
+    },
+    "Langue" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Language"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
