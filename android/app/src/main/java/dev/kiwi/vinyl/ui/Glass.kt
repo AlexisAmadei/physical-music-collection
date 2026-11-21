@@ -65,9 +65,9 @@ private fun Modifier.glass(shape: Shape): Modifier = this
     .background(GlassFill)
     .border(1.dp, GlassRim, shape)
 
-/** 48 dp round glass button; shrinks to 0.96 while pressed. */
+/** 48 dp glass button (round unless `shape` says otherwise); shrinks to 0.96 while pressed. */
 @Composable
-fun GlassIconButton(icon: ImageVector, label: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun GlassIconButton(icon: ImageVector, label: String, onClick: () -> Unit, modifier: Modifier = Modifier, shape: Shape = CircleShape) {
     val src = remember { MutableInteractionSource() }
     val pressed by src.collectIsPressedAsState()
     val scale by animateFloatAsState(if (pressed) 0.96f else 1f, tween(150), label = "press")
@@ -75,7 +75,7 @@ fun GlassIconButton(icon: ImageVector, label: String, onClick: () -> Unit, modif
         modifier
             .size(48.dp)
             .graphicsLayer { scaleX = scale; scaleY = scale }
-            .glass(CircleShape)
+            .glass(shape)
             .clickable(src, indication = null, role = Role.Button, onClick = onClick)
             .semantics { contentDescription = label },
         contentAlignment = Alignment.Center,

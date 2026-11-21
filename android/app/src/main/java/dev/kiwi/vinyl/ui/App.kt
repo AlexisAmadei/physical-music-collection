@@ -2,6 +2,7 @@ package dev.kiwi.vinyl.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,7 +53,7 @@ private fun BoxScope.Chrome(route: String?, vm: AppVm, nav: NavHostController) {
         Modifier.align(Alignment.BottomEnd).padding(end = 14.dp, bottom = bottom + 50.dp),
     )
     Row(Modifier.align(Alignment.BottomStart).padding(start = 21.dp, bottom = bottom), horizontalArrangement = Arrangement.spacedBy(11.dp)) {
-        GlassIconButton(Glyphs.Scan, "Scanner un code-barres", onClick = { nav.navigate(R.SCAN) })
+        GlassIconButton(Glyphs.Scan, "Scanner un code-barres", onClick = { nav.navigate(R.SCAN) }, shape = RoundedCornerShape(14.dp))
         if (route == R.WISH) {
             GlassIconButton(Glyphs.Plus, "Ajouter à la wishlist", onClick = { nav.edit(vm, Disc(wishlist = true)) })
         } else Box {

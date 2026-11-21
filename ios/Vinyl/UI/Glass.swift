@@ -1,27 +1,29 @@
 import SwiftUI
 
-/// 48 pt round glass button with a 44 pt glyph (Android `GlassIconButton`).
+/// 48 pt glass button with a 44 pt glyph, round unless `shape` says otherwise (Android `GlassIconButton`).
 struct GlassIconButton: View {
     let glyph: Glyph
     let label: LocalizedStringKey
+    var shape: AnyShape = AnyShape(.circle)
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) { GlassIcon(glyph: glyph) }
+        Button(action: action) { GlassIcon(glyph: glyph, shape: shape) }
             .buttonStyle(.plain)
-            .glassEffect(.regular.interactive(), in: .circle)
+            .glassEffect(.regular.interactive(), in: shape)
             .accessibilityLabel(label)
     }
 }
 
-/// The glyph inside a round glass button, on its 48 pt hit area.
+/// The glyph inside a glass button, on its 48 pt hit area.
 struct GlassIcon: View {
     let glyph: Glyph
+    var shape: AnyShape = AnyShape(.circle)
 
     var body: some View {
         GlyphView(glyph: glyph)
             .frame(width: 48, height: 48)
-            .contentShape(.circle)
+            .contentShape(shape)
     }
 }
 

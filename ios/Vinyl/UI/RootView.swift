@@ -45,7 +45,7 @@ private struct Chrome: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                 GlassEffectContainer(spacing: 11) {
                     HStack(spacing: 11) {
-                        GlassIconButton(glyph: Glyphs.scan, label: "Scanner un code-barres") { app.scan() }
+                        GlassIconButton(glyph: Glyphs.scan, label: "Scanner un code-barres", shape: AnyShape(.rect(cornerRadius: 14))) { app.scan() }
                         plus
                     }
                 }
