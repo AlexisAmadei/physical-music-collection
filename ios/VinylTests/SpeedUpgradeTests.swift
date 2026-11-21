@@ -51,11 +51,11 @@ struct SpeedUpgradeTests {
 
         #expect(discs.map(\.title) == ["Kid A", "OK Computer"])
         #expect(discs.map(\.speed) == [nil, nil])
-        #expect(discs.map(\.speedLabel) == [nil, nil])
+        #expect(discs.map { $0.speedLabel(in: Language.pinned(.french)) } == [nil, nil])
 
         var draft = Draft(discs[0])
         draft.speed = .rpm33
         store.upsert(draft)
-        #expect(store.list(wishlist: false).first { $0.title == "Kid A" }?.speedLabel == "33 tr/min")
+        #expect(store.list(wishlist: false).first { $0.title == "Kid A" }?.speedLabel(in: Language.pinned(.french)) == "33 tr/min")
     }
 }

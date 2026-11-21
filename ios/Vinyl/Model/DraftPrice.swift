@@ -23,13 +23,15 @@ extension Draft {
     }
 
     /// The label of the one price field: "Prix vu" in the Wishlist, "Prix payé" in the Collection.
-    var priceLabel: String {
-        wishlist ? String(localized: "Prix vu") : String(localized: "Prix payé")
+    @MainActor
+    func priceLabel(in language: Language) -> String {
+        wishlist ? language.string("Prix vu") : language.string("Prix payé")
     }
 
     /// Shown under the price field while its text is malformed; nil when the text is a price or blank.
-    var priceHint: String? {
-        Price.isValid(priceText) ? nil : String(localized: "Exemple : 12,50")
+    @MainActor
+    func priceHint(in language: Language) -> String? {
+        Price.isValid(priceText) ? nil : language.string("Exemple : 12,50")
     }
 
     /// The "In wishlist" switch. Leaving the Wishlist (bought) suggests the Seen price as the Paid price,

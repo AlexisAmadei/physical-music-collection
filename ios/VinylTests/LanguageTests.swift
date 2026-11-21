@@ -116,9 +116,10 @@ struct LanguageTests {
         #expect(language.string("Ton nom") == "Your name")
         #expect(language.string("Valeur de la collection") == "Collection value")
         #expect(language.string("Par format") == "By format")
-        #expect(language.string("valueByFormat.vinyl") == "Vinyl")
+        // The Profile's "By format" rows read the Format's own label, so there is no view-only key for it.
+        #expect(Format.vinyl.label(in: language) == "Vinyl")
         language.select(.french)
-        #expect(language.string("valueByFormat.vinyl") == "Vinyle")
+        #expect(Format.vinyl.label(in: language) == "Vinyle")
     }
 
     // MARK: Through the app model
