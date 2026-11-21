@@ -3,6 +3,7 @@
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 F=app/build.gradle.kts
+P=ios/Vinyl.xcodeproj/project.pbxproj
 [ -z "$(git status --porcelain)" ] || { echo "Dirty tree. Commit first."; exit 1; }
 [ "$(git branch --show-current)" = main ] || { echo "Not on main."; exit 1; }
 
@@ -24,8 +25,10 @@ grep -q '[^[:space:]]' "$notes_file" || { echo "CHANGELOG.md has no Unreleased e
 awk -v h="## v$new - $(date +%F)" '{print} /^## Unreleased$/{print ""; print h}' CHANGELOG.md >CHANGELOG.tmp && mv CHANGELOG.tmp CHANGELOG.md
 
 sed -i.bak -E "s/versionName = \"[0-9.]+\"/versionName = \"$new\"/; s/versionCode = [0-9]+/versionCode = $code/" $F && rm $F.bak
+# iOS: same version as Android (all targets share MARKETING_VERSION).
+sed -i.bak -E "s/MARKETING_VERSION = [0-9.]+;/MARKETING_VERSION = $new;/" $P && rm $P.bak
 git commit -qam "Release v$new"
 git tag "v$new"
 git push -q origin main "v$new"
 gh release create "v$new" --notes-file "$notes_file" --title "v$new"
-echo "Released v$new (code $code). CI builds APK."
+echo "Released v$new (code $code). CI builds APK and iOS."
