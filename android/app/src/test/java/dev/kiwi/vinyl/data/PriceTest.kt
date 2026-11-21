@@ -28,11 +28,37 @@ class PriceTest {
     }
 
     @Test fun formatsFrench() {
-        assertEquals("25 €", Price.format(2500))
-        assertEquals("12,50 €", Price.format(1250))
-        assertEquals("0,05 €", Price.format(5))
-        assertEquals("1 240 €", Price.format(124000))
-        assertEquals("0 €", Price.format(0))
+        assertEquals("25 €", Price.format(2500, Language.FR))
+        assertEquals("12,50 €", Price.format(1250, Language.FR))
+        assertEquals("0,05 €", Price.format(5, Language.FR))
+        assertEquals("1 240 €", Price.format(124000, Language.FR))
+        assertEquals("0 €", Price.format(0, Language.FR))
+    }
+
+    @Test fun formatsFrenchBytesWithNarrowNoBreakGroupingAndNoBreakBeforeEuro() {
+        assertEquals("1 240,50 €", Price.format(124050, Language.FR))
+        assertEquals("1 234 567 €", Price.format(123456700, Language.FR))
+    }
+
+    @Test fun formatsEnglish() {
+        assertEquals("€25", Price.format(2500, Language.EN))
+        assertEquals("€12.50", Price.format(1250, Language.EN))
+        assertEquals("€0.05", Price.format(5, Language.EN))
+        assertEquals("€1,240", Price.format(124000, Language.EN))
+        assertEquals("€1,240.50", Price.format(124050, Language.EN))
+        assertEquals("€1,234,567", Price.format(123456700, Language.EN))
+        assertEquals("€0", Price.format(0, Language.EN))
+    }
+
+    @Test fun formatFollowsTheLanguageNotTheDeviceRegion() {
+        val saved = java.util.Locale.getDefault()
+        try {
+            java.util.Locale.setDefault(java.util.Locale.GERMANY)
+            assertEquals("€1,240.50", Price.format(124050, Language.EN))
+            assertEquals("1 240,50 €", Price.format(124050, Language.FR))
+        } finally {
+            java.util.Locale.setDefault(saved)
+        }
     }
 
     @Test fun inputRoundTrips() {

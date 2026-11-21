@@ -1,12 +1,17 @@
 package dev.kiwi.vinyl.data
 
 import android.content.Context
+import androidx.annotation.StringRes
+import dev.kiwi.vinyl.R
 import androidx.room.*
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.flow.Flow
 
-enum class Format { CD, VINYL }
+enum class Format(@StringRes val labelRes: Int) {
+    CD(R.string.format_cd),
+    VINYL(R.string.format_vinyl),
+}
 
 @Entity
 data class Disc(

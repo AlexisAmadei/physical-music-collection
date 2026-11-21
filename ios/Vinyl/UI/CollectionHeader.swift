@@ -24,7 +24,7 @@ private struct FormatChips: View {
     var body: some View {
         HStack(spacing: 4) {
             chip(.cd, "CD")
-            chip(.vinyl, "Vinyle")
+            chip(.vinyl, "collection.filter.vinyl")
         }
     }
 

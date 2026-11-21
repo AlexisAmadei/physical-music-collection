@@ -13,6 +13,33 @@
     <string name="add_search">Search for an album</string>
     <string name="add_manual">Manual entry</string>
 
+    <!-- BEGIN #25: tabs, Home, Collection, Wishlist, disc card, enum labels -->
+    <string name="tab_profile">Profile</string>
+    <string name="tab_wishlist">Wishlist</string>
+    <string name="tab_collection">Collection</string>
+    <string name="tab_search">Search</string>
+    <string name="tab_home">Home</string>
+    <string name="add_disc">Add a disc</string>
+    <string name="add_to_wishlist">Add to wishlist</string>
+    <string name="home_welcome">Welcome home...</string>
+    <string name="collection_title">My collection</string>
+    <string name="wishlist_title">My wishlist</string>
+    <string name="wishlist_empty_hint">Add the discs you are looking for.</string>
+    <string name="sort_added">Date added</string>
+    <string name="sort_year">Year</string>
+    <string name="disc_untitled">Untitled</string>
+    <string name="disc_flip">Flip</string>
+    <string name="disc_edit">Edit disc</string>
+    <string name="disc_seen_at">Seen at %1$s</string>
+    <string name="disc_paid">Paid %1$s</string>
+    <string name="disc_added_on">Added on %1$s</string>
+    <string name="disc_a11y_vinyl_color">%1$s vinyl</string>
+    <string name="wheel_next">Next disc</string>
+    <string name="wheel_previous">Previous disc</string>
+    <string name="rating_of_five">Rating: %1$d out of 5</string>
+    <string name="rating_none">Not rated</string>
+    <!-- END #25 -->
+
     <!-- Profile -->
     <string name="profile_title">MY PROFILE</string>
     <string name="profile_name_placeholder">Your name</string>
@@ -31,4 +58,42 @@
         <item quantity="one">%d disc without a price</item>
         <item quantity="other">%d discs without a price</item>
     </plurals>
+
+    <!-- ===== Search, Scan and add/edit form (#26) ===== -->
+    <string name="search_not_found">Barcode %1$s not found. Search by name.</string>
+    <string name="search_hint">Looking for something?</string>
+    <string name="search_my_discs">My discs</string>
+    <string name="search_catalog">Search catalog</string>
+    <string name="search_searching">Searching…</string>
+    <string name="search_add_manually">Add manually</string>
+    <string name="scan_enter_manually">Enter manually</string>
+    <string name="scan_camera_needed">Camera permission needed</string>
+    <string name="scan_looking_up">Looking up %1$s…</string>
+    <string name="form_add_title">Add disc</string>
+    <string name="form_edit_title">Edit disc</string>
+    <string name="form_title">Title</string>
+    <string name="form_artist">Artist</string>
+    <string name="form_year">Year</string>
+    <string name="form_barcode">Barcode</string>
+    <string name="form_comment">Comment</string>
+    <string name="form_vinyl_color">Colored vinyl</string>
+    <string name="form_speed">Speed</string>
+    <string name="speed_rpm">%1$d rpm</string>
+    <string name="form_rate">Rate %1$d</string>
+    <string name="form_in_wishlist">In wishlist</string>
+    <string name="form_seen_price">Seen price</string>
+    <string name="form_paid_price">Paid price</string>
+    <string name="form_price_example">Example: 12.50</string>
+    <string name="form_save">Save</string>
+    <string name="form_delete">Delete</string>
+    <string name="vinyl_color_red">Red</string>
+    <string name="vinyl_color_orange">Orange</string>
+    <string name="vinyl_color_yellow">Yellow</string>
+    <string name="vinyl_color_green">Green</string>
+    <string name="vinyl_color_blue">Blue</string>
+    <string name="vinyl_color_purple">Purple</string>
+    <string name="vinyl_color_pink">Pink</string>
+    <string name="vinyl_color_white">White</string>
+    <string name="vinyl_color_clear">Clear</string>
+    <!-- ===== end #26 ===== -->
 </resources>
