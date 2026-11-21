@@ -390,8 +390,13 @@ private fun DiscRow(d: Disc, onClick: () -> Unit) = ListItem(
 /** "Vinyle couleur" switch; when on, a row of 24 dp dots, the picked one ringed. Off = black (null). */
 @Composable
 private fun VinylColorField(color: VinylColor?, onChange: (VinylColor?) -> Unit) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Switch(color != null, { onChange(if (it) VinylColor.RED else null) }); Text("  Vinyle couleur")
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text("Vinyle couleur")
+        Switch(color != null, { onChange(if (it) VinylColor.RED else null) })
     }
     if (color == null) return
     Row(
@@ -462,12 +467,17 @@ fun EditScreen(vm: AppVm, nav: NavHostController) {
             }
         }
         OutlinedTextField(d.comment, { d = d.copy(comment = it) }, Modifier.fillMaxWidth(), label = { Text("Comment") })
-        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+        ) {
+            Text("In wishlist")
             Switch(d.wishlist, {
                 // Bought: suggest the seen price as the paid price, still editable.
                 if (!it && paid.isBlank() && Price.isValid(seen)) paid = seen
                 d = d.copy(wishlist = it)
-            }); Text("  In wishlist")
+            })
         }
         // One field at a time: Seen price in the Wishlist, Paid price in the Collection.
         val price = if (d.wishlist) seen else paid
@@ -478,12 +488,14 @@ fun EditScreen(vm: AppVm, nav: NavHostController) {
             supportingText = { if (!Price.isValid(price)) Text("Exemple : 12,50") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
         )
-        Button(enabled = d.title.isNotBlank() && Price.isValid(price), onClick = {
-            // The hidden field cannot be fixed from here: keep its stored value if it is malformed.
-            fun cents(text: String, stored: Long?) = if (Price.isValid(text)) Price.parse(text) else stored
-            vm.save(d.copy(seenPrice = cents(seen, d.seenPrice), paidPrice = cents(paid, d.paidPrice)))
-            nav.popBackStack()
-        }) { Text("Save") }
-        if (d.id != 0L) OutlinedButton({ vm.delete(d); nav.popBackStack() }) { Text("Delete") }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(enabled = d.title.isNotBlank() && Price.isValid(price), onClick = {
+                // The hidden field cannot be fixed from here: keep its stored value if it is malformed.
+                fun cents(text: String, stored: Long?) = if (Price.isValid(text)) Price.parse(text) else stored
+                vm.save(d.copy(seenPrice = cents(seen, d.seenPrice), paidPrice = cents(paid, d.paidPrice)))
+                nav.popBackStack()
+            }) { Text("Save") }
+            if (d.id != 0L) OutlinedButton({ vm.delete(d); nav.popBackStack() }) { Text("Delete") }
+        }
     }
 }
