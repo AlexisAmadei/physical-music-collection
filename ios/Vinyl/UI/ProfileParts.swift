@@ -11,14 +11,12 @@ struct ValueByFormat: View {
                 .foregroundStyle(Palette.muted)
                 .padding(.bottom, 4)
             row("CD", value.cd)
-            row("Vinyle", value.vinyl)
+            row("valueByFormat.vinyl", value.vinyl)
             if value.unpriced > 0 {
-                Group {
-                    if value.unpriced == 1 { Text("1 disque sans prix") } else { Text("\(value.unpriced) disques sans prix") }
-                }
-                .textStyle(Typography.body)
-                .foregroundStyle(Palette.muted)
-                .padding(.top, 12)
+                Text("\(value.unpriced) disques sans prix")
+                    .textStyle(Typography.body)
+                    .foregroundStyle(Palette.muted)
+                    .padding(.top, 12)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -33,6 +31,18 @@ struct ValueByFormat: View {
         .textStyle(Typography.body)
         .foregroundStyle(Palette.ink)
         .accessibilityElement(children: .combine)
+    }
+}
+
+/// "English | Français": the Language switch. Each name is in its own language and never translated.
+struct LanguagePicker: View {
+    let language: Language
+
+    var body: some View {
+        Picker("Langue", selection: Binding(get: { language.current }, set: { language.select($0) })) {
+            ForEach(AppLanguage.allCases) { Text(verbatim: $0.nativeName).tag($0) }
+        }
+        .pickerStyle(.segmented)
     }
 }
 
