@@ -4,6 +4,12 @@
 
 ### Added
 - Android and iOS: the app is available in English and French. It follows the device Language by default (English when the device uses another one), and the user can pick a Language in the Profile view, which overrides the device Language. The Speed is shown as "33 tr/min" in French and "33 rpm" in English; "Wishlist" stays "Wishlist" in both.
+- Android: a Language picked in the system Settings (per-app language) is picked up by the app, and the Profile view shows the Language the app is actually displayed in.
+- iOS: the app name shown under the icon is translated in French.
+
+### Changed
+- Android and iOS: prices and dates follow the Language: "1 240,50 €" and "3 nov. 2024" in French, "€1,240.50" and "Nov 3, 2024" in English. The Seen price and Paid price fields use the Language's decimal separator ("12,50" in French, "12.50" in English).
+- iOS: a few English wordings and formats now read exactly like Android.
 
 ## v1.2.1 - 2026-11-21
 
