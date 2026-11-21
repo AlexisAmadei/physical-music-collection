@@ -7,7 +7,7 @@ struct DraftPriceTests {
     let app: AppModel
 
     init() throws {
-        app = try AppModel(container: DiscStore.inMemoryContainer())
+        app = try AppModel.pinned()
     }
 
     /// Saves a Wishlist Disc seen at `price` and opens its Draft.
@@ -93,20 +93,32 @@ struct DraftPriceTests {
 
     @Test func thePriceFieldIsPrixVuInTheWishlistAndPrixPayeInTheCollection() {
         app.newDraft(wishlist: true)
-        #expect(app.draft.priceLabel == "Prix vu")
+        #expect(app.draft.priceLabel(in: app.language) == "Prix vu")
 
         app.draft.inWishlist = false
-        #expect(app.draft.priceLabel == "Prix payé")
+        #expect(app.draft.priceLabel(in: app.language) == "Prix payé")
+    }
+
+    @Test func thePriceFieldAndItsExampleSpeakEnglishInEnglish() {
+        app.language.select(.english)
+        app.newDraft(wishlist: true)
+        #expect(app.draft.priceLabel(in: app.language) == "Seen price")
+
+        app.draft.inWishlist = false
+        #expect(app.draft.priceLabel(in: app.language) == "Paid price")
+
+        app.draft.priceText = "12,"
+        #expect(app.draft.priceHint(in: app.language) == "Example: 12.50")
     }
 
     @Test func theExampleShowsUnderAMalformedPriceOnly() {
         app.newDraft()
-        #expect(app.draft.priceHint == nil)
+        #expect(app.draft.priceHint(in: app.language) == nil)
 
         app.draft.priceText = "12,"
-        #expect(app.draft.priceHint == "Exemple : 12,50")
+        #expect(app.draft.priceHint(in: app.language) == "Exemple : 12,50")
 
         app.draft.priceText = "12,5"
-        #expect(app.draft.priceHint == nil)
+        #expect(app.draft.priceHint(in: app.language) == nil)
     }
 }

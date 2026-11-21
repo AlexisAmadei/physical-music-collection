@@ -29,7 +29,7 @@ struct SearchScreen: View {
                             Cover(url: disc.coverURL)
                                 .colorBand(disc.shownVinylColor)
                                 .accessibilityElement()
-                                .accessibilityLabel(disc.coverLabel)
+                                .accessibilityLabel(disc.coverLabel(in: app.language))
                         }
                     }
                     .buttonStyle(.plain)

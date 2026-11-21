@@ -53,14 +53,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.kiwi.vinyl.R as AppR
+import dev.kiwi.vinyl.data.Dates
 import dev.kiwi.vinyl.data.Disc
 import dev.kiwi.vinyl.data.Price
 import dev.kiwi.vinyl.data.shownVinylColor
 import dev.kiwi.vinyl.data.shownSpeed
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import kotlin.random.Random
 
 /** cubic-bezier(.3, 1.45, .55, 1): light overshoot (~5 %) at the end of the flip. */
@@ -125,9 +122,10 @@ fun FlipFaces(
 private fun BackFace(d: Disc, onTap: () -> Unit, onEdit: () -> Unit, large: Boolean) {
     val pad = if (large) 18.dp else 14.dp
     val star = if (large) 13.dp else 12.dp
+    val language = currentLanguage()
     // Seen price in the Wishlist, Paid price in the Collection; the other one stays hidden.
-    val price = if (d.wishlist) d.seenPrice?.let { stringResource(AppR.string.disc_seen_at, Price.format(it)) }
-    else d.paidPrice?.let { stringResource(AppR.string.disc_paid, Price.format(it)) }
+    val price = if (d.wishlist) d.seenPrice?.let { stringResource(AppR.string.disc_seen_at, Price.format(it, language)) }
+    else d.paidPrice?.let { stringResource(AppR.string.disc_paid, Price.format(it, language)) }
     val speed = d.shownSpeed?.let { stringResource(AppR.string.speed_rpm, it.rpm) }
     Box(Modifier.fillMaxSize().clipToBounds().clickable(onClickLabel = stringResource(AppR.string.disc_flip), role = Role.Button, onClick = onTap)) {
         Cover(
@@ -153,7 +151,7 @@ private fun BackFace(d: Disc, onTap: () -> Unit, onEdit: () -> Unit, large: Bool
                 style = Type.Label, color = Palette.Ink,
             )
             speed?.let { Text(it, style = Type.Label, color = Palette.Ink) }
-            Text(stringResource(AppR.string.disc_added_on, addedOn(d.addedAt)), style = Type.Label.copy(fontSize = 11.sp), color = Palette.Ink.copy(alpha = 0.7f))
+            Text(stringResource(AppR.string.disc_added_on, Dates.format(d.addedAt, language)), style = Type.Label.copy(fontSize = 11.sp), color = Palette.Ink.copy(alpha = 0.7f))
             if (price != null) Text(price, style = Type.Label, color = Palette.Ink)
             if (!d.wishlist) StarRating(d.rating, size = star)
         }
@@ -170,9 +168,6 @@ private fun BackFace(d: Disc, onTap: () -> Unit, onEdit: () -> Unit, large: Bool
 internal fun backTitleLines(large: Boolean, hasPrice: Boolean, hasSpeed: Boolean): Int =
     if (large) (if (hasSpeed) 2 else 3)
     else (3 - (if (hasPrice) 1 else 0) - (if (hasSpeed) 1 else 0)).coerceAtLeast(1)
-
-private val DateFmt = DateTimeFormatter.ofPattern("d MMM yyyy", Locale.FRENCH)
-private fun addedOn(ms: Long): String = DateFmt.format(Instant.ofEpochMilli(ms).atZone(ZoneId.systemDefault()))
 
 /** 44 dp glass-look round button (the haze backdrop does not follow a rotated layer, so a plain wash). */
 @Composable

@@ -11,7 +11,7 @@ struct CollectionScreen: View {
             LazyVGrid(columns: columns, alignment: .leading, spacing: 28) {
                 Section {
                     ForEach(app.shownCollection) { disc in
-                        Button { app.open(disc) } label: { CoverCard(disc: disc) }
+                        Button { app.open(disc) } label: { CoverCard(disc: disc, language: app.language) }
                             .buttonStyle(.plain)
                     }
                 } header: {
@@ -44,15 +44,16 @@ struct CollectionScreen: View {
 /// the title only in the Wishlist.
 struct CoverCard: View {
     let disc: Disc
+    let language: Language
 
     var body: some View {
-        let caption = CoverCaption(disc)
+        let caption = CoverCaption(disc, language: language)
         VStack(alignment: .leading, spacing: 0) {
             Cover(url: disc.coverURL)
                 .aspectRatio(176 / 177, contentMode: .fit)
                 .colorBand(disc.shownVinylColor)
                 .accessibilityElement()
-                .accessibilityLabel(disc.coverLabel)
+                .accessibilityLabel(disc.coverLabel(in: language))
             HStack(spacing: 6) {
                 Text(caption.title)
                     .textStyle(Typography.title)

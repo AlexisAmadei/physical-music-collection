@@ -7,7 +7,7 @@ struct DraftVinylColorTests {
     let app: AppModel
 
     init() throws {
-        app = try AppModel(container: DiscStore.inMemoryContainer())
+        app = try AppModel.pinned()
         app.newDraft()
         app.draft.title = "Currents"
     }
@@ -51,21 +51,21 @@ struct DraftVinylColorTests {
         app.draft.artist = "Tame Impala"
         app.draft.year = 2015
         app.saveDraft()
-        #expect(app.collection.first?.coverLabel == "Currents, Tame Impala, Vinyle, 2015")
+        #expect(app.collection.first?.coverLabel(in: app.language) == "Currents, Tame Impala, Vinyle, 2015")
 
         app.edit(try #require(app.collection.first))
         app.draft.coloredVinyl = true
         app.saveDraft()
-        #expect(app.collection.first?.coverLabel == "Currents, Tame Impala, Vinyle couleur rouge, 2015")
+        #expect(app.collection.first?.coverLabel(in: app.language) == "Currents, Tame Impala, Vinyle couleur rouge, 2015")
 
         app.edit(try #require(app.collection.first))
         app.draft.format = .cd
         app.saveDraft()
-        #expect(app.collection.first?.coverLabel == "Currents, Tame Impala, CD, 2015")
+        #expect(app.collection.first?.coverLabel(in: app.language) == "Currents, Tame Impala, CD, 2015")
     }
 
     @Test func coverOfAnUntitledDiscWithNoArtistIsReadSansTitre() {
-        #expect(Disc(Draft(format: .cd)).coverLabel == "Sans titre, CD")
+        #expect(Disc(Draft(format: .cd)).coverLabel(in: app.language) == "Sans titre, CD")
     }
 
     @Test func theVinylColorFieldShowsOnVinylDraftsOnly() {

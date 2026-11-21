@@ -65,7 +65,7 @@ final class InMemoryLanguagePreferences: LanguagePreferences {
 /// Device language until the user picks one in the Profile (English for any non-French device); the pick wins after.
 /// SwiftUI views read `locale` (put in the environment at the root) and get their text from the String Catalog.
 /// Anything that builds text outside a view asks `string(_:)`, which uses `bundle` and `locale`, so it follows the
-/// switch too. Ticket #28 moves the model-layer `String(localized:)` calls here.
+/// switch too. The model layer asks it too, so no other file builds localized text on its own.
 @MainActor
 @Observable
 final class Language {

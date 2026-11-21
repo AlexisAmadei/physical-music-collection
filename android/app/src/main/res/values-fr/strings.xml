@@ -34,16 +34,6 @@
     <string name="wheel_previous">Disque précédent</string>
     <string name="rating_of_five">Note : %1$d sur 5</string>
     <string name="rating_none">Non noté</string>
-    <string name="speed_rpm">%1$d tr/min</string>
-    <string name="vinyl_color_red">Rouge</string>
-    <string name="vinyl_color_orange">Orange</string>
-    <string name="vinyl_color_yellow">Jaune</string>
-    <string name="vinyl_color_green">Vert</string>
-    <string name="vinyl_color_blue">Bleu</string>
-    <string name="vinyl_color_purple">Violet</string>
-    <string name="vinyl_color_pink">Rose</string>
-    <string name="vinyl_color_white">Blanc</string>
-    <string name="vinyl_color_clear">Transparent</string>
     <!-- END #25 -->
 
     <!-- Profile -->
@@ -67,4 +57,42 @@
         <item quantity="many">%d disques sans prix</item>
         <item quantity="other">%d disques sans prix</item>
     </plurals>
+
+    <!-- ===== Search, Scan and add/edit form (#26) ===== -->
+    <string name="search_not_found">Code-barres %1$s introuvable. Cherche par nom.</string>
+    <string name="search_hint">Tu cherches quelque chose ?</string>
+    <string name="search_my_discs">Mes disques</string>
+    <string name="search_catalog">Chercher dans le catalogue</string>
+    <string name="search_searching">Recherche…</string>
+    <string name="search_add_manually">Ajouter à la main</string>
+    <string name="scan_enter_manually">Saisie manuelle</string>
+    <string name="scan_camera_needed">Accès à l’appareil photo requis</string>
+    <string name="scan_looking_up">Recherche de %1$s…</string>
+    <string name="form_add_title">Ajouter un disque</string>
+    <string name="form_edit_title">Modifier le disque</string>
+    <string name="form_title">Titre</string>
+    <string name="form_artist">Artiste</string>
+    <string name="form_year">Année</string>
+    <string name="form_barcode">Code-barres</string>
+    <string name="form_comment">Commentaire</string>
+    <string name="form_vinyl_color">Vinyle couleur</string>
+    <string name="form_speed">Vitesse</string>
+    <string name="speed_rpm">%1$d tr/min</string>
+    <string name="form_rate">Noter %1$d</string>
+    <string name="form_in_wishlist">Dans la wishlist</string>
+    <string name="form_seen_price">Prix vu</string>
+    <string name="form_paid_price">Prix payé</string>
+    <string name="form_price_example">Exemple : 12,50</string>
+    <string name="form_save">Enregistrer</string>
+    <string name="form_delete">Supprimer</string>
+    <string name="vinyl_color_red">Rouge</string>
+    <string name="vinyl_color_orange">Orange</string>
+    <string name="vinyl_color_yellow">Jaune</string>
+    <string name="vinyl_color_green">Vert</string>
+    <string name="vinyl_color_blue">Bleu</string>
+    <string name="vinyl_color_purple">Violet</string>
+    <string name="vinyl_color_pink">Rose</string>
+    <string name="vinyl_color_white">Blanc</string>
+    <string name="vinyl_color_clear">Transparent</string>
+    <!-- ===== end #26 ===== -->
 </resources>

@@ -1,21 +1,19 @@
 package dev.kiwi.vinyl.data
 
-import androidx.annotation.StringRes
-import dev.kiwi.vinyl.R
 import kotlin.math.pow
 
 /** Vinyl color of a vinyl Disc's wax. No value (null) means black. Solid colors only. */
-enum class VinylColor(val argb: Long, @StringRes val labelRes: Int) {
-    RED(0xFFC8242B, R.string.vinyl_color_red),
-    ORANGE(0xFFE8731E, R.string.vinyl_color_orange),
-    YELLOW(0xFFF2C94C, R.string.vinyl_color_yellow),
-    GREEN(0xFF2E8B57, R.string.vinyl_color_green),
-    BLUE(0xFF2B5BA8, R.string.vinyl_color_blue),
-    PURPLE(0xFF6B3FA0, R.string.vinyl_color_purple),
-    PINK(0xFFE0609A, R.string.vinyl_color_pink),
-    WHITE(0xFFF4F2EE, R.string.vinyl_color_white),
+enum class VinylColor(val argb: Long) {
+    RED(0xFFC8242B),
+    ORANGE(0xFFE8731E),
+    YELLOW(0xFFF2C94C),
+    GREEN(0xFF2E8B57),
+    BLUE(0xFF2B5BA8),
+    PURPLE(0xFF6B3FA0),
+    PINK(0xFFE0609A),
+    WHITE(0xFFF4F2EE),
     /** See-through: drawn half transparent. */
-    CLEAR(0x8CE6ECF0, R.string.vinyl_color_clear);
+    CLEAR(0x8CE6ECF0);
 
     /** Light wax needs dark grooves, or they vanish. */
     val light: Boolean get() = luminance() > 0.4

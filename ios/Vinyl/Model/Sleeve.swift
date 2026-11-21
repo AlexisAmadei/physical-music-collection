@@ -22,24 +22,27 @@ struct SleeveBack: Equatable, Sendable {
     /// The card fits a 3-line title and the price line; a Speed line takes a title line.
     var titleLines: Int { speed == nil ? 3 : 2 }
 
-    init(_ disc: Disc, timeZone: TimeZone = .current) {
+    @MainActor
+    init(_ disc: Disc, language: Language, timeZone: TimeZone = .current) {
         price = if disc.wishlist {
-            disc.seenPrice.map { String(localized: "Vu à \(Price.format($0))") }
+            disc.seenPrice.map { language.string("Vu à \(Price.format($0))") }
         } else {
-            disc.paidPrice.map { String(localized: "Payé \(Price.format($0))") }
+            disc.paidPrice.map { language.string("Payé \(Price.format($0))") }
         }
-        speed = disc.speedLabel
+        speed = disc.speedLabel(in: language)
         showsRating = !disc.wishlist
-        title = disc.shownTitle
+        title = disc.shownTitle(in: language)
         artist = disc.shownArtist
-        details = [disc.year.map(String.init), disc.format.label].compactMap { $0 }.joined(separator: " · ")
-        addedOn = String(localized: "Ajouté le \(Self.dateText(disc.addedAt, timeZone: timeZone))")
+        details = [disc.year.map(String.init), disc.format.label(in: language)].compactMap { $0 }.joined(separator: " · ")
+        addedOn = language.string(
+            "Ajouté le \(Self.dateText(disc.addedAt, locale: language.locale, timeZone: timeZone))"
+        )
     }
 
-    /// "d MMM yyyy" in French, as on Android.
-    private static func dateText(_ date: Date, timeZone: TimeZone) -> String {
+    /// "d MMM yyyy" in the Language's locale: "3 nov. 2024" in French, "3 Nov 2024" in English.
+    private static func dateText(_ date: Date, locale: Locale, timeZone: TimeZone) -> String {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "fr_FR")
+        formatter.locale = locale
         formatter.timeZone = timeZone
         formatter.dateFormat = "d MMM yyyy"
         return formatter.string(from: date)
