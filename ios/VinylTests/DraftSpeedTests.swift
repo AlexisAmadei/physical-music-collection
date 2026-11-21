@@ -7,7 +7,7 @@ struct DraftSpeedTests {
     let app: AppModel
 
     init() throws {
-        app = try AppModel(container: DiscStore.inMemoryContainer())
+        app = try AppModel.pinned()
         app.newDraft()
         app.draft.title = "Currents"
     }
@@ -29,14 +29,14 @@ struct DraftSpeedTests {
 
         let saved = try #require(app.collection.first)
         #expect(saved.speed == .rpm45)
-        #expect(saved.speedLabel == "45 tr/min")
+        #expect(saved.speedLabel(in: app.language) == "45 tr/min")
 
         app.edit(saved)
         #expect(app.draft.speed == .rpm45)
         app.draft.speed = app.draft.speed.tapped(.rpm33)
         app.saveDraft()
         #expect(app.collection.first?.speed == .rpm33)
-        #expect(app.collection.first?.speedLabel == "33 tr/min")
+        #expect(app.collection.first?.speedLabel(in: app.language) == "33 tr/min")
     }
 
     @Test func clearingTheSpeedRemovesIt() throws {
@@ -48,12 +48,12 @@ struct DraftSpeedTests {
         app.saveDraft()
 
         #expect(app.collection.first?.speed == nil)
-        #expect(app.collection.first?.speedLabel == nil)
+        #expect(app.collection.first?.speedLabel(in: app.language) == nil)
     }
 
     @Test func vinylWithoutSpeedShowsNothing() {
         app.saveDraft()
-        #expect(app.collection.first?.speedLabel == nil)
+        #expect(app.collection.first?.speedLabel(in: app.language) == nil)
     }
 
     @Test func aCDKeepsItsSpeedHiddenAndSwitchingBackToVinylRestoresIt() throws {
@@ -66,19 +66,30 @@ struct DraftSpeedTests {
         let saved = try #require(app.collection.first)
         #expect(saved.speed == .rpm45)
         #expect(saved.shownSpeed == nil)
-        #expect(saved.speedLabel == nil)
+        #expect(saved.speedLabel(in: app.language) == nil)
 
         app.edit(saved)
         app.draft.format = .vinyl
         #expect(app.draft.showsSpeedField)
         #expect(app.draft.shownSpeed == .rpm45)
         app.saveDraft()
-        #expect(app.collection.first?.speedLabel == "45 tr/min")
+        #expect(app.collection.first?.speedLabel(in: app.language) == "45 tr/min")
     }
 
     @Test func speedShowsInTheCollectionAndInTheWishlist() {
-        #expect(Disc(Draft(wishlist: false, speed: .rpm33)).speedLabel == "33 tr/min")
-        #expect(Disc(Draft(wishlist: true, speed: .rpm33)).speedLabel == "33 tr/min")
+        #expect(Disc(Draft(wishlist: false, speed: .rpm33)).speedLabel(in: app.language) == "33 tr/min")
+        #expect(Disc(Draft(wishlist: true, speed: .rpm33)).speedLabel(in: app.language) == "33 tr/min")
+    }
+
+    @Test func speedReadsTrMinInFrenchAndRpmInEnglish() {
+        let disc = Disc(Draft(speed: .rpm45))
+        #expect(disc.speedLabel(in: app.language) == "45 tr/min")
+        #expect(Speed.rpm33.label(in: app.language) == "33 tr/min")
+
+        app.language.select(.english)
+        #expect(disc.speedLabel(in: app.language) == "45 rpm")
+        #expect(Speed.rpm33.label(in: app.language) == "33 rpm")
+        #expect(Disc(Draft(format: .cd, speed: .rpm33)).speedLabel(in: app.language) == nil)
     }
 
     @Test func aWishlistDiscMovedToTheCollectionKeepsItsSpeed() throws {

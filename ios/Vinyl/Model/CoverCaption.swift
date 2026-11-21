@@ -15,8 +15,9 @@ struct CoverCaption: Equatable, Sendable {
         self.showsRating = showsRating
     }
 
-    init(_ disc: Disc) {
-        title = disc.shownTitle
+    @MainActor
+    init(_ disc: Disc, language: Language) {
+        title = disc.shownTitle(in: language)
         artist = disc.wishlist ? nil : disc.shownArtist
         showsRating = !disc.wishlist
     }
