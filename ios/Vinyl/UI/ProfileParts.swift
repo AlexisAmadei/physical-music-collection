@@ -3,6 +3,7 @@ import SwiftUI
 /// "Par format": the Collection value for CD and Vinyle; Discs without a Paid price counted apart.
 struct ValueByFormat: View {
     let value: CollectionValue
+    let language: Language
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -10,8 +11,8 @@ struct ValueByFormat: View {
                 .textStyle(Typography.label)
                 .foregroundStyle(Palette.muted)
                 .padding(.bottom, 4)
-            row("CD", value.cd)
-            row("valueByFormat.vinyl", value.vinyl)
+            row(Format.cd.label(in: language), value.cd)
+            row(Format.vinyl.label(in: language), value.vinyl)
             if value.unpriced > 0 {
                 Text("\(value.unpriced) disques sans prix")
                     .textStyle(Typography.body)
@@ -22,9 +23,9 @@ struct ValueByFormat: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    private func row(_ label: LocalizedStringKey, _ cents: Int) -> some View {
+    private func row(_ label: String, _ cents: Int) -> some View {
         HStack {
-            Text(label)
+            Text(verbatim: label)
             Spacer()
             Text(verbatim: Price.format(cents)).fontWeight(.medium)
         }

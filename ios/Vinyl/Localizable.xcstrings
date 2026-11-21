@@ -85,7 +85,14 @@
       }
     },
     "%lld tr/min" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld rpm"
+          }
+        }
+      }
     },
     "Accueil" : {
 
@@ -123,7 +130,14 @@
       }
     },
     "Ajouté le %@" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Added on %@"
+          }
+        }
+      }
     },
     "Ajoute les disques que tu cherches." : {
 
@@ -196,10 +210,24 @@
       }
     },
     "Blanc" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "White"
+          }
+        }
+      }
     },
     "Bleu" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blue"
+          }
+        }
+      }
     },
     "CD" : {
 
@@ -297,7 +325,14 @@
       }
     },
     "Exemple : 12,50" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Example: 12.50"
+          }
+        }
+      }
     },
     "Format" : {
 
@@ -319,7 +354,14 @@
       }
     },
     "Jaune" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yellow"
+          }
+        }
+      }
     },
     "Ma collection" : {
 
@@ -408,7 +450,14 @@
 
     },
     "Orange" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orange"
+          }
+        }
+      }
     },
     "Par format" : {
       "localizations" : {
@@ -421,13 +470,34 @@
       }
     },
     "Payé %@" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paid %@"
+          }
+        }
+      }
     },
     "Prix payé" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paid price"
+          }
+        }
+      }
     },
     "Prix vu" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seen price"
+          }
+        }
+      }
     },
     "Profil" : {
 
@@ -475,10 +545,24 @@
       }
     },
     "Rose" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pink"
+          }
+        }
+      }
     },
     "Rouge" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Red"
+          }
+        }
+      }
     },
     "Saisie manuelle" : {
       "localizations" : {
@@ -491,7 +575,14 @@
       }
     },
     "Sans titre" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Untitled"
+          }
+        }
+      }
     },
     "Save" : {
       "localizations" : {
@@ -588,7 +679,14 @@
       }
     },
     "Transparent" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear"
+          }
+        }
+      }
     },
     "Valeur de la collection" : {
       "localizations" : {
@@ -601,7 +699,14 @@
       }
     },
     "Vert" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Green"
+          }
+        }
+      }
     },
     "VINYL" : {
       "localizations" : {
@@ -620,7 +725,14 @@
       }
     },
     "Vinyle" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vinyl"
+          }
+        }
+      }
     },
     "Vinyle couleur" : {
       "localizations" : {
@@ -639,23 +751,21 @@
       }
     },
     "Vinyle couleur %@" : {
-
-    },
-    "Violet" : {
-
-    },
-    "valueByFormat.vinyl" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vinyl"
+            "value" : "%@ vinyl"
           }
-        },
-        "fr" : {
+        }
+      }
+    },
+    "Violet" : {
+      "localizations" : {
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vinyle"
+            "value" : "Purple"
           }
         }
       }
@@ -677,7 +787,14 @@
       }
     },
     "Vu à %@" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seen at %@"
+          }
+        }
+      }
     },
     "Welcome home..." : {
 

@@ -24,17 +24,18 @@ enum VinylColor: String, Codable, CaseIterable, Sendable {
     }
 
     /// The name shown to the user and read by VoiceOver.
-    var label: String {
+    @MainActor
+    func label(in language: Language) -> String {
         switch self {
-        case .red: String(localized: "Rouge")
-        case .orange: String(localized: "Orange")
-        case .yellow: String(localized: "Jaune")
-        case .green: String(localized: "Vert")
-        case .blue: String(localized: "Bleu")
-        case .purple: String(localized: "Violet")
-        case .pink: String(localized: "Rose")
-        case .white: String(localized: "Blanc")
-        case .clear: String(localized: "Transparent")
+        case .red: language.string("Rouge")
+        case .orange: language.string("Orange")
+        case .yellow: language.string("Jaune")
+        case .green: language.string("Vert")
+        case .blue: language.string("Bleu")
+        case .purple: language.string("Violet")
+        case .pink: language.string("Rose")
+        case .white: language.string("Blanc")
+        case .clear: language.string("Transparent")
         }
     }
 
@@ -68,14 +69,15 @@ extension Disc {
 
     /// What VoiceOver reads for its cover: title, artist, Format ("CD", "Vinyle" or "Vinyle couleur <color>"), year.
     /// Mirrors the Android `Disc.a11yLabel()`.
-    var coverLabel: String {
+    @MainActor
+    func coverLabel(in language: Language) -> String {
         let formatLabel = if let color = shownVinylColor {
-            String(localized: "Vinyle couleur \(color.label.lowercased())")
+            language.string("Vinyle couleur \(color.label(in: language).lowercased())")
         } else {
-            format.label
+            format.label(in: language)
         }
         return [
-            shownTitle,
+            shownTitle(in: language),
             shownArtist,
             formatLabel,
             year.map(String.init),

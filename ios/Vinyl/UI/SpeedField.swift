@@ -4,6 +4,7 @@ import SwiftUI
 /// Mirrors the Android `SpeedField`. Shown on vinyl Drafts only.
 struct SpeedField: View {
     @Binding var draft: Draft
+    let language: Language
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -19,7 +20,7 @@ struct SpeedField: View {
                             .contentShape(.rect)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel(speed.label)
+                    .accessibilityLabel(speed.label(in: language))
                     .accessibilityAddTraits(selected ? .isSelected : [])
                 }
             }

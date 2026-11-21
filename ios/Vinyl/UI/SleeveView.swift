@@ -6,6 +6,7 @@ import SwiftUI
 /// Driven frame by frame by `SleeveMotion`.
 struct SleeveView: View {
     let disc: Disc
+    let language: Language
     let sleeve: SleeveMotion
     /// The white veil of the card's place on the wheel (the sleeve rides along while the wheel turns).
     let veil: Double
@@ -27,7 +28,7 @@ struct SleeveView: View {
     @ViewBuilder private var faces: some View {
         let turn = (sleeve.rotation.truncatingRemainder(dividingBy: 360) + 360).truncatingRemainder(dividingBy: 360)
         if (90...270).contains(turn) {
-            SleeveBackFace(disc: disc, onEdit: onEdit)
+            SleeveBackFace(disc: disc, language: language, onEdit: onEdit)
                 .scaleEffect(x: -1) // seen from behind: mirrored back so it reads the right way round
         } else {
             WheelCard(disc: disc, veil: veil)
@@ -57,12 +58,13 @@ struct FlipTurn: GeometryEffect {
 /// and the pencil that opens its Draft.
 struct SleeveBackFace: View {
     let disc: Disc
+    let language: Language
     let onEdit: () -> Void
 
     private let pad = 18.0
 
     var body: some View {
-        let back = SleeveBack(disc)
+        let back = SleeveBack(disc, language: language)
         ZStack(alignment: .topLeading) {
             Cover(url: disc.coverURL)
                 .scaleEffect(1.24)
