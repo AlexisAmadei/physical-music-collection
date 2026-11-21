@@ -36,6 +36,6 @@ struct DraftScreen: View {
                 }
             }
         }
-        .navigationTitle(app.draft.isNew ? "Add disc" : "Edit disc")
+        .navigationTitle(app.draft.isNew ? Text("Add disc") : Text("Edit disc"))
     }
 }
