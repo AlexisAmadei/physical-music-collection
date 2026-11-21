@@ -11,6 +11,3 @@ fun Speed?.tapped(picked: Speed): Speed? = if (this == picked) null else picked
 
 /** The Speed as shown: only on vinyl. A CD keeps its value hidden. */
 val Disc.shownSpeed: Speed? get() = speed.takeIf { format == Format.VINYL }
-
-/** "33 tr/min" / "45 tr/min" for the Disc detail; null when nothing should show. */
-val Disc.speedLabel: String? get() = shownSpeed?.let { "${it.rpm} tr/min" }

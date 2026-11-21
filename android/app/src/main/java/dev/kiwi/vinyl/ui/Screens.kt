@@ -80,7 +80,7 @@ fun HomeScreen(vm: AppVm, nav: NavHostController) {
             CoverWheel(discs, onOpen = { nav.edit(vm, it) }, Modifier.hazeSource(LocalHaze.current))
         }
         Text(
-            "Welcome home...", style = Type.Welcome,
+            stringResource(AppR.string.home_welcome), style = Type.Welcome,
             modifier = Modifier.align(Alignment.BottomEnd).padding(end = 20.dp, bottom = chromeBottom() + 8.dp),
         )
     }
@@ -102,7 +102,7 @@ fun CollectionScreen(vm: AppVm, nav: NavHostController) {
             }
         )
     }
-    CoverGrid("Ma collection", rowGap = 28.dp, headerGap = 35.dp, header = {
+    CoverGrid(stringResource(AppR.string.collection_title), rowGap = 28.dp, headerGap = 35.dp, header = {
         Row(
             Modifier.padding(top = 16.dp).height(38.dp).fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically,
@@ -126,10 +126,10 @@ fun CollectionScreen(vm: AppVm, nav: NavHostController) {
 fun WishlistScreen(vm: AppVm, nav: NavHostController) {
     val all by vm.dao.byList(true).collectAsState(null)
     val list = all ?: return
-    CoverGrid("Ma wishlist", rowGap = 12.dp, headerGap = 21.dp) {
+    CoverGrid(stringResource(AppR.string.wishlist_title), rowGap = 12.dp, headerGap = 21.dp) {
         if (list.isEmpty()) item(span = { GridItemSpan(maxLineSpan) }) {
             EmptyState(
-                "Ajoute les disques que tu cherches.", "Ajouter à la wishlist",
+                stringResource(AppR.string.wishlist_empty_hint), stringResource(AppR.string.add_to_wishlist),
                 onAdd = { nav.edit(vm, Disc(wishlist = true)) }, Modifier.padding(top = 120.dp - 12.dp),
             )
         }
@@ -251,13 +251,13 @@ private fun CoverGrid(title: String, rowGap: Dp, headerGap: Dp, header: @Composa
     }
 }
 
-fun Disc.a11yLabel() =
-    listOfNotNull(
-        title.ifBlank { "Sans titre" }, artist.ifBlank { null },
-        if (format == Format.CD) "CD" else shownVinylColor?.let { "Vinyle couleur ${it.label.lowercase()}" } ?: "Vinyle",
-        year?.toString(),
-    )
+@Composable
+fun Disc.a11yLabel(): String {
+    val formatLabel = shownVinylColor?.let { stringResource(AppR.string.disc_a11y_vinyl_color, stringResource(it.labelRes).lowercase()) }
+        ?: stringResource(format.labelRes)
+    return listOfNotNull(title.ifBlank { stringResource(AppR.string.disc_untitled) }, artist.ifBlank { null }, formatLabel, year?.toString())
         .joinToString(", ")
+}
 
 /** Cover art, or a neutral disc placeholder while loading / when there is none. */
 @Composable
@@ -278,7 +278,7 @@ private fun CoverCard(d: Disc, onClick: () -> Unit, showMeta: Boolean = true) {
             Modifier.padding(top = 8.dp).fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(d.title.ifBlank { "Sans titre" }, Modifier.weight(1f), style = Type.Title, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(d.title.ifBlank { stringResource(AppR.string.disc_untitled) }, Modifier.weight(1f), style = Type.Title, maxLines = 1, overflow = TextOverflow.Ellipsis)
             if (showMeta) StarRating(d.rating)
         }
         if (showMeta && d.comment.isNotBlank()) {
@@ -290,8 +290,9 @@ private fun CoverCard(d: Disc, onClick: () -> Unit, showMeta: Boolean = true) {
 /** Read-only 0..5 stars, one semantic node. */
 @Composable
 fun StarRating(rating: Int, size: Dp = 15.dp) {
+    val label = if (rating > 0) stringResource(AppR.string.rating_of_five, rating) else stringResource(AppR.string.rating_none)
     Row(
-        Modifier.clearAndSetSemantics { contentDescription = if (rating > 0) "Note : $rating sur 5" else "Non noté" },
+        Modifier.clearAndSetSemantics { contentDescription = label },
         horizontalArrangement = Arrangement.spacedBy(1.dp),
     ) {
         (1..5).forEach { i -> Icon(Glyphs.Star, null, Modifier.size(size), tint = if (i <= rating) Palette.Ink else Palette.Line) }
@@ -302,7 +303,7 @@ fun StarRating(rating: Int, size: Dp = 15.dp) {
 @Composable
 private fun FormatFilter(selected: Format?, onChange: (Format?) -> Unit, modifier: Modifier = Modifier) {
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
-        listOf(Format.CD to "CD", Format.VINYL to "Vinyle").forEach { (f, label) ->
+        Format.entries.forEach { f ->
             val on = selected == f
             Box(
                 Modifier
@@ -314,7 +315,7 @@ private fun FormatFilter(selected: Format?, onChange: (Format?) -> Unit, modifie
                     .padding(horizontal = 12.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(label, style = Type.Chip, color = Palette.Accent, fontWeight = if (on) FontWeight.Medium else FontWeight.Normal)
+                Text(stringResource(f.labelRes), style = Type.Chip, color = Palette.Accent, fontWeight = if (on) FontWeight.Medium else FontWeight.Normal)
             }
         }
     }
@@ -324,7 +325,7 @@ private fun FormatFilter(selected: Format?, onChange: (Format?) -> Unit, modifie
 @Composable
 private fun SortToggle(sort: Sort, onChange: (Sort) -> Unit) {
     Row(Modifier.selectableGroup(), horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
-        listOf(Sort.ADDED to "Date d’ajout", Sort.YEAR to "Année").forEach { (s, label) ->
+        listOf(Sort.ADDED to AppR.string.sort_added, Sort.YEAR to AppR.string.sort_year).forEach { (s, labelRes) ->
             val on = sort == s
             var baseline by remember { mutableFloatStateOf(0f) }
             Box(
@@ -335,7 +336,7 @@ private fun SortToggle(sort: Sort, onChange: (Sort) -> Unit) {
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    label, style = Type.Label, fontWeight = if (on) FontWeight.SemiBold else FontWeight.Normal,
+                    stringResource(labelRes), style = Type.Label, fontWeight = if (on) FontWeight.SemiBold else FontWeight.Normal,
                     onTextLayout = { baseline = it.firstBaseline },
                     modifier = Modifier.drawBehind {
                         if (on) {
@@ -432,12 +433,13 @@ private fun VinylColorField(color: VinylColor?, onChange: (VinylColor?) -> Unit)
     ) {
         VinylColor.entries.forEach { c ->
             val on = c == color
+            val label = stringResource(c.labelRes)
             Box(
                 Modifier
                     .size(32.dp)
                     .clip(CircleShape)
                     .selectable(on, role = Role.RadioButton) { onChange(c) }
-                    .semantics { contentDescription = c.label }
+                    .semantics { contentDescription = label }
                     .border(2.dp, if (on) Palette.Ink else Color.Transparent, CircleShape),
                 contentAlignment = Alignment.Center,
             ) {
@@ -460,7 +462,8 @@ private fun SpeedField(speed: Speed?, onChange: (Speed?) -> Unit) {
             ) {
                 // Read "33 tr/min", not a bare "33" (iOS: accessibilityLabel(speed.label)). The button is a selectable
                 // radio, so the screen reader already announces whether it is selected.
-                Text(s.rpm.toString(), Modifier.clearAndSetSemantics { contentDescription = "${s.rpm} tr/min" })
+                val label = stringResource(AppR.string.speed_rpm, s.rpm)
+                Text(s.rpm.toString(), Modifier.clearAndSetSemantics { contentDescription = label })
             }
         }
     }

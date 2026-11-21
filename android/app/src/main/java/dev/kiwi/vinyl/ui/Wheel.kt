@@ -52,6 +52,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
@@ -62,6 +63,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import dev.kiwi.vinyl.R as AppR
 import dev.kiwi.vinyl.data.Disc
 import kotlin.math.PI
 import kotlin.math.abs
@@ -212,6 +214,9 @@ fun CoverWheel(discs: List<Disc>, onOpen: (Disc) -> Unit, modifier: Modifier = M
     BackHandler(flip.holding) { flip.close() }
     LaunchedEffect(reduced) { wheel.run(drift = !reduced) }
     val n = discs.size
+    val collectionTitle = stringResource(AppR.string.collection_title)
+    val nextDisc = stringResource(AppR.string.wheel_next)
+    val previousDisc = stringResource(AppR.string.wheel_previous)
     val disc = { k: Int -> discs[Math.floorMod(k, n)] }
     // Closing never blocks the wheel: it turns toward the tapped card while the sleeve shuts.
     val tap = { k: Int ->
@@ -232,10 +237,10 @@ fun CoverWheel(discs: List<Disc>, onOpen: (Disc) -> Unit, modifier: Modifier = M
                 .clipToBounds()
                 .fadeEdges()
                 .semantics {
-                    contentDescription = "Ma collection"
+                    contentDescription = collectionTitle
                     customActions = listOf(
-                        CustomAccessibilityAction("Disque suivant") { flip.close(); wheel.stepBy(1); true },
-                        CustomAccessibilityAction("Disque précédent") { flip.close(); wheel.stepBy(-1); true },
+                        CustomAccessibilityAction(nextDisc) { flip.close(); wheel.stepBy(1); true },
+                        CustomAccessibilityAction(previousDisc) { flip.close(); wheel.stepBy(-1); true },
                     )
                 }
                 .pointerInput(Unit) { // pause while any finger is down, without consuming
@@ -276,10 +281,7 @@ fun CoverWheel(discs: List<Disc>, onOpen: (Disc) -> Unit, modifier: Modifier = M
             }
         }
         // Polite announcement of the front disc (TalkBack).
-        Box(Modifier.size(1.dp).clearAndSetSemantics {
-            liveRegion = LiveRegionMode.Polite
-            contentDescription = disc(wheel.front).a11yLabel()
-        })
+        FrontAnnouncement { disc(wheel.front) }
         PositionIndicator(
             fraction = { if (n < 2) 0f else Math.floorMod(wheel.front, n) / (n - 1f) },
             modifier = Modifier.offset(w - 79.5.dp, h / 2 - 51.5.dp),
@@ -288,14 +290,24 @@ fun CoverWheel(discs: List<Disc>, onOpen: (Disc) -> Unit, modifier: Modifier = M
 }
 
 @Composable
+private fun FrontAnnouncement(disc: () -> Disc) {
+    val label = disc().a11yLabel()
+    Box(Modifier.size(1.dp).clearAndSetSemantics {
+        liveRegion = LiveRegionMode.Polite
+        contentDescription = label
+    })
+}
+
+@Composable
 private fun WheelCard(d: Disc, theta: () -> Float, onClick: () -> Unit, modifier: Modifier) {
+    val label = d.a11yLabel()
     Box(
         modifier
             .size(CARD.dp)
             .onWheel(theta)
             .shadow(5.dp, ambientColor = Color.Black.copy(alpha = 0.25f), spotColor = Color.Black.copy(alpha = 0.25f))
             .clickable(role = Role.Button, onClick = onClick)
-            .semantics { contentDescription = d.a11yLabel() },
+            .semantics { contentDescription = label },
     ) {
         Cover(d.coverUrl, Modifier.matchParentSize())
         ColorBandOf(d)

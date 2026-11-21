@@ -9,6 +9,43 @@
     <string name="add_search">Rechercher un album</string>
     <string name="add_manual">Saisie manuelle</string>
 
+    <!-- BEGIN #25: tabs, Home, Collection, Wishlist, disc card, enum labels -->
+    <string name="tab_profile">Profil</string>
+    <string name="tab_wishlist">Wishlist</string>
+    <string name="tab_collection">Collection</string>
+    <string name="tab_search">Rechercher</string>
+    <string name="tab_home">Accueil</string>
+    <string name="add_disc">Ajouter un disque</string>
+    <string name="add_to_wishlist">Ajouter à la wishlist</string>
+    <string name="home_welcome">Bienvenue à la maison...</string>
+    <string name="collection_title">Ma collection</string>
+    <string name="wishlist_title">Ma wishlist</string>
+    <string name="wishlist_empty_hint">Ajoute les disques que tu cherches.</string>
+    <string name="sort_added">Date d’ajout</string>
+    <string name="sort_year">Année</string>
+    <string name="disc_untitled">Sans titre</string>
+    <string name="disc_flip">Retourner</string>
+    <string name="disc_edit">Modifier le disque</string>
+    <string name="disc_seen_at">Vu à %1$s</string>
+    <string name="disc_paid">Payé %1$s</string>
+    <string name="disc_added_on">Ajouté le %1$s</string>
+    <string name="disc_a11y_vinyl_color">Vinyle couleur %1$s</string>
+    <string name="wheel_next">Disque suivant</string>
+    <string name="wheel_previous">Disque précédent</string>
+    <string name="rating_of_five">Note : %1$d sur 5</string>
+    <string name="rating_none">Non noté</string>
+    <string name="speed_rpm">%1$d tr/min</string>
+    <string name="vinyl_color_red">Rouge</string>
+    <string name="vinyl_color_orange">Orange</string>
+    <string name="vinyl_color_yellow">Jaune</string>
+    <string name="vinyl_color_green">Vert</string>
+    <string name="vinyl_color_blue">Bleu</string>
+    <string name="vinyl_color_purple">Violet</string>
+    <string name="vinyl_color_pink">Rose</string>
+    <string name="vinyl_color_white">Blanc</string>
+    <string name="vinyl_color_clear">Transparent</string>
+    <!-- END #25 -->
+
     <!-- Profile -->
     <string name="profile_title">MON PROFIL</string>
     <string name="profile_name_placeholder">Ton nom</string>
