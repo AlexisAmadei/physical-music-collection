@@ -88,7 +88,14 @@
 
     },
     "Accueil" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Home"
+          }
+        }
+      }
     },
     "Add disc" : {
 
@@ -100,7 +107,14 @@
 
     },
     "Ajoute les disques que tu cherches." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add the discs you’re looking for."
+          }
+        }
+      }
     },
     "Ajouter mon premier disque" : {
       "localizations" : {
@@ -113,13 +127,34 @@
       }
     },
     "Ajouter un disque" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a disc"
+          }
+        }
+      }
     },
     "Ajouter à la wishlist" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add to wishlist"
+          }
+        }
+      }
     },
     "Année" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Year"
+          }
+        }
+      }
     },
     "Artist" : {
 
@@ -149,16 +184,37 @@
 
     },
     "Date d’ajout" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date added"
+          }
+        }
+      }
     },
     "Delete" : {
 
     },
     "Disque précédent" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous disc"
+          }
+        }
+      }
     },
     "Disque suivant" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next disc"
+          }
+        }
+      }
     },
     "Edit disc" : {
 
@@ -179,10 +235,24 @@
 
     },
     "Ma collection" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My collection"
+          }
+        }
+      }
     },
     "Ma wishlist" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My wishlist"
+          }
+        }
+      }
     },
     "Looking for something?" : {
 
@@ -191,7 +261,14 @@
 
     },
     "Modifier le disque" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit disc"
+          }
+        }
+      }
     },
     "Modifier ton nom" : {
       "localizations" : {
@@ -217,10 +294,24 @@
 
     },
     "Non noté" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not rated"
+          }
+        }
+      }
     },
     "Note : %lld sur 5" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rating: %lld of 5"
+          }
+        }
+      }
     },
     "OK" : {
 
@@ -248,13 +339,27 @@
 
     },
     "Profil" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profile"
+          }
+        }
+      }
     },
     "Rate %lld" : {
 
     },
     "Rechercher" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search"
+          }
+        }
+      }
     },
     "Rechercher un album" : {
       "localizations" : {
@@ -267,7 +372,14 @@
       }
     },
     "Retourner" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flip"
+          }
+        }
+      }
     },
     "Rien ici pour l’instant." : {
       "localizations" : {
@@ -394,7 +506,20 @@
 
     },
     "Welcome home..." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome home..."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bienvenue à la maison..."
+          }
+        }
+      }
     },
     "Wishlist" : {
 
@@ -408,6 +533,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Language"
+          }
+        }
+      }
+    },
+    "collection.filter.vinyl" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vinyl"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vinyle"
           }
         }
       }
