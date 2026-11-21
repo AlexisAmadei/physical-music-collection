@@ -66,7 +66,10 @@ abstract class AppDb : RoomDatabase() {
         private val V4_5 = object : Migration(4, 5) {
             override fun migrate(db: SupportSQLiteDatabase) = db.execSQL("ALTER TABLE Disc ADD COLUMN speed TEXT")
         }
-        /** Every step from version 1; the migration test replays them from the schema history. */
+        /**
+         * Every step from version 1. The exported schemas (app/schemas) start at version 4, so the migration test
+         * can only replay the steps from version 4 on; steps 1 to 4 are not covered by a test.
+         */
         val MIGRATIONS: Array<Migration> = arrayOf(V1_2, V2_3, V3_4, V4_5)
         fun get(c: Context) = db ?: synchronized(this) {
             db ?: Room.databaseBuilder(c.applicationContext, AppDb::class.java, "vinyl.db")

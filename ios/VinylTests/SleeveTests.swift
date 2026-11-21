@@ -63,6 +63,20 @@ struct SleeveBackTests {
         #expect(back(Draft(format: .cd, speed: .rpm33)).speed == nil)
     }
 
+    @Test func titleKeepsThreeLinesWithoutASpeed() {
+        #expect(back(Draft(title: "Kid A", wishlist: false)).titleLines == 3)
+        #expect(back(Draft(wishlist: true, seenPrice: 1250)).titleLines == 3)
+    }
+
+    @Test func titleKeepsTwoLinesWithASpeedWhateverThePrice() {
+        #expect(back(Draft(format: .vinyl, speed: .rpm33)).titleLines == 2)
+        #expect(back(Draft(format: .vinyl, wishlist: true, seenPrice: 1250, speed: .rpm45)).titleLines == 2)
+    }
+
+    @Test func aCDsHiddenSpeedDoesNotCostATitleLine() {
+        #expect(back(Draft(format: .cd, speed: .rpm33)).titleLines == 3)
+    }
+
     @Test func ratingShowsInTheCollectionOnly() {
         #expect(back(Draft(rating: 4, wishlist: false)).showsRating)
         #expect(!back(Draft(rating: 4, wishlist: true)).showsRating)

@@ -425,7 +425,11 @@ private fun SpeedField(speed: Speed?, onChange: (Speed?) -> Unit) {
                 selected = speed == s,
                 onClick = { onChange(speed.tapped(s)) },
                 shape = SegmentedButtonDefaults.itemShape(i, Speed.entries.size),
-            ) { Text(s.rpm.toString()) }
+            ) {
+                // Read "33 tr/min", not a bare "33" (iOS: accessibilityLabel(speed.label)). The button is a selectable
+                // radio, so the screen reader already announces whether it is selected.
+                Text(s.rpm.toString(), Modifier.clearAndSetSemantics { contentDescription = "${s.rpm} tr/min" })
+            }
         }
     }
 }

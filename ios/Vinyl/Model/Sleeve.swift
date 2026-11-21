@@ -18,6 +18,10 @@ struct SleeveBack: Equatable, Sendable {
     /// The star rating shows in the Collection only.
     let showsRating: Bool
 
+    /// Title lines the back keeps (Android `backTitleLines` with `large = true`: the card is always the large one).
+    /// The card fits a 3-line title and the price line; a Speed line takes a title line.
+    var titleLines: Int { speed == nil ? 3 : 2 }
+
     init(_ disc: Disc, timeZone: TimeZone = .current) {
         price = if disc.wishlist {
             disc.seenPrice.map { String(localized: "Vu à \(Price.format($0))") }

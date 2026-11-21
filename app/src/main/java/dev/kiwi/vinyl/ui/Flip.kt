@@ -139,8 +139,7 @@ private fun BackFace(d: Disc, onTap: () -> Unit, onEdit: () -> Unit, large: Bool
                 )
             }
             Text(
-                // The extra price line would push a 3-line title into the barcode on small cards.
-                d.title.ifBlank { "Sans titre" }, maxLines = if ((price != null || d.speedLabel != null) && !large) 2 else 3, overflow = TextOverflow.Ellipsis,
+                d.title.ifBlank { "Sans titre" }, maxLines = backTitleLines(large, hasPrice = price != null, hasSpeed = d.speedLabel != null), overflow = TextOverflow.Ellipsis,
                 style = Type.Title.copy(fontSize = if (large) 17.sp else 15.sp, lineHeight = if (large) 21.sp else 19.sp),
                 color = Palette.Ink,
             )
@@ -157,6 +156,15 @@ private fun BackFace(d: Disc, onTap: () -> Unit, onEdit: () -> Unit, large: Bool
         PencilButton(onEdit, Modifier.align(Alignment.BottomEnd).padding(end = 8.dp, bottom = 8.dp))
     }
 }
+
+/**
+ * Title lines on the back of a card, so the details never reach the barcode and the rating.
+ * A small card has room for 3 lines in all: each extra line (price, Speed) takes one from the title, down to 1.
+ * A large card has room for the price line beside a 3-line title; a Speed line takes one more.
+ */
+internal fun backTitleLines(large: Boolean, hasPrice: Boolean, hasSpeed: Boolean): Int =
+    if (large) (if (hasSpeed) 2 else 3)
+    else (3 - (if (hasPrice) 1 else 0) - (if (hasSpeed) 1 else 0)).coerceAtLeast(1)
 
 private val DateFmt = DateTimeFormatter.ofPattern("d MMM yyyy", Locale.FRENCH)
 private fun addedOn(ms: Long): String = DateFmt.format(Instant.ofEpochMilli(ms).atZone(ZoneId.systemDefault()))
