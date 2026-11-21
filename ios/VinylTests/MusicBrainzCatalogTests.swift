@@ -49,6 +49,13 @@ struct MusicBrainzCatalogTests {
     }
 
     /// "Watch the Throne" is credited to "JAY‐Z" joined by " & " to "Kanye West", or "Dean Blunt" " Meets " "James Ferraro".
+    @Test func catalogResultsHaveNoSpeed() async {
+        let results = await catalog(FakeTransport(fixture: "musicbrainz-search-ok-computer")).search("ok computer")
+
+        #expect(!results.isEmpty)
+        #expect(results.allSatisfy { $0.speed == nil })
+    }
+
     @Test func artistIsJoinedFromTheArtistCreditsWithTheirJoinPhrases() async {
         let results = await catalog(FakeTransport(fixture: "musicbrainz-search-watch-the-throne")).search("watch the throne")
 

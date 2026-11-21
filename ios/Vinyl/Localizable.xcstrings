@@ -13,6 +13,9 @@
     "%lld disques sans prix" : {
 
     },
+    "%lld tr/min" : {
+
+    },
     "1 disque sans prix" : {
 
     },
@@ -221,6 +224,9 @@
 
     },
     "Violet" : {
+
+    },
+    "Vitesse" : {
 
     },
     "Vu à %@" : {

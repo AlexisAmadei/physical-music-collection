@@ -8,6 +8,8 @@ struct SleeveBack: Equatable, Sendable {
     let artist: String?
     /// Year and Format: "2000 · Vinyle", "CD".
     let details: String
+    /// "33 tr/min" or "45 tr/min": vinyl Discs with a Speed only, in the Collection and the Wishlist.
+    let speed: String?
     /// "Ajouté le 3 nov. 2024".
     let addedOn: String
     /// "Vu à 12,50 €" in the Wishlist, "Payé 25 €" in the Collection; nil when that price is unset.
@@ -22,6 +24,7 @@ struct SleeveBack: Equatable, Sendable {
         } else {
             disc.paidPrice.map { String(localized: "Payé \(Price.format($0))") }
         }
+        speed = disc.speedLabel
         showsRating = !disc.wishlist
         title = disc.shownTitle
         artist = disc.shownArtist

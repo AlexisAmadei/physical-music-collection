@@ -53,6 +53,16 @@ struct SleeveBackTests {
         #expect(back(Draft(wishlist: false, seenPrice: 900)).price == nil)
     }
 
+    @Test func speedLineShowsForVinylWithASpeedInTheCollectionAndTheWishlist() {
+        #expect(back(Draft(format: .vinyl, wishlist: false, speed: .rpm33)).speed == "33 tr/min")
+        #expect(back(Draft(format: .vinyl, wishlist: true, speed: .rpm45)).speed == "45 tr/min")
+    }
+
+    @Test func noSpeedLineWithoutASpeedOrOnACD() {
+        #expect(back(Draft(format: .vinyl)).speed == nil)
+        #expect(back(Draft(format: .cd, speed: .rpm33)).speed == nil)
+    }
+
     @Test func ratingShowsInTheCollectionOnly() {
         #expect(back(Draft(rating: 4, wishlist: false)).showsRating)
         #expect(!back(Draft(rating: 4, wishlist: true)).showsRating)

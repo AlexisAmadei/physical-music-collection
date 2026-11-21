@@ -79,13 +79,18 @@ struct SleeveBackFace: View {
                 Text(verbatim: back.title)
                     .textStyle(TextStyle(size: 17, lineHeight: 21, weight: .bold))
                     .foregroundStyle(Palette.ink)
-                    .lineLimit(3)
+                    .lineLimit(back.speed != nil ? 2 : 3) // one line of room for the Speed line
                 Text(verbatim: back.details)
                     .textStyle(Typography.label)
                     .foregroundStyle(Palette.ink)
                 Text(verbatim: back.addedOn)
                     .textStyle(TextStyle(size: 11, lineHeight: 15))
                     .foregroundStyle(Palette.ink.opacity(0.7))
+                if let speed = back.speed {
+                    Text(verbatim: speed)
+                        .textStyle(Typography.label)
+                        .foregroundStyle(Palette.ink)
+                }
                 if let price = back.price {
                     Text(verbatim: price)
                         .textStyle(Typography.label)

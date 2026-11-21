@@ -31,6 +31,13 @@ struct DiscogsCatalogTests {
         ])
     }
 
+    @Test func catalogResultsHaveNoSpeed() async {
+        let results = await catalog(FakeTransport(fixture: "discogs-search-ok-computer")).search("ok computer")
+
+        #expect(!results.isEmpty)
+        #expect(results.allSatisfy { $0.speed == nil })
+    }
+
     @Test func withoutAnyCoverTheFirstPressingIsKeptWithNoCover() async {
         let results = await catalog(FakeTransport(fixture: "discogs-search-ok-computer")).search("ok computer")
 

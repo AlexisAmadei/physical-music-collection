@@ -42,6 +42,9 @@ final class Disc {
     var paidPrice: Int?
     /// Vinyl color, nil = black. Kept (not cleared) if the Format becomes CD.
     var vinylColor: VinylColor?
+    /// Speed (33 or 45 RPM), nil = not set. Kept (not cleared) if the Format becomes CD.
+    /// Added after release: an optional field, so Discs saved before it open with no Speed.
+    var speed: Speed?
 
     init(_ draft: Draft) {
         update(from: draft)
@@ -62,6 +65,7 @@ final class Disc {
         seenPrice = draft.seenPrice
         paidPrice = draft.paidPrice
         vinylColor = draft.vinylColor
+        speed = draft.speed
     }
 }
 
@@ -83,6 +87,8 @@ struct Draft: Equatable, Sendable {
     var seenPrice: Int?
     var paidPrice: Int?
     var vinylColor: VinylColor?
+    /// Speed (33 or 45 RPM), nil = not set. Kept (not cleared) if the Format becomes CD.
+    var speed: Speed?
     /// Price texts as typed in the Draft form; nil = not typed. Read them through `DraftPrice.swift`.
     var seenPriceEdit: String?
     var paidPriceEdit: String?
@@ -104,7 +110,8 @@ extension Draft {
             id: disc.persistentModelID, title: disc.title, artist: disc.artist, year: disc.year,
             format: disc.format, barcode: disc.barcode, rating: disc.rating, comment: disc.comment,
             wishlist: disc.wishlist, addedAt: disc.addedAt, coverURL: disc.coverURL,
-            seenPrice: disc.seenPrice, paidPrice: disc.paidPrice, vinylColor: disc.vinylColor
+            seenPrice: disc.seenPrice, paidPrice: disc.paidPrice, vinylColor: disc.vinylColor,
+            speed: disc.speed
         )
     }
 }

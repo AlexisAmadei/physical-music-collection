@@ -18,6 +18,7 @@ struct DraftScreen: View {
             }
             .pickerStyle(.segmented)
             if app.draft.showsVinylColorField { VinylColorField(draft: $app.draft) }
+            if app.draft.showsSpeedField { SpeedField(draft: $app.draft) }
             StarPicker(draft: $app.draft)
             TextField("Comment", text: $app.draft.comment, axis: .vertical)
             DraftPriceFields(draft: $app.draft)

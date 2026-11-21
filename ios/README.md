@@ -9,7 +9,7 @@ no project file edit needed.
 | `Vinyl/AppModel.swift` | The app model: the one object screens talk to |
 | `Vinyl/Navigation.swift`, `Search.swift`, `Scan.swift` | The app model's navigation, Search and Scan state and actions |
 | `Vinyl/DebugSeed.swift` | Debug builds only: the `-seedDiscs` launch argument (see below) |
-| `Vinyl/Model/` | SwiftData `Disc`, the `Draft` value and its form rules, `DiscStore` (the Android DAO queries), and the pure rules screens read: Price, Vinyl color, Collection value, Collection filter, Profile name, cover caption, wheel, sleeve, tilt |
+| `Vinyl/Model/` | SwiftData `Disc`, the `Draft` value and its form rules, `DiscStore` (the Android DAO queries), and the pure rules screens read: Price, Vinyl color, Speed, Collection value, Collection filter, Profile name, cover caption, wheel, sleeve, tilt |
 | `Vinyl/Catalog/` | The Catalog (Sources asked in order), its two Sources (Discogs, then MusicBrainz), `CatalogTransport` (the network seam, fake in tests) |
 | `Config/` | `Vinyl.xcconfig` (app target build settings), `Secrets.example.xcconfig`, `Vinyl-Info.plist` |
 | `Vinyl/UI/` | `Theme.swift` (Palette, Typography = Android `Type`), screens |
