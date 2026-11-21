@@ -1,0 +1,52 @@
+package dev.kiwi.vinyl.data
+
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import org.junit.Test
+
+class PriceTest {
+    @Test fun parsesCommaDotAndWhole() {
+        assertEquals(1250L, Price.parse("12,50"))
+        assertEquals(1250L, Price.parse("12.50"))
+        assertEquals(1250L, Price.parse("12,5"))
+        assertEquals(2500L, Price.parse("25"))
+        assertEquals(124000L, Price.parse("1 240"))
+    }
+
+    @Test fun blankIsNoPriceAndValid() {
+        assertNull(Price.parse("  "))
+        assertTrue(Price.isValid(""))
+    }
+
+    @Test fun rejectsMalformed() {
+        listOf("abc", "12,", "12,505", "-3", "1,2,3", "12€").forEach {
+            assertNull(it, Price.parse(it))
+            assertFalse(it, Price.isValid(it))
+        }
+    }
+
+    @Test fun formatsFrench() {
+        assertEquals("25 €", Price.format(2500))
+        assertEquals("12,50 €", Price.format(1250))
+        assertEquals("0,05 €", Price.format(5))
+        assertEquals("1 240 €", Price.format(124000))
+        assertEquals("0 €", Price.format(0))
+    }
+
+    @Test fun inputRoundTrips() {
+        listOf(2500L, 1250L, 5L, 124000L).forEach { assertEquals(it, Price.parse(Price.input(it))) }
+        assertEquals("", Price.input(null))
+    }
+
+    @Test fun collectionValueSkipsWishlistAndCountsUnpriced() {
+        val v = collectionValue(listOf(
+            Disc(format = Format.CD, paidPrice = 1000),
+            Disc(format = Format.VINYL, paidPrice = 2550),
+            Disc(format = Format.VINYL),
+            Disc(format = Format.VINYL, wishlist = true, paidPrice = 9999, seenPrice = 3000),
+        ))
+        assertEquals(CollectionValue(total = 3550, cd = 1000, vinyl = 2550, unpriced = 1), v)
+    }
+}
