@@ -16,12 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
+import dev.kiwi.vinyl.R as AppR
 import dev.kiwi.vinyl.data.Disc
 import java.util.concurrent.Executors
 
@@ -46,14 +48,14 @@ fun ScanScreen(vm: AppVm, nav: NavHostController) {
 
     Box(Modifier.fillMaxSize()) {
         when {
-            !granted -> Text("Camera permission needed", Modifier.align(Alignment.Center))
+            !granted -> Text(stringResource(AppR.string.scan_camera_needed), Modifier.align(Alignment.Center))
             code != null -> Column(Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {
-                CircularProgressIndicator(); Text("Looking up $code…")
+                CircularProgressIndicator(); Text(stringResource(AppR.string.scan_looking_up, code ?: ""))
             }
             else -> CameraPreview { if (code == null) code = it }
         }
         OutlinedButton({ nav.edit(vm, Disc(barcode = code)) }, Modifier.align(Alignment.BottomCenter).padding(16.dp)) {
-            Text("Enter manually")
+            Text(stringResource(AppR.string.scan_enter_manually))
         }
     }
 }

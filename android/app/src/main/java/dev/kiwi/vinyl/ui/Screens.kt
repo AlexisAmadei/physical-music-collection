@@ -389,15 +389,15 @@ fun SearchScreen(vm: AppVm, nav: NavHostController, notFound: String) {
         Modifier.fillMaxSize().hazeSource(LocalHaze.current).verticalScroll(rememberScrollState())
             .safeDrawingPadding().padding(16.dp).padding(bottom = 124.dp)
     ) {
-        if (notFound.isNotBlank()) Text("Barcode $notFound not found. Search by name.", color = MaterialTheme.colorScheme.error)
-        OutlinedTextField(q, { q = it }, Modifier.fillMaxWidth(), label = { Text("Looking for something?") })
-        Text("My discs", style = MaterialTheme.typography.titleMedium)
+        if (notFound.isNotBlank()) Text(stringResource(AppR.string.search_not_found, notFound), color = MaterialTheme.colorScheme.error)
+        OutlinedTextField(q, { q = it }, Modifier.fillMaxWidth(), label = { Text(stringResource(AppR.string.search_hint)) })
+        Text(stringResource(AppR.string.search_my_discs), style = MaterialTheme.typography.titleMedium)
         Column { (if (q.isBlank()) emptyList() else local).forEach { d -> DiscRow(d) { nav.edit(vm, d) } } }
         Button(enabled = q.isNotBlank() && !loading, onClick = {
             scope.launch { loading = true; remote = vm.searchCatalog(q); loading = false }
-        }) { Text(if (loading) "Searching…" else "Search catalog") }
+        }) { Text(stringResource(if (loading) AppR.string.search_searching else AppR.string.search_catalog)) }
         remote.forEach { d -> DiscRow(d) { nav.edit(vm, d.copy(barcode = notFound.ifBlank { d.barcode })) } }
-        if (notFound.isNotBlank()) OutlinedButton({ nav.edit(vm, Disc(barcode = notFound, title = q)) }) { Text("Add manually") }
+        if (notFound.isNotBlank()) OutlinedButton({ nav.edit(vm, Disc(barcode = notFound, title = q)) }) { Text(stringResource(AppR.string.search_add_manually)) }
     }
 }
 
@@ -411,7 +411,7 @@ private fun DiscRow(d: Disc, onClick: () -> Unit) = ListItem(
         }
     },
     headlineContent = { Text(d.title) },
-    supportingContent = { Text(listOfNotNull(d.artist, d.year?.toString(), d.format.name).joinToString(" · ")) },
+    supportingContent = { Text(listOfNotNull(d.artist, d.year?.toString(), d.format.tag()).joinToString(" · ")) },
 )
 
 /** "Vinyle couleur" switch; when on, a row of 24 dp dots, the picked one ringed. Off = black (null). */
@@ -422,7 +422,7 @@ private fun VinylColorField(color: VinylColor?, onChange: (VinylColor?) -> Unit)
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text("Vinyle couleur")
+        Text(stringResource(AppR.string.form_vinyl_color))
         Switch(color != null, { onChange(if (it) VinylColor.RED else null) })
     }
     if (color == null) return
@@ -432,12 +432,13 @@ private fun VinylColorField(color: VinylColor?, onChange: (VinylColor?) -> Unit)
     ) {
         VinylColor.entries.forEach { c ->
             val on = c == color
+            val colorName = c.displayName()
             Box(
                 Modifier
                     .size(32.dp)
                     .clip(CircleShape)
                     .selectable(on, role = Role.RadioButton) { onChange(c) }
-                    .semantics { contentDescription = c.label }
+                    .semantics { contentDescription = colorName }
                     .border(2.dp, if (on) Palette.Ink else Color.Transparent, CircleShape),
                 contentAlignment = Alignment.Center,
             ) {
@@ -450,9 +451,10 @@ private fun VinylColorField(color: VinylColor?, onChange: (VinylColor?) -> Unit)
 /** "33 | 45" segmented control, nothing selected at first. Tapping the selected one clears it (null). */
 @Composable
 private fun SpeedField(speed: Speed?, onChange: (Speed?) -> Unit) {
-    Text("Vitesse", style = MaterialTheme.typography.labelLarge)
+    Text(stringResource(AppR.string.form_speed), style = MaterialTheme.typography.labelLarge)
     SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
         Speed.entries.forEachIndexed { i, s ->
+            val speedLabel = stringResource(AppR.string.speed_rpm, s.rpm)
             SegmentedButton(
                 selected = speed == s,
                 onClick = { onChange(speed.tapped(s)) },
@@ -460,7 +462,7 @@ private fun SpeedField(speed: Speed?, onChange: (Speed?) -> Unit) {
             ) {
                 // Read "33 tr/min", not a bare "33" (iOS: accessibilityLabel(speed.label)). The button is a selectable
                 // radio, so the screen reader already announces whether it is selected.
-                Text(s.rpm.toString(), Modifier.clearAndSetSemantics { contentDescription = "${s.rpm} tr/min" })
+                Text(s.rpm.toString(), Modifier.clearAndSetSemantics { contentDescription = speedLabel })
             }
         }
     }
@@ -473,14 +475,14 @@ fun EditScreen(vm: AppVm, nav: NavHostController) {
     var seen by remember { mutableStateOf(Price.input(vm.draft.seenPrice)) }
     var paid by remember { mutableStateOf(Price.input(vm.draft.paidPrice)) }
     Column(Modifier.padding(16.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(if (d.id == 0L) "Add disc" else "Edit disc", style = MaterialTheme.typography.headlineSmall)
-        OutlinedTextField(d.title, { d = d.copy(title = it) }, Modifier.fillMaxWidth(), label = { Text("Title") })
-        OutlinedTextField(d.artist, { d = d.copy(artist = it) }, Modifier.fillMaxWidth(), label = { Text("Artist") })
+        Text(stringResource(if (d.id == 0L) AppR.string.form_add_title else AppR.string.form_edit_title), style = MaterialTheme.typography.headlineSmall)
+        OutlinedTextField(d.title, { d = d.copy(title = it) }, Modifier.fillMaxWidth(), label = { Text(stringResource(AppR.string.form_title)) })
+        OutlinedTextField(d.artist, { d = d.copy(artist = it) }, Modifier.fillMaxWidth(), label = { Text(stringResource(AppR.string.form_artist)) })
         OutlinedTextField(d.year?.toString() ?: "", { d = d.copy(year = it.toIntOrNull()) }, Modifier.fillMaxWidth(),
-            label = { Text("Year") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
-        OutlinedTextField(d.barcode ?: "", { d = d.copy(barcode = it.ifBlank { null }) }, Modifier.fillMaxWidth(), label = { Text("Barcode") })
+            label = { Text(stringResource(AppR.string.form_year)) }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
+        OutlinedTextField(d.barcode ?: "", { d = d.copy(barcode = it.ifBlank { null }) }, Modifier.fillMaxWidth(), label = { Text(stringResource(AppR.string.form_barcode)) })
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Format.entries.forEach { f -> FilterChip(d.format == f, { d = d.copy(format = f) }, { Text(f.name) }) }
+            Format.entries.forEach { f -> FilterChip(d.format == f, { d = d.copy(format = f) }, { Text(f.tag()) }) }
         }
         if (d.format == Format.VINYL) {
             VinylColorField(d.vinylColor) { d = d.copy(vinylColor = it) }
@@ -489,17 +491,17 @@ fun EditScreen(vm: AppVm, nav: NavHostController) {
         Row {
             (1..5).forEach { i ->
                 IconButton({ d = d.copy(rating = if (d.rating == i) 0 else i) }) {
-                    Icon(if (i <= d.rating) Icons.Default.Star else Icons.Default.StarBorder, "Rate $i")
+                    Icon(if (i <= d.rating) Icons.Default.Star else Icons.Default.StarBorder, stringResource(AppR.string.form_rate, i))
                 }
             }
         }
-        OutlinedTextField(d.comment, { d = d.copy(comment = it) }, Modifier.fillMaxWidth(), label = { Text("Comment") })
+        OutlinedTextField(d.comment, { d = d.copy(comment = it) }, Modifier.fillMaxWidth(), label = { Text(stringResource(AppR.string.form_comment)) })
         Row(
             Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
         ) {
-            Text("In wishlist")
+            Text(stringResource(AppR.string.form_in_wishlist))
             Switch(d.wishlist, {
                 // Bought: suggest the seen price as the paid price, still editable.
                 if (!it && paid.isBlank() && Price.isValid(seen)) paid = seen
@@ -510,9 +512,9 @@ fun EditScreen(vm: AppVm, nav: NavHostController) {
         val price = if (d.wishlist) seen else paid
         OutlinedTextField(
             price, { if (d.wishlist) seen = it else paid = it }, Modifier.fillMaxWidth(),
-            label = { Text(if (d.wishlist) "Prix vu" else "Prix payé") },
+            label = { Text(stringResource(if (d.wishlist) AppR.string.form_seen_price else AppR.string.form_paid_price)) },
             suffix = { Text("€") }, singleLine = true, isError = !Price.isValid(price),
-            supportingText = { if (!Price.isValid(price)) Text("Exemple : 12,50") },
+            supportingText = { if (!Price.isValid(price)) Text(stringResource(AppR.string.form_price_example)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -521,8 +523,8 @@ fun EditScreen(vm: AppVm, nav: NavHostController) {
                 fun cents(text: String, stored: Long?) = if (Price.isValid(text)) Price.parse(text) else stored
                 vm.save(d.copy(seenPrice = cents(seen, d.seenPrice), paidPrice = cents(paid, d.paidPrice)))
                 nav.popBackStack()
-            }) { Text("Save") }
-            if (d.id != 0L) OutlinedButton({ vm.delete(d); nav.popBackStack() }) { Text("Delete") }
+            }) { Text(stringResource(AppR.string.form_save)) }
+            if (d.id != 0L) OutlinedButton({ vm.delete(d); nav.popBackStack() }) { Text(stringResource(AppR.string.form_delete)) }
         }
     }
 }
