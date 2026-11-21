@@ -27,7 +27,7 @@ struct ValueByFormat: View {
         HStack {
             Text(verbatim: label)
             Spacer()
-            Text(verbatim: Price.format(cents)).fontWeight(.medium)
+            Text(verbatim: Price.format(cents, locale: language.locale)).fontWeight(.medium)
         }
         .textStyle(Typography.body)
         .foregroundStyle(Palette.ink)

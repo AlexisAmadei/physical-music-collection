@@ -26,19 +26,12 @@ enum Price {
         text.allSatisfy(\.isWhitespace)
     }
 
-    /// French display: "25 €", "12,50 €", "1 240 €" (narrow no-break space between thousands,
-    /// no-break space before "€").
-    static func format(_ cents: Int) -> String {
-        var euros = String(cents / 100)
-        var groups: [Substring] = []
-        while euros.count > 3 {
-            groups.insert(Substring(euros.suffix(3)), at: 0)
-            euros.removeLast(3)
-        }
-        groups.insert(Substring(euros), at: 0)
-        let whole = groups.joined(separator: "\u{202F}")
-        let rest = cents % 100
-        return (rest == 0 ? whole : whole + "," + twoDigits(rest)) + "\u{A0}€"
+    /// Display in the locale's own style, always in euros: French "25 €", "12,50 €", "1 240 €" (narrow no-break
+    /// space between thousands, no-break space before "€"); English "€25", "€12.50", "€1,240". Whole euros drop the cents.
+    static func format(_ cents: Int, locale: Locale) -> String {
+        let euros = Decimal(cents) / 100
+        let digits = cents % 100 == 0 ? 0 : 2
+        return euros.formatted(.currency(code: "EUR").locale(locale).precision(.fractionLength(digits)))
     }
 
     /// What the edit field shows for an existing price: "25", "12,50". No price → "".

@@ -59,9 +59,25 @@ struct SleeveBackTests {
         #expect(face.title == "Untitled")
         #expect(face.details == "Vinyl")
         #expect(face.speed == "33 rpm")
-        #expect(face.addedOn == "Added on 3 Nov 2024")
-        #expect(face.price == "Paid 9\u{A0}€")
-        #expect(back(Draft(wishlist: true, seenPrice: 1250)).price == "Seen at 12,50\u{A0}€")
+        #expect(face.addedOn == "Added on Nov 3, 2024")
+        #expect(face.price == "Paid €9")
+        #expect(back(Draft(wishlist: true, seenPrice: 1250)).price == "Seen at €12.50")
+    }
+
+    @Test func priceAndDateFollowALiveLanguageSwitch() {
+        let disc = Draft(wishlist: false, addedAt: november3, paidPrice: 124_050)
+        func face() -> SleeveBack { back(disc) }
+
+        #expect(face().price == "Payé 1\u{202F}240,50\u{A0}€")
+        #expect(face().addedOn == "Ajouté le 3 nov. 2024")
+
+        language.select(.english)
+        #expect(face().price == "Paid €1,240.50")
+        #expect(face().addedOn == "Added on Nov 3, 2024")
+
+        language.select(.french)
+        #expect(face().price == "Payé 1\u{202F}240,50\u{A0}€")
+        #expect(face().addedOn == "Ajouté le 3 nov. 2024")
     }
 
     @Test func noPriceLineWhenTheShownPriceIsUnset() {

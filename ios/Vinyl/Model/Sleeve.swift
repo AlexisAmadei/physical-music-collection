@@ -25,9 +25,9 @@ struct SleeveBack: Equatable, Sendable {
     @MainActor
     init(_ disc: Disc, language: Language, timeZone: TimeZone = .current) {
         price = if disc.wishlist {
-            disc.seenPrice.map { language.string("Vu à \(Price.format($0))") }
+            disc.seenPrice.map { language.string("Vu à \(Price.format($0, locale: language.locale))") }
         } else {
-            disc.paidPrice.map { language.string("Payé \(Price.format($0))") }
+            disc.paidPrice.map { language.string("Payé \(Price.format($0, locale: language.locale))") }
         }
         speed = disc.speedLabel(in: language)
         showsRating = !disc.wishlist
@@ -35,17 +35,8 @@ struct SleeveBack: Equatable, Sendable {
         artist = disc.shownArtist
         details = [disc.year.map(String.init), disc.format.label(in: language)].compactMap { $0 }.joined(separator: " · ")
         addedOn = language.string(
-            "Ajouté le \(Self.dateText(disc.addedAt, locale: language.locale, timeZone: timeZone))"
+            "Ajouté le \(DateText.format(disc.addedAt, locale: language.locale, timeZone: timeZone))"
         )
-    }
-
-    /// "d MMM yyyy" in the Language's locale: "3 nov. 2024" in French, "3 Nov 2024" in English.
-    private static func dateText(_ date: Date, locale: Locale, timeZone: TimeZone) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = locale
-        formatter.timeZone = timeZone
-        formatter.dateFormat = "d MMM yyyy"
-        return formatter.string(from: date)
     }
 }
 

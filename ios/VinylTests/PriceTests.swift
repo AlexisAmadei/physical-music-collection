@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import Vinyl
 
@@ -22,13 +23,32 @@ struct PriceTests {
         #expect(!Price.isValid(text))
     }
 
+    let french = Locale(identifier: "fr")
+    let english = Locale(identifier: "en")
+
     /// Narrow no-break space (U+202F) between thousands, no-break space (U+00A0) before "€", as on Android.
     @Test func formatsFrench() {
-        #expect(Price.format(2500) == "25\u{A0}€")
-        #expect(Price.format(1250) == "12,50\u{A0}€")
-        #expect(Price.format(5) == "0,05\u{A0}€")
-        #expect(Price.format(124000) == "1\u{202F}240\u{A0}€")
-        #expect(Price.format(0) == "0\u{A0}€")
+        #expect(Price.format(2500, locale: french) == "25\u{A0}€")
+        #expect(Price.format(1250, locale: french) == "12,50\u{A0}€")
+        #expect(Price.format(5, locale: french) == "0,05\u{A0}€")
+        #expect(Price.format(124000, locale: french) == "1\u{202F}240\u{A0}€")
+        #expect(Price.format(124050, locale: french) == "1\u{202F}240,50\u{A0}€")
+        #expect(Price.format(0, locale: french) == "0\u{A0}€")
+    }
+
+    @Test func formatsEnglish() {
+        #expect(Price.format(2500, locale: english) == "€25")
+        #expect(Price.format(1250, locale: english) == "€12.50")
+        #expect(Price.format(5, locale: english) == "€0.05")
+        #expect(Price.format(124000, locale: english) == "€1,240")
+        #expect(Price.format(124050, locale: english) == "€1,240.50")
+        #expect(Price.format(0, locale: english) == "€0")
+    }
+
+    /// The currency is euros whatever the device region says.
+    @Test func currencyStaysEuroInAnyRegion() {
+        #expect(Price.format(124050, locale: Locale(identifier: "en_US")) == "€1,240.50")
+        #expect(Price.format(124050, locale: Locale(identifier: "fr_CA")).hasSuffix("€"))
     }
 
     @Test func inputRoundTrips() {

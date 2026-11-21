@@ -16,6 +16,7 @@ struct ProfileCard: View {
     static let stillLight = CGPoint(x: 0.35, y: -0.3)
     private static let maxDegrees = 10.0
 
+    @Environment(\.locale) private var locale
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var driver = CardTiltDriver()
     /// The card in window coordinates, to read the finger.
@@ -81,7 +82,7 @@ struct ProfileCard: View {
                     Text("Valeur de la collection")
                         .textStyle(Typography.label)
                         .foregroundStyle(Self.muted)
-                    Text(verbatim: Price.format(value))
+                    Text(verbatim: Price.format(value, locale: locale))
                         .textStyle(Typography.display)
                         .foregroundStyle(Self.ink)
                         .lineLimit(1)

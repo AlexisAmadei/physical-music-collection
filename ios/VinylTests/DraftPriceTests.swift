@@ -111,6 +111,21 @@ struct DraftPriceTests {
         #expect(app.draft.priceHint(in: app.language) == "Example: 12.50")
     }
 
+    @Test func bothSeparatorsAreAcceptedInEitherLanguage() {
+        for language in AppLanguage.allCases {
+            app.language.select(language)
+            for typed in ["12,50", "12.50"] {
+                app.newDraft()
+                app.draft.title = "Debut"
+                app.draft.priceText = typed
+                #expect(app.canSaveDraft)
+                #expect(app.draft.priceHint(in: app.language) == nil)
+                app.saveDraft()
+            }
+        }
+        #expect(app.collection.map(\.paidPrice) == [1250, 1250, 1250, 1250])
+    }
+
     @Test func theExampleShowsUnderAMalformedPriceOnly() {
         app.newDraft()
         #expect(app.draft.priceHint(in: app.language) == nil)
