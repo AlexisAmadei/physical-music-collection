@@ -38,6 +38,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -50,12 +52,14 @@ import coil.compose.AsyncImage
 import dev.chrisbanes.haze.hazeSource
 import dev.kiwi.vinyl.data.Disc
 import dev.kiwi.vinyl.data.Format
+import dev.kiwi.vinyl.data.Language
 import dev.kiwi.vinyl.data.Price
 import dev.kiwi.vinyl.data.ProfileName
 import dev.kiwi.vinyl.data.Speed
 import dev.kiwi.vinyl.data.VinylColor
 import dev.kiwi.vinyl.data.shownVinylColor
 import dev.kiwi.vinyl.data.tapped
+import dev.kiwi.vinyl.R as AppR
 import dev.kiwi.vinyl.data.CollectionValue
 import dev.kiwi.vinyl.data.collectionValue
 import kotlinx.coroutines.launch
@@ -68,7 +72,7 @@ fun HomeScreen(vm: AppVm, nav: NavHostController) {
         if (discs.isEmpty()) {
             var adding by remember { mutableStateOf(false) }
             EmptyState(
-                "Scanne un code-barres ou cherche un album pour commencer.", "Ajouter mon premier disque",
+                stringResource(AppR.string.profile_empty_hint), stringResource(AppR.string.profile_empty_action),
                 onAdd = { adding = true },
                 Modifier.align(Alignment.CenterStart).padding(start = 20.dp, end = 72.dp),
             ) { AddChoices(adding, { adding = false }, vm, nav) }
@@ -110,7 +114,7 @@ fun CollectionScreen(vm: AppVm, nav: NavHostController) {
         if (shown.isEmpty()) item(span = { GridItemSpan(maxLineSpan) }) {
             var adding by remember { mutableStateOf(false) }
             EmptyState(
-                "Scanne un code-barres ou cherche un album pour commencer.", "Ajouter mon premier disque",
+                stringResource(AppR.string.profile_empty_hint), stringResource(AppR.string.profile_empty_action),
                 onAdd = { adding = true }, Modifier.padding(top = 120.dp - 28.dp),
             ) { AddChoices(adding, { adding = false }, vm, nav) }
         }
@@ -138,6 +142,7 @@ fun WishlistScreen(vm: AppVm, nav: NavHostController) {
 fun ProfileScreen(vm: AppVm, nav: NavHostController) {
     val all by vm.dao.byList(false).collectAsState(null)
     val name by vm.name.collectAsState()
+    val language by vm.language.collectAsState()
     var editing by rememberSaveable { mutableStateOf(false) }
     val list = all ?: return
     val value = remember(list) { collectionValue(list) }
@@ -145,17 +150,18 @@ fun ProfileScreen(vm: AppVm, nav: NavHostController) {
         Modifier.fillMaxSize().hazeSource(LocalHaze.current).verticalScroll(rememberScrollState())
             .padding(start = 20.dp, end = 20.dp, top = screenTop(), bottom = 119.dp + chromeBottom()),
     ) {
-        Text("MON PROFIL", style = Type.Display)
+        Text(stringResource(AppR.string.profile_title), style = Type.Display)
         ProfileCard(name, value.total, list.size, onEditName = { editing = true }, Modifier.padding(top = 24.dp))
         if (list.isEmpty()) {
             var adding by remember { mutableStateOf(false) }
             EmptyState(
-                "Scanne un code-barres ou cherche un album pour commencer.", "Ajouter mon premier disque",
+                stringResource(AppR.string.profile_empty_hint), stringResource(AppR.string.profile_empty_action),
                 onAdd = { adding = true }, Modifier.padding(top = 35.dp),
             ) { AddChoices(adding, { adding = false }, vm, nav) }
         } else {
             ValueByFormat(value, Modifier.padding(top = 35.dp))
         }
+        LanguageSwitch(language, onPick = vm::setLanguage, Modifier.padding(top = 35.dp))
     }
     if (editing) NameSheet(name, onDone = { vm.setName(it); editing = false }, onDismiss = { editing = false })
 }
@@ -163,8 +169,8 @@ fun ProfileScreen(vm: AppVm, nav: NavHostController) {
 @Composable
 private fun ValueByFormat(v: CollectionValue, modifier: Modifier = Modifier) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text("Par format", Modifier.padding(bottom = 4.dp), style = Type.Label, color = Palette.Muted)
-        listOf("CD" to v.cd, "Vinyle" to v.vinyl).forEach { (label, cents) ->
+        Text(stringResource(AppR.string.profile_by_format), Modifier.padding(bottom = 4.dp), style = Type.Label, color = Palette.Muted)
+        listOf(stringResource(AppR.string.format_cd) to v.cd, stringResource(AppR.string.format_vinyl) to v.vinyl).forEach { (label, cents) ->
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(label, style = Type.Body)
                 Text(Price.format(cents), style = Type.Body, fontWeight = FontWeight.Medium)
@@ -172,9 +178,30 @@ private fun ValueByFormat(v: CollectionValue, modifier: Modifier = Modifier) {
         }
         if (v.unpriced > 0) {
             Text(
-                if (v.unpriced == 1) "1 disque sans prix" else "${v.unpriced} disques sans prix",
+                pluralStringResource(AppR.plurals.discs_without_price, v.unpriced, v.unpriced),
                 Modifier.padding(top = 12.dp), style = Type.Body, color = Palette.Muted,
             )
+        }
+    }
+}
+
+/** "English | Français": a native segmented control. Each language is named in its own language, never translated. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun LanguageSwitch(current: Language, onPick: (Language) -> Unit, modifier: Modifier = Modifier) {
+    val names = mapOf(Language.EN to stringResource(AppR.string.language_name_en), Language.FR to stringResource(AppR.string.language_name_fr))
+    val label = stringResource(AppR.string.language_switch)
+    val colors = SegmentedButtonDefaults.colors(
+        activeContainerColor = Palette.Ink, activeContentColor = Color.White, activeBorderColor = Palette.Ink,
+        inactiveContainerColor = Palette.Surface, inactiveContentColor = Palette.Ink, inactiveBorderColor = Palette.Line,
+    )
+    SingleChoiceSegmentedButtonRow(modifier.fillMaxWidth().semantics { contentDescription = label }) {
+        Language.entries.forEachIndexed { i, lang ->
+            SegmentedButton(
+                selected = lang == current, onClick = { if (lang != current) onPick(lang) },
+                shape = SegmentedButtonDefaults.itemShape(i, Language.entries.size), colors = colors,
+                modifier = Modifier.height(48.dp),
+            ) { Text(names.getValue(lang), style = Type.Body, fontWeight = FontWeight.Medium) }
         }
     }
 }
@@ -187,7 +214,7 @@ private fun NameSheet(current: String, onDone: (String) -> Unit, onDismiss: () -
     val focus = remember { FocusRequester() }
     ModalBottomSheet(onDismiss, containerColor = Palette.Surface) {
         Column(Modifier.padding(start = 20.dp, end = 20.dp, bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text("Ton nom", style = Type.Title)
+            Text(stringResource(AppR.string.profile_name_placeholder), style = Type.Title)
             OutlinedTextField(
                 text, { text = it.take(ProfileName.MAX) }, Modifier.fillMaxWidth().focusRequester(focus),
                 singleLine = true, supportingText = { Text("${text.length} / ${ProfileName.MAX}") },
@@ -198,7 +225,7 @@ private fun NameSheet(current: String, onDone: (String) -> Unit, onDismiss: () -
                 { onDone(text) }, Modifier.height(48.dp).align(Alignment.End), shape = RoundedCornerShape(24.dp),
                 colors = ButtonDefaults.buttonColors(Palette.Ink, Color.White),
                 contentPadding = PaddingValues(horizontal = 24.dp),
-            ) { Text("OK", style = Type.Body, fontWeight = FontWeight.Medium) }
+            ) { Text(stringResource(AppR.string.ok), style = Type.Body, fontWeight = FontWeight.Medium) }
         }
     }
     LaunchedEffect(Unit) { focus.requestFocus() }
@@ -326,7 +353,7 @@ private fun SortToggle(sort: Sort, onChange: (Sort) -> Unit) {
 @Composable
 private fun EmptyState(hint: String, action: String, onAdd: () -> Unit, modifier: Modifier = Modifier, anchored: @Composable () -> Unit = {}) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Text("Rien ici pour l’instant.", style = Type.Welcome)
+        Text(stringResource(AppR.string.empty_title), style = Type.Welcome)
         Text(hint, style = Type.Body, color = Palette.Muted)
         Box {
             Button(
@@ -343,9 +370,9 @@ private fun EmptyState(hint: String, action: String, onAdd: () -> Unit, modifier
 @Composable
 fun AddChoices(expanded: Boolean, onDismiss: () -> Unit, vm: AppVm, nav: NavHostController) {
     DropdownMenu(expanded, onDismiss) {
-        DropdownMenuItem({ Text("Scanner un code-barres") }, { onDismiss(); nav.navigate(R.SCAN) })
-        DropdownMenuItem({ Text("Rechercher un album") }, { onDismiss(); nav.navigate(R.SEARCH) { launchSingleTop = true } })
-        DropdownMenuItem({ Text("Saisie manuelle") }, { onDismiss(); nav.edit(vm, Disc()) })
+        DropdownMenuItem({ Text(stringResource(AppR.string.add_scan)) }, { onDismiss(); nav.navigate(R.SCAN) })
+        DropdownMenuItem({ Text(stringResource(AppR.string.add_search)) }, { onDismiss(); nav.navigate(R.SEARCH) { launchSingleTop = true } })
+        DropdownMenuItem({ Text(stringResource(AppR.string.add_manual)) }, { onDismiss(); nav.edit(vm, Disc()) })
     }
 }
 
