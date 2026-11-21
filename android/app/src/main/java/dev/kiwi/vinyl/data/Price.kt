@@ -28,11 +28,14 @@ object Price {
         return if (fr) number + "\u00A0\u20AC" else "\u20AC" + number
     }
 
-    /** What the edit field shows for an existing price: "25", "12,50". */
-    fun input(cents: Long?): String = when {
+    /**
+     * What the edit field shows for an existing price, with the in-app language's decimal separator:
+     * "25", "12,50" in French, "12.50" in English. [parse] takes either separator.
+     */
+    fun input(cents: Long?, language: Language): String = when {
         cents == null -> ""
         cents % 100 == 0L -> (cents / 100).toString()
-        else -> "${cents / 100},${(cents % 100).toString().padStart(2, '0')}"
+        else -> "${cents / 100}${if (language == Language.FR) "," else "."}${(cents % 100).toString().padStart(2, '0')}"
     }
 }
 

@@ -473,8 +473,9 @@ private fun SpeedField(speed: Speed?, onChange: (Speed?) -> Unit) {
 fun EditScreen(vm: AppVm, nav: NavHostController) {
     var d by remember { mutableStateOf(vm.draft) }
     // Raw text so "12," survives while typing; parsed into the Disc on save.
-    var seen by remember { mutableStateOf(Price.input(vm.draft.seenPrice)) }
-    var paid by remember { mutableStateOf(Price.input(vm.draft.paidPrice)) }
+    val language = currentLanguage()
+    var seen by remember { mutableStateOf(Price.input(vm.draft.seenPrice, language)) }
+    var paid by remember { mutableStateOf(Price.input(vm.draft.paidPrice, language)) }
     Column(Modifier.padding(16.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(stringResource(if (d.id == 0L) AppR.string.form_add_title else AppR.string.form_edit_title), style = MaterialTheme.typography.headlineSmall)
         OutlinedTextField(d.title, { d = d.copy(title = it) }, Modifier.fillMaxWidth(), label = { Text(stringResource(AppR.string.form_title)) })

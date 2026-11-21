@@ -22,9 +22,6 @@ fun VinylColor.displayName(): String = stringResource(
     },
 )
 
-/** The Format as an uppercase tag ("CD", "VINYL" / "VINYLE"), in the active language. */
+/** The Format label as an uppercase tag ("CD", "VINYL" / "VINYLE"), in the active language. */
 @Composable
-fun Format.tag(): String = when (this) {
-    Format.CD -> stringResource(AppR.string.format_cd)
-    Format.VINYL -> stringResource(AppR.string.format_vinyl).uppercase()
-}
+fun Format.tag(): String = stringResource(labelRes).uppercase()

@@ -28,6 +28,19 @@ class LanguageTest {
         assertNull(Language.fromTag(""))
     }
 
+    // iOS: AppLanguage.forDevice. Android resolves its resources across the whole locale list too, so the
+    // formatters must read the same first supported language the strings do.
+    @Test fun theFirstSupportedDeviceLanguageWins() {
+        assertEquals(Language.FR, Language.forDevice(listOf("de", "fr")))
+        assertEquals(Language.EN, Language.forDevice(listOf("de", "en", "fr")))
+        assertEquals(Language.FR, Language.forDevice(listOf("fr", "en")))
+    }
+
+    @Test fun aDeviceWithNeitherLanguageIsEnglish() {
+        assertEquals(Language.EN, Language.forDevice(listOf("de", "es")))
+        assertEquals(Language.EN, Language.forDevice(emptyList()))
+    }
+
     @Test fun eachLanguageIsStoredByItsTag() {
         assertEquals("en", Language.EN.tag)
         assertEquals("fr", Language.FR.tag)

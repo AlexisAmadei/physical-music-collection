@@ -62,8 +62,18 @@ class PriceTest {
     }
 
     @Test fun inputRoundTrips() {
-        listOf(2500L, 1250L, 5L, 124000L).forEach { assertEquals(it, Price.parse(Price.input(it))) }
-        assertEquals("", Price.input(null))
+        for (language in Language.entries) {
+            listOf(2500L, 1250L, 5L, 124000L).forEach { assertEquals(it, Price.parse(Price.input(it, language))) }
+            assertEquals("", Price.input(null, language))
+        }
+    }
+
+    // iOS: Price.input(_:locale:). The edit field shows the language's decimal separator.
+    @Test fun inputUsesTheLanguagesDecimalSeparator() {
+        assertEquals("12.50", Price.input(1250, Language.EN))
+        assertEquals("12,50", Price.input(1250, Language.FR))
+        assertEquals("0.05", Price.input(5, Language.EN))
+        assertEquals("25", Price.input(2500, Language.EN))
     }
 
     @Test fun collectionValueSkipsWishlistAndCountsUnpriced() {

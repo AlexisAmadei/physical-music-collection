@@ -10,5 +10,7 @@ import dev.kiwi.vinyl.data.Language
  * device language, English unless French. Formatters take this, never the device region.
  */
 @Composable
-fun currentLanguage(): Language =
-    Language.resolve(stored = null, deviceLanguage = LocalConfiguration.current.locales[0].language)
+fun currentLanguage(): Language {
+    val locales = LocalConfiguration.current.locales
+    return Language.forDevice((0 until locales.size()).map { locales[it].language })
+}

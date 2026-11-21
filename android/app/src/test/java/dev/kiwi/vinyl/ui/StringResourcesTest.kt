@@ -45,11 +45,28 @@ class StringResourcesTest {
     @Test fun discCountsAreRealPluralsWithTheQuantitiesEachLanguageNeeds() {
         val en = load("values")
         val fr = load("values-fr")
-        for (name in listOf("disc_count", "discs_without_price")) {
+        val plurals = en.values.filter { it.quantities.isNotEmpty() }.map { it.name }
+        assertEquals(listOf("disc_count", "discs_without_price"), plurals)
+        for (name in plurals) {
             assertEquals(name, setOf("one", "other"), en.getValue(name).quantities)
             // French: 0 and 1 are "one"; "many" covers millions (CLDR), so lint and ICU agree.
             assertEquals(name, setOf("one", "many", "other"), fr.getValue(name).quantities)
         }
+    }
+
+    @Test fun noStringIsBlankInEitherLanguage() {
+        for (dir in listOf("values", "values-fr")) {
+            val blank = load(dir).values.filter { it.text.isBlank() }.map { it.name }
+            assertEquals("$dir has blank strings", emptyList<String>(), blank)
+        }
+    }
+
+    /** Wording that used to differ from iOS: the same words on both platforms now (see iOS CrossPlatformParityTests). */
+    @Test fun englishWordingMatchesIos() {
+        val en = load("values")
+        assertEquals("Add my first disc", en.getValue("profile_empty_action").text)
+        assertEquals("Add the discs you are looking for.", en.getValue("wishlist_empty_hint").text)
+        assertEquals("Rating: %1\$d out of 5", en.getValue("rating_of_five").text)
     }
 
     /** Search, Scan and the add/edit form (#26): all user-visible copy lives in resources, in both languages. */

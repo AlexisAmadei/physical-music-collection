@@ -9,6 +9,10 @@ enum class Language(val tag: String) {
         /** A stored tag as a Language; absent or unknown = no choice made. */
         fun fromTag(tag: String?): Language? = entries.firstOrNull { it.tag == tag }
 
+        /** The first of the device's languages (language codes, most preferred first) the app has; English when none. */
+        fun forDevice(languages: List<String>): Language =
+            languages.firstNotNullOfOrNull { fromTag(it) } ?: EN
+
         /** The stored choice wins; with none, follow the device (French) and fall back to English. */
         fun resolve(stored: Language?, deviceLanguage: String): Language =
             stored ?: if (deviceLanguage == FR.tag) FR else EN

@@ -21,7 +21,7 @@ class LanguageSettings(context: Context) {
     fun stored(): Language? = Language.fromTag(prefs.getString(KEY, null))
 
     /** The language the app shows: the stored choice, else the device language, else English. */
-    fun effective(): Language = Language.resolve(stored(), deviceLanguage())
+    fun effective(): Language = stored() ?: Language.forDevice(deviceLanguages())
 
     /** Remember [language] and re-render now: the activity is recreated in the new language. */
     fun choose(language: Language) {
@@ -47,7 +47,10 @@ class LanguageSettings(context: Context) {
         }
     }
 
-    private fun deviceLanguage(): String = Resources.getSystem().configuration.locales[0].language
+    private fun deviceLanguages(): List<String> {
+        val locales = Resources.getSystem().configuration.locales
+        return (0 until locales.size()).map { locales[it].language }
+    }
 
     private companion object {
         const val KEY = "language"
