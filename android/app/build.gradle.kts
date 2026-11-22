@@ -11,12 +11,12 @@ val localProps = Properties().apply { rootProject.file("local.properties").takeI
 fun secret(prop: String, env: String) = localProps.getProperty(prop) ?: System.getenv(env) ?: ""
 
 android {
-    namespace = "dev.kiwi.vinyl"
-    compileSdk = 35
+    namespace = "com.kiwidev.physical"
+    compileSdk = 36
     defaultConfig {
-        applicationId = "dev.kiwi.vinyl"
+        applicationId = "com.kiwidev.physical"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 7
         versionName = "1.2.2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
