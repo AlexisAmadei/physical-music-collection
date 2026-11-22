@@ -14,3 +14,8 @@ ios/build/
 ios/DerivedData/
 DerivedData/
 ios/Config/Secrets.xcconfig
+android/*.jks
+
+# Release signing (never commit)
+*.jks
+.env.signing

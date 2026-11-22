@@ -1,4 +1,4 @@
-name: Release APK
+name: Release APK + AAB
 on:
   release:
     types: [published]
@@ -21,7 +21,7 @@ jobs:
           test -n "$KEYSTORE_B64" || { echo "SIGNING_KEYSTORE_B64 secret missing"; exit 1; }
           echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
         env: { KEYSTORE_B64: '${{ secrets.SIGNING_KEYSTORE_B64 }}' }
-      - run: ./gradlew assembleRelease
+      - run: ./gradlew assembleRelease bundleRelease
         env:
           DISCOGS_KEY: ${{ secrets.DISCOGS_KEY }}
           DISCOGS_SECRET: ${{ secrets.DISCOGS_SECRET }}
@@ -29,6 +29,8 @@ jobs:
           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
-      - run: mv app/build/outputs/apk/release/app-release.apk vinyl-${{ github.event.release.tag_name }}.apk
-      - run: gh release upload "${{ github.event.release.tag_name }}" vinyl-*.apk
+      - run: |
+          mv app/build/outputs/apk/release/app-release.apk vinyl-${{ github.event.release.tag_name }}.apk
+          mv app/build/outputs/bundle/release/app-release.aab vinyl-${{ github.event.release.tag_name }}.aab
+      - run: gh release upload "${{ github.event.release.tag_name }}" vinyl-*.apk vinyl-*.aab
         env: { GH_TOKEN: '${{ github.token }}' }
