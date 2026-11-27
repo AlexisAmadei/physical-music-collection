@@ -315,12 +315,69 @@ TECH.F = (g, rand, c) => {
   }
 };
 
+/* G. Galaxy v2: soft nebula (same warped noise, smooth instead of banded) + stars of varied size, a few with a glow. */
+TECH.G = (g, rand, c) => {
+  const N = Math.min(c.S, 256);
+  const T = document.createElement('canvas'); T.width = T.height = N;
+  const tg = T.getContext('2d'); const img = tg.createImageData(N, N); const d = img.data;
+  const s0 = Math.floor(rand() * 1e6), sc = 1.3;
+  const o = Array.from({ length: 6 }, () => rand() * 80);
+  const lite = mix(c.sec, [255, 255, 255], 0.35);
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    const px = ((x + 0.5) / N * 2 - 1) * sc, py = ((y + 0.5) / N * 2 - 1) * sc;
+    const qx = fbm(px + o[0], py + o[1], s0), qy = fbm(px + o[2], py + o[3], s0 + 7);
+    const f = fbm(px + 2.2 * qx + o[4], py + 2.2 * qy + o[5], s0 + 13);
+    const t = smooth(0.38, 0.78, f);
+    const core = smooth(0.62, 0.9, f);
+    let col = mix(c.base, c.sec, t);
+    col = mix(col, lite, core * 0.5);
+    const i = (y * N + x) * 4;
+    d[i] = col[0]; d[i + 1] = col[1]; d[i + 2] = col[2];
+    d[i + 3] = (c.clear ? CLEAR_A + (1 - CLEAR_A) * t : 1) * 255;
+  }
+  tg.putImageData(img, 0, 0);
+  g.clearRect(-1.1, -1.1, 2.2, 2.2);
+  g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
+  g.drawImage(T, -1, -1, 2, 2);
+  const r2 = rng(Math.floor(rand() * 1e9) + 1);
+  for (let i = 0; i < 260; i++) {
+    const [x, y] = inDisc(r2, 1.02), r = 0.003 + Math.pow(r2(), 4) * 0.014;
+    ellipse(g, x, y, r, r, 0, `rgba(255,255,255,${0.45 + r2() * 0.5})`);
+  }
+  for (let i = 0; i < 14; i++) {
+    const [x, y] = inDisc(r2, 0.98), r = 0.022 + r2() * 0.02;
+    const gr = g.createRadialGradient(x, y, 0, x, y, r);
+    gr.addColorStop(0, 'rgba(255,255,255,0.95)'); gr.addColorStop(0.25, 'rgba(255,255,255,0.55)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill();
+  }
+};
+/* H. Glitter v3: 1400 flecks, tints chosen against the wax: dark and mid flecks on light wax, white and light flecks on dark wax. */
+TECH.H = (g, rand, c) => {
+  const light = lum(c.base) > 0.4;
+  const hi = light ? mix(c.base, [0, 0, 0], 0.5) : [255, 255, 255];
+  const mid = light ? mix(c.base, [0, 0, 0], 0.22) : mix(c.base, [255, 255, 255], 0.5);
+  const lo = light ? [255, 255, 255] : mix(c.base, [0, 0, 0], 0.4);
+  for (let i = 0; i < 1400; i++) {
+    const [x, y] = inDisc(rand, 1.02), r = 0.003 + Math.pow(rand(), 3) * 0.013;
+    const k = rand();
+    const col = k < 0.45 ? hi : k < 0.8 ? mid : lo;
+    ellipse(g, x, y, r, r, 0, css(col, 0.35 + rand() * 0.6));
+  }
+};
+/* I. Split, current implementation: second color on one half, seeded angle. */
+TECH.I = (g, rand, c) => {
+  g.save(); g.rotate(rand() * TAU); g.fillStyle = css(c.sec, 1); g.fillRect(0, -1, 1, 2); g.restore();
+};
+
 const VARIANTS = [
   { key:'A', name:'Marble, ribbons',          kind:'vector',  note:'Curling feathered ribbons (3 stacked translucent passes instead of a blur), a mid tone underneath, thin veins on top. Pure paths and fills: trivial on SwiftUI Canvas and Compose Canvas, a few ms. Risk: looks drawn rather than poured when ribbons overlap a lot.' },
   { key:'B', name:'Marble, warped noise',     kind:'bitmap',  note:'Domain-warped fbm thresholded into bands. Richest and closest to real marbling, but it is per-pixel math: build one 256 px bitmap per Disc on a background thread, cache it, draw it scaled. Works on iOS (CGContext buffer) and Android minSdk 26 (Bitmap.setPixels); a shader is not an option on Android below API 33. Needs a noise function ported twice and kept identical in style.' },
   { key:'C', name:'Marble, clouds',           kind:'vector',  note:'Large soft elongated radial-gradient blobs plus a few veins. Reads as smoky or swirled marble rather than veined stone. Radial gradients are native on both platforms, no blur needed. Looks softer and less crisp than A or B.' },
   { key:'D', name:'Splatter, uniform',        kind:'vector',  note:'About 230 round droplets with power-law sizes, scattered evenly. The simplest thing. Risk: reads as polka dots or confetti, not flicked paint.' },
   { key:'E', name:'Splatter, bursts',         kind:'vector',  note:'3 to 6 impact points, each a core blob throwing elongated droplets outward. Closest to how splatter vinyl is actually made. Uneven coverage is part of the look. Elliptical droplets are rotated paths, easy on both platforms.' },
+  { key:'G', name:'Galaxy (current)', kind:'bitmap', note:'Marble B plus 160 white speckles.' },
+  { key:'H', name:'Glitter (current)', kind:'vector', note:'420 silver flecks.' },
+  { key:'I', name:'Split (current)', kind:'vector', note:'Second color on one half.' },
   { key:'F', name:'Splatter, blobs and mist', kind:'vector',  note:'Lumpy paint blobs, medium drops with slight tint variation, and 480 fine mist dots. Busiest, about 600 shapes per Disc, still cheap if cached as a bitmap once.' },
 ];
 
@@ -455,7 +512,7 @@ addEventListener('keydown', e => {
   if (/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName) || document.activeElement.isContentEditable) return;
   if (e.key === 'ArrowLeft') cycle(-1); else if (e.key === 'ArrowRight') cycle(1);
   else if (e.key === 'r' || e.key === 'R') reroll();
-  else if (/^[1-6]$/.test(e.key)) select(VARIANTS[+e.key - 1].key);
+  else if (/^[1-9]$/.test(e.key)) select(VARIANTS[+e.key - 1].key);
 });
 for (const [b, s] of PRESETS) {
   const el = document.createElement('button'); el.className = 'chip';
@@ -463,7 +520,17 @@ for (const [b, s] of PRESETS) {
   el.onclick = () => { st.base = b; st.second = s; renderAll(); };
   $('presets').appendChild(el);
 }
-renderAll(); frame();
+if (params.get('sheet')) {
+  document.body.innerHTML = '<div id="sh" style="display:flex;flex-wrap:wrap;gap:14px;padding:16px;background:#17181b;color:#ccc;font:12px system-ui"></div>';
+  for (const spec of JSON.parse(params.get('sheet'))) {
+    const [v, b, sec, seed] = spec;
+    const box = document.createElement('div'); box.style.textAlign = 'center';
+    const cv = document.createElement('canvas'); cv.className = 'disc'; box.appendChild(cv);
+    const cap = document.createElement('div'); cap.textContent = `${v} ${b}/${sec}`; box.appendChild(cap);
+    document.getElementById('sh').appendChild(box);
+    paintDisc(cv, 190, { base: b, second: sec }, v, seed, 0);
+  }
+} else { renderAll(); frame(); }
 </script>
 </body>
 </html>
