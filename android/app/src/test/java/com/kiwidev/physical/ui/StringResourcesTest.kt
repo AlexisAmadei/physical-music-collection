@@ -74,7 +74,7 @@ class StringResourcesTest {
         "search_not_found", "search_hint", "search_my_discs", "search_catalog", "search_searching", "search_add_manually",
         "scan_enter_manually", "scan_camera_needed", "scan_looking_up",
         "form_add_title", "form_edit_title", "form_title", "form_artist", "form_year", "form_barcode", "form_comment",
-        "form_vinyl_color", "form_speed", "speed_rpm", "form_rate", "form_in_wishlist", "form_seen_price", "form_paid_price",
+        "form_vinyl_color", "form_finish", "form_second_color", "form_speed", "speed_rpm", "form_rate", "form_in_wishlist", "form_seen_price", "form_paid_price",
         "form_price_example", "form_save", "form_delete",
         "vinyl_color_red", "vinyl_color_orange", "vinyl_color_yellow", "vinyl_color_green", "vinyl_color_blue",
         "vinyl_color_purple", "vinyl_color_pink", "vinyl_color_white", "vinyl_color_clear",

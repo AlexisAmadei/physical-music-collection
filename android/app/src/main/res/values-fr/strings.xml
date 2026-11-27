@@ -93,6 +93,8 @@
     <string name="vinyl_color_purple">Violet</string>
     <string name="vinyl_color_pink">Rose</string>
     <string name="vinyl_color_white">Blanc</string>
+    <string name="form_finish">Finition</string>
+    <string name="form_second_color">Deuxième couleur</string>
     <string name="vinyl_color_clear">Transparent</string>
     <string name="vinyl_color_gold">Or</string>
     <string name="vinyl_color_silver">Argent</string>

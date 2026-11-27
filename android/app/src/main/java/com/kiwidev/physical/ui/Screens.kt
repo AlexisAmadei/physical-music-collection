@@ -492,6 +492,7 @@ fun EditScreen(vm: AppVm, nav: NavHostController) {
         }
         if (d.format == Format.VINYL) {
             VinylColorField(d.vinylColor) { d = d.withVinylColor(it) }
+            FinishField(d) { d = it }
             SpeedField(d.speed) { d = d.copy(speed = it) }
         }
         Row {

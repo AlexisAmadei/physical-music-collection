@@ -94,6 +94,8 @@
     <string name="vinyl_color_purple">Purple</string>
     <string name="vinyl_color_pink">Pink</string>
     <string name="vinyl_color_white">White</string>
+    <string name="form_finish">Finish</string>
+    <string name="form_second_color">Second color</string>
     <string name="vinyl_color_clear">Clear</string>
     <string name="vinyl_color_gold">Gold</string>
     <string name="vinyl_color_silver">Silver</string>
