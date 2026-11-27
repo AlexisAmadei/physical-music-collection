@@ -13,15 +13,23 @@ The physical medium of a Disc: vinyl or CD. Anything else (cassette, file, DVD) 
 _Avoid_: Media, type
 
 **Vinyl color**:
-The color of a vinyl Disc's wax, picked from a short fixed list of solid colors (or clear). Black when not set. Kept but hidden if the Disc's Format is CD.
+The main color of a vinyl Disc's wax, picked from a short fixed list of colors (or clear). Black when not set; Black is not in the list, except as a Second color. Kept but hidden if the Disc's Format is CD.
 _Avoid_: Colour, variant
+
+**Finish**:
+How a vinyl Disc's wax is patterned: Solid, Marble, Splatter, Split, Galaxy or Glitter. Solid when not set, so existing Discs stay Solid. It only exists on a Disc with a Vinyl color, and is drawn from it (and from the Second color, for the Finishes that use one). It shows on the Disc out of its sleeve and in the form, never on the Color band. Every Disc has its own pattern, which never changes between launches. Typed by the user, never prefilled from the Catalog. Kept but hidden if the Disc's Format is CD; cleared when the Vinyl color is turned off. Picture discs and rarer finishes are out of scope.
+_Avoid_: Pattern, effect, style, variant
+
+**Second color**:
+The other color of a Finish that uses one: Marble, Splatter, Split and Galaxy (Solid and Glitter have none). Picked from the Vinyl color list plus Black (Clear is not offered). Choosing such a Finish preselects White, or Black for Split. Kept when the Finish goes back to Solid, hidden then; cleared when the Vinyl color is turned off, and hidden but kept if the Disc's Format is CD.
+_Avoid_: Accent color, color 2
 
 **Speed**:
 The RPM a vinyl Disc plays at: 33 or 45, nothing else. Optional and unset by default; existing Discs and Catalog results stay unset. Tapping the selected value in the form clears it. Kept but hidden if the Disc's Format is CD. Shown on the Disc detail only for a vinyl Disc with a Speed set, as "33 tr/min" or "45 tr/min" in French and "33 rpm" or "45 rpm" in English.
 _Avoid_: RPM, size
 
 **Color band**:
-The flat band of a Disc's Vinyl color across the top-right corner of its cover, drawn only when the Disc shows a Vinyl color. Shown on the cover front everywhere a cover appears.
+The flat band of a Disc's Vinyl color across the top-right corner of its cover, drawn only when the Disc shows a Vinyl color. Shown on the cover front everywhere a cover appears. Always a single flat color: the Finish and Second color never show on it.
 _Avoid_: Sticker, color dot, badge, ribbon
 
 **Collection**:
@@ -46,6 +54,8 @@ The app is available in English and French. Domain terms keep the same meaning i
 | Wishlist | Wishlist |
 | Profile | Profil |
 | Vinyl color | Couleur vinyle |
+| Finish | Finition |
+| Second color | Deuxième couleur |
 | Speed | Vitesse ("33 tr/min") in French, "33 rpm" in English |
 | Format | Format |
 

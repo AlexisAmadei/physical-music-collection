@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Added
+- Android and iOS: a vinyl Disc with a Vinyl color can carry a Finish, set under the Vinyl color: Solid (the default), Marble, Splatter, Split, Galaxy or Glitter. It shows on the Disc out of its sleeve and in the form; the Color band on covers stays flat in the Vinyl color. Every Disc has its own pattern. Existing Discs stay Solid. The Catalog does not prefill it.
+- Android and iOS: Marble, Splatter, Split and Galaxy take a Second color, picked from the Vinyl colors plus Black. It starts as White (Black for Split) and can be changed.
+- Android and iOS: six new Vinyl colors: Gold, Silver, Grey, Brown, Teal and Bone.
+- Android and iOS: Glitter and Galaxy shimmer as the phone tilts, unless the system asks to reduce motion.
+- Android and iOS: the Disc detail shows the Finish and colors as text (for example "Marbré, Rouge et noir"), and the cover's screen reader label includes them.
+
 ## v1.2.2 - 2026-11-21
 
 ### Added
