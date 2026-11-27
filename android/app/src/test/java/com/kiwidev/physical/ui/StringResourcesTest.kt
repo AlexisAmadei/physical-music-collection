@@ -42,16 +42,21 @@ class StringResourcesTest {
         assertEquals("only in French", emptySet<String>(), fr - en)
     }
 
-    @Test fun discCountsAreRealPluralsWithTheQuantitiesEachLanguageNeeds() {
+    /** The Profile card labels: short, to fit the narrow portrait card. Same words on iOS. */
+    @Test fun profileCardLabelsInBothLanguages() {
         val en = load("values")
         val fr = load("values-fr")
-        val plurals = en.values.filter { it.quantities.isNotEmpty() }.map { it.name }
-        assertEquals(listOf("disc_count", "discs_without_price"), plurals)
-        for (name in plurals) {
-            assertEquals(name, setOf("one", "other"), en.getValue(name).quantities)
-            // French: 0 and 1 are "one"; "many" covers millions (CLDR), so lint and ICU agree.
-            assertEquals(name, setOf("one", "many", "other"), fr.getValue(name).quantities)
+        val words = mapOf(
+            "profile_collection_value" to ("Collection value" to "Valeur"), "profile_vinyls" to ("Vinyls" to "Vinyles"),
+            "profile_cds" to ("CDs" to "CD"), "profile_colored" to ("Colored discs" to "Disques colorés"),
+            "profile_oldest" to ("Oldest" to "Plus ancien"),
+        )
+        for ((key, pair) in words) {
+            assertEquals(key, pair.first, en.getValue(key).text)
+            assertEquals(key, pair.second, fr.getValue(key).text)
         }
+        assertEquals("3 without price", String.format(en.getValue("profile_without_price").text, 3))
+        assertEquals("3 sans prix", String.format(fr.getValue("profile_without_price").text, 3))
     }
 
     @Test fun noStringIsBlankInEitherLanguage() {

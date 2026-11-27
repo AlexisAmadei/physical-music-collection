@@ -40,23 +40,16 @@
     <string name="profile_title">MON PROFIL</string>
     <string name="profile_name_placeholder">Ton nom</string>
     <string name="profile_name_edit">Modifier ton nom</string>
-    <string name="profile_collection_value">Valeur de la collection</string>
+    <string name="profile_collection_value">Valeur</string>
     <string name="profile_empty_hint">Scanne un code-barres ou cherche un album pour commencer.</string>
     <string name="profile_empty_action">Ajouter mon premier disque</string>
-    <string name="profile_by_format">Par format</string>
+    <string name="profile_vinyls">Vinyles</string>
+    <string name="profile_cds">CD</string>
+    <string name="profile_colored">Disques colorés</string>
+    <string name="profile_oldest">Plus ancien</string>
+    <string name="profile_without_price">%1$d sans prix</string>
     <string name="format_cd">CD</string>
     <string name="format_vinyl">Vinyle</string>
-    <!-- French: 0 and 1 are singular. "many" is the CLDR category for round millions. -->
-    <plurals name="disc_count">
-        <item quantity="one">%d disque</item>
-        <item quantity="many">%d disques</item>
-        <item quantity="other">%d disques</item>
-    </plurals>
-    <plurals name="discs_without_price">
-        <item quantity="one">%d disque sans prix</item>
-        <item quantity="many">%d disques sans prix</item>
-        <item quantity="other">%d disques sans prix</item>
-    </plurals>
 
     <!-- ===== Search, Scan and add/edit form (#26) ===== -->
     <string name="search_not_found">Code-barres %1$s introuvable. Cherche par nom.</string>
