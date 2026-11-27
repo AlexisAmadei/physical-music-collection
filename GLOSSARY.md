@@ -72,11 +72,11 @@ _Avoid_: Worth, total
 ## Profile
 
 **Profile**:
-The user's own screen: the Profile card, then the Collection value by Format.
+The user's own screen: the Profile card, then the Language switch.
 _Avoid_: Stats, account
 
 **Profile card**:
-The brushed silver card at the top of the Profile: Profile name, Collection value and the number of Collection Discs. It tilts with the phone.
+The portrait silver card at the top of the Profile, brushed in diagonal lines: the Profile name, the Collection value (with the number of Collection Discs without a Paid price, when there are some), the number of vinyl and of CD Discs, the number of colored Discs (vinyl Discs with a Vinyl color, Clear included; never a CD) and the oldest year among the Discs that have one. Collection Discs only. It tilts with the phone.
 _Avoid_: Holo card, badge
 
 **Profile name**:
