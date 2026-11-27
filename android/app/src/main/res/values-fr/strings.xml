@@ -94,5 +94,18 @@
     <string name="vinyl_color_pink">Rose</string>
     <string name="vinyl_color_white">Blanc</string>
     <string name="vinyl_color_clear">Transparent</string>
+    <string name="vinyl_color_gold">Or</string>
+    <string name="vinyl_color_silver">Argent</string>
+    <string name="vinyl_color_grey">Gris</string>
+    <string name="vinyl_color_brown">Marron</string>
+    <string name="vinyl_color_teal">Bleu canard</string>
+    <string name="vinyl_color_bone">Os</string>
+    <string name="vinyl_color_black">Noir</string>
+    <string name="finish_solid">Unie</string>
+    <string name="finish_marble">Marbré</string>
+    <string name="finish_splatter">Splatter</string>
+    <string name="finish_split">Bicolore</string>
+    <string name="finish_galaxy">Galaxy</string>
+    <string name="finish_glitter">Pailleté</string>
     <!-- ===== end #26 ===== -->
 </resources>

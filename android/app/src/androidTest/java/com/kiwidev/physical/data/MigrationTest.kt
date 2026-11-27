@@ -18,7 +18,7 @@ class MigrationTest {
 
     private val from4: Array<Migration> = AppDb.MIGRATIONS.filter { it.startVersion >= 4 }.toTypedArray()
 
-    @Test fun existingDiscsOpenWithNoSpeedAfterUpgradingFromVersion4() {
+    @Test fun existingDiscsOpenWithNoSpeedFinishOrSecondColorAfterUpgradingFromVersion4() {
         helper.createDatabase(DB, 4).apply {
             execSQL(
                 "INSERT INTO Disc (id, title, artist, year, format, barcode, rating, comment, wishlist, addedAt, coverUrl, seenPrice, paidPrice, vinylColor) " +
@@ -27,20 +27,51 @@ class MigrationTest {
             close()
         }
 
-        val db = helper.runMigrationsAndValidate(DB, 5, true, *from4)
+        val db = helper.runMigrationsAndValidate(DB, 6, true, *from4)
 
-        db.query("SELECT title, paidPrice, vinylColor, speed FROM Disc WHERE id = 1").use { c ->
+        db.query("SELECT title, paidPrice, vinylColor, speed, finish, secondColor FROM Disc WHERE id = 1").use { c ->
             assertTrue(c.moveToFirst())
             assertEquals("Kind of Blue", c.getString(0))
             assertEquals(2500L, c.getLong(1))
             assertEquals("RED", c.getString(2))
+            assertTrue(c.isNull(3))
+            assertTrue(c.isNull(4))
+            assertTrue(c.isNull(5))
+        }
+    }
+
+    @Test fun finishAndSecondColorCanBeStoredAfterMigration() {
+        helper.createDatabase(DB, 4).close()
+        val db = helper.runMigrationsAndValidate(DB, 6, true, *from4)
+        db.execSQL(
+            "INSERT INTO Disc (title, artist, format, rating, comment, wishlist, addedAt, vinylColor, finish, secondColor) " +
+                "VALUES ('t', 'a', 'VINYL', 0, '', 0, 0, 'RED', 'MARBLE', 'BLACK')",
+        )
+        db.query("SELECT finish, secondColor FROM Disc").use { c ->
+            assertTrue(c.moveToFirst())
+            assertEquals("MARBLE", c.getString(0))
+            assertEquals("BLACK", c.getString(1))
+        }
+    }
+
+    @Test fun upgradingFromVersion5AddsBothColumns() {
+        helper.createDatabase(DB, 5).apply {
+            execSQL("INSERT INTO Disc (title, artist, format, rating, comment, wishlist, addedAt, vinylColor, speed) VALUES ('t', 'a', 'VINYL', 0, '', 0, 0, 'BLUE', 'RPM_33')")
+            close()
+        }
+        val db = helper.runMigrationsAndValidate(DB, 6, true, *AppDb.MIGRATIONS.filter { it.startVersion >= 5 }.toTypedArray())
+        db.query("SELECT vinylColor, speed, finish, secondColor FROM Disc").use { c ->
+            assertTrue(c.moveToFirst())
+            assertEquals("BLUE", c.getString(0))
+            assertEquals("RPM_33", c.getString(1))
+            assertTrue(c.isNull(2))
             assertTrue(c.isNull(3))
         }
     }
 
     @Test fun speedCanBeStoredAfterMigration() {
         helper.createDatabase(DB, 4).close()
-        val db = helper.runMigrationsAndValidate(DB, 5, true, *from4)
+        val db = helper.runMigrationsAndValidate(DB, 6, true, *from4)
         db.execSQL("INSERT INTO Disc (title, artist, format, rating, comment, wishlist, addedAt, speed) VALUES ('t', 'a', 'VINYL', 0, '', 0, 0, 'RPM_45')")
         db.query("SELECT speed FROM Disc").use { c ->
             assertTrue(c.moveToFirst())

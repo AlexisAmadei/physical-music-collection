@@ -2,7 +2,10 @@ package com.kiwidev.physical.data
 
 import kotlin.math.pow
 
-/** Vinyl color of a vinyl Disc's wax. No value (null) means black. Solid colors only. */
+/**
+ * A wax color of a vinyl Disc: its Vinyl color, or the Second color of a Finish. No Vinyl color (null) means black wax;
+ * [BLACK] exists only to be a Second color.
+ */
 enum class VinylColor(val argb: Long) {
     RED(0xFFC8242B),
     ORANGE(0xFFE8731E),
@@ -13,7 +16,23 @@ enum class VinylColor(val argb: Long) {
     PINK(0xFFE0609A),
     WHITE(0xFFF4F2EE),
     /** See-through: drawn half transparent. */
-    CLEAR(0x8CE6ECF0);
+    CLEAR(0x8CE6ECF0),
+    GOLD(0xFFC9A227),
+    SILVER(0xFFB8BCC2),
+    GREY(0xFF7D8085),
+    BROWN(0xFF6B4A32),
+    TEAL(0xFF1F8A8A),
+    BONE(0xFFE9E1CC),
+    /** Only as a Second color: plain black wax is "no Vinyl color". Same near black as the black wax. */
+    BLACK(0xFF121212);
+
+    companion object {
+        /** The colors offered as the Vinyl color: all but [BLACK]. Order is the order in the form. */
+        val firstChoices: List<VinylColor> = entries - BLACK
+
+        /** The colors offered as the Second color: all but [CLEAR]. */
+        val secondChoices: List<VinylColor> = entries - CLEAR
+    }
 
     /** Light wax needs dark grooves, or they vanish. */
     val light: Boolean get() = luminance() > 0.4
