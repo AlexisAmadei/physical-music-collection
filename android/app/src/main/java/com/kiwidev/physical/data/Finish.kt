@@ -8,10 +8,10 @@ enum class Finish(val defaultSecondColor: VinylColor?) {
     MARBLE(VinylColor.WHITE),
     SPLATTER(VinylColor.WHITE),
     SPLIT(VinylColor.BLACK),
-    GALAXY(VinylColor.WHITE),
+    GALAXY(VinylColor.BLACK),
     GLITTER(null);
 
-    /** Marble, Splatter, Split and Galaxy take a Second color; Glitter is silver flecks on the Vinyl color. */
+    /** Marble, Splatter, Split and Galaxy take a Second color; Glitter is flecks tinted to the Vinyl color. */
     val usesSecondColor: Boolean get() = defaultSecondColor != null
 }
 

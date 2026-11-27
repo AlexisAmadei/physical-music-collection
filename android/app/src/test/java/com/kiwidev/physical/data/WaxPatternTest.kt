@@ -51,36 +51,106 @@ class WaxPatternTest {
         assertTrue(on > drops.size * 0.85)
     }
 
-    @Test fun speckleAndFleckCountsAreFixed() {
-        assertEquals(160, WaxPattern.speckles(1).size)
-        assertEquals(420, WaxPattern.flecks(1).size)
-        assertTrue(WaxPattern.speckles(1).all { it.x * it.x + it.y * it.y <= 1.05 * 1.05 })
+    @Test fun starAndFleckCountsAreFixed() {
+        assertEquals(260, WaxPattern.stars(1).dots.size)
+        assertEquals(14, WaxPattern.stars(1).glows.size)
+        assertEquals(1400, WaxPattern.flecks(1).size)
+        assertTrue(WaxPattern.stars(1).dots.all { it.x * it.x + it.y * it.y <= 1.05 * 1.05 })
+        assertTrue(WaxPattern.flecks(1).all { it.x * it.x + it.y * it.y <= 1.05 * 1.05 })
     }
 
-    @Test fun splitAngleIsWithinAFullTurn() {
-        repeat(50) { val a = WaxPattern.splitAngle(it.toLong()); assertTrue(a >= 0 && a < 2 * Math.PI) }
+    @Test fun starsAndFlecksAreTheSameEveryTime() {
+        assertEquals(WaxPattern.flecks(3), WaxPattern.flecks(3))
+        assertEquals(WaxPattern.stars(3).dots, WaxPattern.stars(3).dots)
+        assertNotEquals(WaxPattern.flecks(3), WaxPattern.flecks(4))
     }
 
-    @Test fun marbleIsTheSameEveryTimeAndOpaqueOnSolidWax() {
-        val a = WaxPattern.marble(9, VinylColor.RED, VinylColor.BLACK, 24)
-        assertEquals(24 * 24, a.size)
-        assertTrue(a.contentEquals(WaxPattern.marble(9, VinylColor.RED, VinylColor.BLACK, 24)))
+    @Test fun starsAreMostlyFineWithAFewBigGlows() {
+        val s = WaxPattern.stars(5)
+        assertTrue(s.dots.count { it.rx < 0.006 } > s.dots.size / 2)
+        assertTrue(s.glows.all { it.rx in 0.022..0.042 })
+    }
+
+    @Test fun fleckTonesAreSpreadAcrossTheThreeTones() {
+        val tones = WaxPattern.flecks(5).groupingBy { it.tone }.eachCount()
+        assertEquals(setOf(0, 1, 2), tones.keys)
+        assertTrue(tones.getValue(0) > tones.getValue(2))
+    }
+
+    @Test fun fleckTintsAreLightOnDarkWaxAndDarkOnLightWax() {
+        fun lum(argb: Int) = ((argb shr 16) and 0xFF) + ((argb shr 8) and 0xFF) + (argb and 0xFF)
+        // Dark wax: the strongest flecks are white; light wax: they are darker than the wax.
+        assertEquals(0xFFFFFFFF.toInt(), WaxPattern.fleckColor(VinylColor.BLUE, 0))
+        assertTrue(lum(WaxPattern.fleckColor(VinylColor.WHITE, 0)) < lum(VinylColor.WHITE.argb.toInt()))
+        assertTrue(lum(WaxPattern.fleckColor(VinylColor.YELLOW, 1)) < lum(VinylColor.YELLOW.argb.toInt()))
+        assertEquals(0xFFFFFFFF.toInt(), WaxPattern.fleckColor(VinylColor.YELLOW, 2))
+        assertTrue(lum(WaxPattern.fleckColor(VinylColor.RED, 2)) < lum(VinylColor.RED.argb.toInt()))
+        assertTrue(WaxPattern.fleckColor(VinylColor.TEAL, 1) ushr 24 == 0xFF)
+    }
+
+    @Test fun nebulaIsSoftOpaqueAndTheSameEveryTime() {
+        val a = WaxPattern.nebula(9, VinylColor.BLUE, VinylColor.BLACK, 32)
+        assertEquals(32 * 32, a.size)
+        assertTrue(a.contentEquals(WaxPattern.nebula(9, VinylColor.BLUE, VinylColor.BLACK, 32)))
         assertTrue(a.all { (it ushr 24) == 255 })
+        assertTrue(!a.contentEquals(WaxPattern.nebula(10, VinylColor.BLUE, VinylColor.BLACK, 32)))
+        // Soft: next to each other, pixels differ little (marble has sharp bands).
+        val steps = (0 until 32 * 31).map { i -> val p = a[i + i / 31]; val q = a[i + i / 31 + 1]; kotlin.math.abs(((p shr 16) and 0xFF) - ((q shr 16) and 0xFF)) }
+        assertTrue(steps.max() < 40)
     }
 
-    @Test fun marbleMixesBothColorsAndDiffersPerSeed() {
-        val a = WaxPattern.marble(9, VinylColor.RED, VinylColor.WHITE, 48)
-        val reds = a.count { ((it shr 16) and 0xFF) > 0xA0 && ((it shr 8) and 0xFF) < 0x80 }
-        val whites = a.count { ((it shr 8) and 0xFF) > 0xD0 }
-        assertTrue("both colors show: $reds red, $whites white", reds > 48 * 48 / 10 && whites > 48 * 48 / 10)
-        assertTrue(!a.contentEquals(WaxPattern.marble(10, VinylColor.RED, VinylColor.WHITE, 48)))
+    @Test fun nebulaMixesBothColors() {
+        val a = WaxPattern.nebula(9, VinylColor.BLUE, VinylColor.BLACK, 48)
+        val dark = a.count { ((it shr 16) and 0xFF) < 0x20 && (it and 0xFF) < 0x40 }
+        val blue = a.count { (it and 0xFF) > 0x90 && ((it shr 16) and 0xFF) < 0x50 }
+        assertTrue("both show: $dark dark, $blue blue", dark > 48 * 48 / 20 && blue > 48 * 48 / 20)
     }
 
-    @Test fun marbleOnClearWaxIsSeeThroughWhereTheSecondColorIsAbsent() {
-        val a = WaxPattern.marble(9, VinylColor.CLEAR, VinylColor.RED, 48)
-        val alphas = a.map { it ushr 24 }
-        assertTrue(alphas.min() in 0x8A..0x8E)
-        assertTrue(alphas.max() > 0xF0)
+    @Test fun nebulaOnClearWaxIsSeeThroughWhereTheSecondColorIsAbsent() {
+        val alphas = WaxPattern.nebula(9, VinylColor.CLEAR, VinylColor.RED, 48).map { it ushr 24 }
+        assertTrue(alphas.min() in 0x8A..0x95)
+        assertTrue(alphas.max() > 0xE0)
+    }
+
+    @Test fun bitmapIsMarbleForMarbleNebulaForGalaxyAndNullOtherwise() {
+        assertTrue(WaxPattern.bitmap(Finish.MARBLE, 9, VinylColor.RED, VinylColor.WHITE, 16)!!.contentEquals(WaxPattern.marble(9, VinylColor.RED, VinylColor.WHITE, 16)))
+        assertTrue(WaxPattern.bitmap(Finish.GALAXY, 9, VinylColor.RED, VinylColor.WHITE, 16)!!.contentEquals(WaxPattern.nebula(9, VinylColor.RED, VinylColor.WHITE, 16)))
+        assertEquals(null, WaxPattern.bitmap(Finish.SPLATTER, 9, VinylColor.RED, VinylColor.WHITE, 16))
+        assertEquals(null, WaxPattern.bitmap(null, 9, VinylColor.RED, VinylColor.WHITE, 16))
+    }
+
+    @Test fun nebulaStarsAndFlecksArePinnedForCrossPlatformParity() {
+        // Also asserted by iOS WaxPatternTests (nebula pixels within 1 per channel).
+        val seed = 0x1234_5678_9ABCL
+        val n = WaxPattern.nebula(seed, VinylColor.BLUE, VinylColor.BLACK, 16)
+        assertEquals(
+            listOf(0xFF29559CL, 0xFF285398L, 0xFF192539L, 0xFF192230L, 0xFF244780L),
+            listOf(0, 17, 100, 135, 255).map { n[it].toLong() and 0xFFFFFFFFL },
+        )
+        val st = WaxPattern.stars(seed)
+        assertEquals(-0.6076736162442895, st.dots[0].x, 1e-9)
+        assertEquals(-0.5869105169175586, st.dots[0].y, 1e-9)
+        assertEquals(0.005999525691160388, st.dots[0].rx, 1e-9)
+        assertEquals(0.6857312517606784, st.dots[0].alpha, 1e-9)
+        assertEquals(0.33211123641401147, st.dots.last().x, 1e-9)
+        assertEquals(0.0031537245436594687, st.dots.last().rx, 1e-9)
+        assertEquals(-0.040921805961647455, st.glows[0].x, 1e-9)
+        assertEquals(0.03673884539194255, st.glows[0].rx, 1e-9)
+        assertEquals(0.6750497501233313, st.glows.last().x, 1e-9)
+        assertEquals(0.034548589046788966, st.glows.last().rx, 1e-9)
+        val fl = WaxPattern.flecks(seed)
+        assertEquals(-0.5084313018175756, fl[0].x, 1e-9)
+        assertEquals(0.009172563331896023, fl[0].rx, 1e-9)
+        assertEquals(0.6517783316081485, fl[0].alpha, 1e-9)
+        assertEquals(0, fl[0].tone)
+        assertEquals(0.616497619115278, fl[700].y, 1e-9)
+        assertEquals(0.34199837017293205, fl.last().x, 1e-9)
+        assertEquals(1, fl.last().tone)
+        assertEquals(
+            listOf(0xFFFFFFFFL, 0xFFE39195L, 0xFF781519L, 0xFF796426L, 0xFFBC9C3BL, 0xFFFFFFFFL),
+            (0..2).map { WaxPattern.fleckColor(VinylColor.RED, it).toLong() and 0xFFFFFFFFL } +
+                (0..2).map { WaxPattern.fleckColor(VinylColor.YELLOW, it).toLong() and 0xFFFFFFFFL },
+        )
     }
 
     @Test fun marblePixelsArePinnedForCrossPlatformParity() {

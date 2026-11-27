@@ -17,10 +17,10 @@ class FinishTest {
         assertFalse(Finish.GLITTER.usesSecondColor)
     }
 
-    @Test fun secondColorStartsAsWhiteAndBlackForSplit() {
+    @Test fun secondColorStartsAsWhiteAndBlackForSplitAndGalaxy() {
         assertEquals(VinylColor.WHITE, Finish.MARBLE.defaultSecondColor)
         assertEquals(VinylColor.WHITE, Finish.SPLATTER.defaultSecondColor)
-        assertEquals(VinylColor.WHITE, Finish.GALAXY.defaultSecondColor)
+        assertEquals(VinylColor.BLACK, Finish.GALAXY.defaultSecondColor)
         assertEquals(VinylColor.BLACK, Finish.SPLIT.defaultSecondColor)
         assertNull(Finish.GLITTER.defaultSecondColor)
     }

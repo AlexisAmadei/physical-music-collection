@@ -238,10 +238,10 @@ fun Vinyl(d: Disc, spinning: Boolean, modifier: Modifier = Modifier) {
             val finish = d.shownFinish
             val second = d.shownSecondColor
             val seed = d.waxSeed
-            val marble = rememberMarble(finish, wax, second, seed)
+            val bitmap = rememberWaxBitmap(finish, wax, second, seed)
             val groove = if (wax?.light == true) Color.Black.copy(alpha = 0.10f) else Color.White.copy(alpha = 0.07f)
             Canvas(Modifier.fillMaxSize()) {
-                drawWax(wax, finish, second, seed, marble)
+                drawWax(wax, finish, second, seed, bitmap)
                 val outer = size.minDimension / 2
                 var r = outer * 0.36f
                 while (r < outer - 2.dp.toPx()) {

@@ -42,7 +42,10 @@ class WaxRandom(seed: Long) {
 val Disc.waxSeed: Long get() = WaxRandom(addedAt).next()
 
 /** An ellipse on the unit disc (radius 1, origin at the centre, y down), turned by [rot] radians. */
-data class Droplet(val x: Double, val y: Double, val rx: Double, val ry: Double, val rot: Double, val alpha: Double)
+data class Droplet(val x: Double, val y: Double, val rx: Double, val ry: Double, val rot: Double, val alpha: Double, val tone: Int = 0)
+
+/** Galaxy stars: [dots] are fine white points of varied size, [glows] a few bigger stars drawn with a halo. */
+class Stars(val dots: List<Droplet>, val glows: List<Droplet>)
 
 object WaxPattern {
     private const val TAU = 2 * PI
@@ -83,24 +86,52 @@ object WaxPattern {
         return out
     }
 
-    /** Galaxy: fine white speckles over the marbled swirl. */
-    fun speckles(seed: Long): List<Droplet> {
+    /** Galaxy: stars over the nebula. */
+    fun stars(seed: Long): Stars {
         val rand = WaxRandom(seed + 1)
-        return List(160) {
+        val dots = List(260) {
             val (x, y) = inDisc(rand, 1.02)
-            val r = 0.004 + rand.unit() * 0.007
-            Droplet(x, y, r, r, 0.0, 0.5 + rand.unit() * 0.45)
+            val r = 0.003 + rand.unit().pow(4) * 0.014
+            Droplet(x, y, r, r, 0.0, 0.45 + rand.unit() * 0.5)
+        }
+        val glows = List(14) {
+            val (x, y) = inDisc(rand, 0.98)
+            val r = 0.022 + rand.unit() * 0.02
+            Droplet(x, y, r, r, 0.0, 1.0)
+        }
+        return Stars(dots, glows)
+    }
+
+    /**
+     * Glitter: about 1400 flecks of mixed size and brightness. Each fleck has a tone, 0 (strongest), 1 or 2, that
+     * [fleckColor] turns into a tint of the wax: light flecks on dark wax, dark flecks on light wax.
+     */
+    fun flecks(seed: Long): List<Droplet> {
+        val rand = WaxRandom(seed + 2)
+        return List(1400) {
+            val (x, y) = inDisc(rand, 1.02)
+            val r = 0.003 + rand.unit().pow(3) * 0.013
+            val k = rand.unit()
+            val tone = if (k < 0.45) 0 else if (k < 0.8) 1 else 2
+            Droplet(x, y, r, r, 0.0, 0.35 + rand.unit() * 0.6, tone)
         }
     }
 
-    /** Glitter: many tiny silver flecks. */
-    fun flecks(seed: Long): List<Droplet> {
-        val rand = WaxRandom(seed + 2)
-        return List(420) {
-            val (x, y) = inDisc(rand, 1.02)
-            val r = 0.004 + rand.unit() * 0.005
-            Droplet(x, y, r, r, 0.0, 0.45 + rand.unit() * 0.45)
+    /** The opaque ARGB of a Glitter fleck of [tone] on wax of the [base] color. */
+    fun fleckColor(base: VinylColor, tone: Int): Int {
+        val rgb = rgb(base)
+        val white = doubleArrayOf(255.0, 255.0, 255.0)
+        val black = doubleArrayOf(0.0, 0.0, 0.0)
+        val c = if (base.light) when (tone) {
+            0 -> mix(rgb, black, 0.5)
+            1 -> mix(rgb, black, 0.22)
+            else -> white
+        } else when (tone) {
+            0 -> white
+            1 -> mix(rgb, white, 0.5)
+            else -> mix(rgb, black, 0.4)
         }
+        return (0xFF shl 24) or (c[0].toInt() shl 16) or (c[1].toInt() shl 8) or c[2].toInt()
     }
 
     /** Split: the angle, in radians, of the line between the two colors. The second color is on the far side of it. */
@@ -184,5 +215,43 @@ object WaxPattern {
                 (col[0].toInt() shl 16) or (col[1].toInt() shl 8) or col[2].toInt()
         }
         return out
+    }
+
+    /**
+     * Galaxy nebula as [n] x [n] ARGB pixels, like [marble] but smooth: soft clouds of the [second] color over the [base],
+     * with brighter cores. Stars are drawn over it from [stars].
+     */
+    fun nebula(seed: Long, base: VinylColor, second: VinylColor, n: Int = MARBLE_SIZE): IntArray {
+        val rand = WaxRandom(seed)
+        val s0 = floor(rand.unit() * 1e6).toInt()
+        val o = DoubleArray(6) { rand.unit() * 80 }
+        val scale = 1.3
+        val baseRgb = rgb(base)
+        val secRgb = rgb(second)
+        val baseAlpha = (base.argb ushr 24) / 255.0
+        val lite = mix(secRgb, doubleArrayOf(255.0, 255.0, 255.0), 0.35)
+        val out = IntArray(n * n)
+        for (y in 0 until n) for (x in 0 until n) {
+            val px = ((x + 0.5) / n * 2 - 1) * scale
+            val py = ((y + 0.5) / n * 2 - 1) * scale
+            val qx = fbm(px + o[0], py + o[1], s0)
+            val qy = fbm(px + o[2], py + o[3], s0 + 7)
+            val f = fbm(px + 2.2 * qx + o[4], py + 2.2 * qy + o[5], s0 + 13)
+            val t = smooth(0.38, 0.78, f)
+            val core = smooth(0.62, 0.9, f)
+            var col = mix(baseRgb, secRgb, t)
+            col = mix(col, lite, core * 0.5)
+            val alpha = baseAlpha + (1 - baseAlpha) * t
+            out[y * n + x] = (Math.round(alpha * 255).toInt() shl 24) or
+                (col[0].toInt() shl 16) or (col[1].toInt() shl 8) or col[2].toInt()
+        }
+        return out
+    }
+
+    /** The bitmap under a Finish that has one: Marble (veined bands) or Galaxy (soft nebula); null for the others. */
+    fun bitmap(finish: Finish?, seed: Long, base: VinylColor, second: VinylColor, n: Int = MARBLE_SIZE): IntArray? = when (finish) {
+        Finish.MARBLE -> marble(seed, base, second, n)
+        Finish.GALAXY -> nebula(seed, base, second, n)
+        else -> null
     }
 }

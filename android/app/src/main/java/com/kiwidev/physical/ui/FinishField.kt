@@ -94,8 +94,8 @@ fun FinishField(d: Disc, onChange: (Disc) -> Unit) {
 /** A round preview of a Finish in the form, drawn like the wax of the Disc: same colors, same pattern. */
 @Composable
 fun FinishSwatch(finish: Finish?, color: VinylColor, second: VinylColor?, seed: Long, modifier: Modifier = Modifier) {
-    val marble = rememberMarble(finish, color, second, seed, n = 64)
+    val bitmap = rememberWaxBitmap(finish, color, second, seed, n = 64)
     Canvas(modifier.clip(CircleShape).border(1.dp, Palette.Line, CircleShape)) {
-        drawWax(color, finish, second, seed, marble)
+        drawWax(color, finish, second, seed, bitmap)
     }
 }
