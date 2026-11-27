@@ -1,0 +1,188 @@
+package com.kiwidev.physical.data
+
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.exp
+import kotlin.math.floor
+import kotlin.math.ln
+import kotlin.math.max
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
+
+/**
+ * What a Finish looks like, as plain data: no drawing here, so it is the same on both platforms and testable.
+ * Mirrors iOS `WaxPattern.swift` (same generator, same steps, same numbers). The look was settled with the browser
+ * prototype on branch prototype/vinyl-finishes: Marble is warped noise, Splatter is bursts of elongated droplets.
+ */
+
+/** SplitMix64, the same generator as iOS `SeededRandom`: a fixed seed always draws the same thing. */
+class WaxRandom(seed: Long) {
+    private var state = seed
+
+    fun next(): Long {
+        state += GAMMA
+        var z = state
+        z = (z xor (z ushr 30)) * MIX1
+        z = (z xor (z ushr 27)) * MIX2
+        return z xor (z ushr 31)
+    }
+
+    /** In 0 until 1. */
+    fun unit(): Double = (next() ushr 11).toDouble() / (1L shl 53).toDouble()
+
+    private companion object {
+        const val GAMMA = -0x61c8864680b583ebL // 0x9E3779B97F4A7C15
+        const val MIX1 = -0x40a7b892e31b1a47L // 0xBF58476D1CE4E5B9
+        const val MIX2 = -0x6b2fb644ecceee15L // 0x94D049BB133111EB
+    }
+}
+
+/** The seed of a Disc's pattern. From the creation time: stable across launches and edits, different for each Disc. */
+val Disc.waxSeed: Long get() = WaxRandom(addedAt).next()
+
+/** An ellipse on the unit disc (radius 1, origin at the centre, y down), turned by [rot] radians. */
+data class Droplet(val x: Double, val y: Double, val rx: Double, val ry: Double, val rot: Double, val alpha: Double)
+
+object WaxPattern {
+    private const val TAU = 2 * PI
+
+    /** Marble bitmap side, in pixels. One bitmap per Disc, drawn scaled. */
+    const val MARBLE_SIZE = 256
+
+    private fun inDisc(rand: WaxRandom, radius: Double): Pair<Double, Double> {
+        val a = rand.unit() * TAU
+        val d = sqrt(rand.unit()) * radius
+        return cos(a) * d to sin(a) * d
+    }
+
+    /** Splatter: a few impact points, each a core blob throwing elongated droplets outward. */
+    fun splatter(seed: Long): List<Droplet> {
+        val rand = WaxRandom(seed)
+        val out = ArrayList<Droplet>()
+        val impacts = 4 + floor(rand.unit() * 3).toInt()
+        repeat(impacts) {
+            val (cx, cy) = inDisc(rand, 0.85)
+            val core = 5 + floor(rand.unit() * 4).toInt()
+            repeat(core) {
+                val a = rand.unit() * TAU
+                val d = rand.unit() * 0.05
+                val r = 0.025 + rand.unit() * 0.05
+                out += Droplet(cx + cos(a) * d, cy + sin(a) * d, r, r, 0.0, 0.97)
+            }
+            val n = 90 + floor(rand.unit() * 70).toInt()
+            val reach = 0.3 + rand.unit() * 0.3
+            repeat(n) {
+                val a = rand.unit() * TAU
+                val d = 0.05 - ln(1 - rand.unit()) * reach * 0.5
+                val r = max(0.005, 0.07 * exp(-d * 4) * (0.3 + rand.unit() * 0.9))
+                val e = 1 + d * 7 * rand.unit()
+                out += Droplet(cx + cos(a) * d, cy + sin(a) * d, r * e, r, a, 0.96)
+            }
+        }
+        return out
+    }
+
+    /** Galaxy: fine white speckles over the marbled swirl. */
+    fun speckles(seed: Long): List<Droplet> {
+        val rand = WaxRandom(seed + 1)
+        return List(160) {
+            val (x, y) = inDisc(rand, 1.02)
+            val r = 0.004 + rand.unit() * 0.007
+            Droplet(x, y, r, r, 0.0, 0.5 + rand.unit() * 0.45)
+        }
+    }
+
+    /** Glitter: many tiny silver flecks. */
+    fun flecks(seed: Long): List<Droplet> {
+        val rand = WaxRandom(seed + 2)
+        return List(420) {
+            val (x, y) = inDisc(rand, 1.02)
+            val r = 0.004 + rand.unit() * 0.005
+            Droplet(x, y, r, r, 0.0, 0.45 + rand.unit() * 0.45)
+        }
+    }
+
+    /** Split: the angle, in radians, of the line between the two colors. The second color is on the far side of it. */
+    fun splitAngle(seed: Long): Double = WaxRandom(seed + 3).unit() * TAU
+
+    // --- Marble: domain-warped value noise, thresholded into bands ---
+
+    private fun hash2(ix: Int, iy: Int, s: Int): Double {
+        var h = ix * 374761393 + iy * 668265263 + s * 1597334677
+        h = (h xor (h ushr 13)) * 1274126177
+        h = h xor (h ushr 16)
+        return (h.toLong() and 0xFFFFFFFFL).toDouble() / 4294967296.0
+    }
+
+    private fun vnoise(x: Double, y: Double, s: Int): Double {
+        val ix = floor(x).toInt()
+        val iy = floor(y).toInt()
+        val fx = x - ix
+        val fy = y - iy
+        val u = fx * fx * fx * (fx * (fx * 6 - 15) + 10)
+        val v = fy * fy * fy * (fy * (fy * 6 - 15) + 10)
+        val a = hash2(ix, iy, s)
+        val b = hash2(ix + 1, iy, s)
+        val c = hash2(ix, iy + 1, s)
+        val d = hash2(ix + 1, iy + 1, s)
+        return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v
+    }
+
+    private fun fbm(x: Double, y: Double, s: Int): Double {
+        var t = 0.0
+        var amp = 0.5
+        var f = 1.0
+        for (i in 0 until 4) {
+            t += amp * vnoise(x * f, y * f, s + i * 31)
+            f *= 2
+            amp *= 0.5
+        }
+        return t / 0.9375
+    }
+
+    private fun smooth(a: Double, b: Double, x: Double): Double {
+        val t = ((x - a) / (b - a)).coerceIn(0.0, 1.0)
+        return t * t * (3 - 2 * t)
+    }
+
+    private fun mix(a: DoubleArray, b: DoubleArray, t: Double) = DoubleArray(3) { a[it] + (b[it] - a[it]) * t }
+
+    private fun rgb(c: VinylColor) = doubleArrayOf(((c.argb shr 16) and 0xFF).toDouble(), ((c.argb shr 8) and 0xFF).toDouble(), (c.argb and 0xFF).toDouble())
+
+    /**
+     * Marble as [n] x [n] ARGB pixels (straight alpha, row by row, top first) covering the square around the disc; draw
+     * it clipped to the disc. A Clear [base] stays see-through where the [second] color is absent.
+     */
+    fun marble(seed: Long, base: VinylColor, second: VinylColor, n: Int = MARBLE_SIZE): IntArray {
+        val rand = WaxRandom(seed)
+        val s0 = floor(rand.unit() * 1e6).toInt()
+        val o = DoubleArray(6) { rand.unit() * 80 }
+        val scale = 1.45
+        val baseRgb = rgb(base)
+        val secRgb = rgb(second)
+        val baseAlpha = (base.argb ushr 24) / 255.0
+        val veinRgb = if (second.light) mix(secRgb, doubleArrayOf(0.0, 0.0, 0.0), 0.35) else mix(secRgb, doubleArrayOf(255.0, 255.0, 255.0), 0.4)
+        val mid = mix(baseRgb, secRgb, 0.5)
+        val out = IntArray(n * n)
+        for (y in 0 until n) for (x in 0 until n) {
+            val px = ((x + 0.5) / n * 2 - 1) * scale
+            val py = ((y + 0.5) / n * 2 - 1) * scale
+            val qx = fbm(px + o[0], py + o[1], s0)
+            val qy = fbm(px + o[2], py + o[3], s0 + 7)
+            val rx = fbm(px + 3.2 * qx + o[4], py + 3.2 * qy + 1.7, s0 + 13)
+            val ry = fbm(px + 3.2 * qx + 8.3, py + 3.2 * qy + o[5], s0 + 19)
+            val f = fbm(px + 3.2 * rx, py + 3.2 * ry, s0 + 29)
+            val band = 0.5 + 0.5 * sin((f - 0.5) * TAU * 2.1 + 0.6)
+            val t = smooth(0.3, 0.7, band)
+            val edge = exp(-((band - 0.5) / 0.09).pow(2))
+            var col = mix(baseRgb, secRgb, t)
+            col = mix(col, mid, edge * 0.45)
+            col = mix(col, veinRgb, exp(-((band - 0.5) / 0.03).pow(2)) * 0.45)
+            val alpha = baseAlpha + (1 - baseAlpha) * t
+            out[y * n + x] = (Math.round(alpha * 255).toInt() shl 24) or
+                (col[0].toInt() shl 16) or (col[1].toInt() shl 8) or col[2].toInt()
+        }
+        return out
+    }
+}

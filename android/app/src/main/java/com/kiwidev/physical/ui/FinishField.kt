@@ -20,8 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -33,6 +31,7 @@ import com.kiwidev.physical.data.Disc
 import com.kiwidev.physical.data.Finish
 import com.kiwidev.physical.data.VinylColor
 import com.kiwidev.physical.data.shownSecondColor
+import com.kiwidev.physical.data.waxSeed
 import com.kiwidev.physical.data.withFinish
 
 /**
@@ -61,7 +60,7 @@ fun FinishField(d: Disc, onChange: (Disc) -> Unit) {
                     Modifier.size(52.dp).border(2.dp, if (on) Palette.Ink else Color.Transparent, CircleShape).padding(4.dp),
                     contentAlignment = Alignment.Center,
                 ) {
-                    FinishSwatch(f, color, d.secondColor ?: f?.defaultSecondColor, Modifier.size(40.dp))
+                    FinishSwatch(f, color, d.secondColor ?: f?.defaultSecondColor, d.waxSeed, Modifier.size(40.dp))
                 }
                 Text(name, style = MaterialTheme.typography.labelSmall)
             }
@@ -92,27 +91,11 @@ fun FinishField(d: Disc, onChange: (Disc) -> Unit) {
     }
 }
 
-/**
- * A round hint of a Finish in the form. A stand-in until the wax drawing exists: Split is two halves, Marble, Splatter
- * and Galaxy are the Vinyl color with spots of the Second color, Glitter has silver flecks.
- */
+/** A round preview of a Finish in the form, drawn like the wax of the Disc: same colors, same pattern. */
 @Composable
-fun FinishSwatch(finish: Finish?, color: VinylColor, second: VinylColor?, modifier: Modifier = Modifier) {
+fun FinishSwatch(finish: Finish?, color: VinylColor, second: VinylColor?, seed: Long, modifier: Modifier = Modifier) {
+    val marble = rememberMarble(finish, color, second, seed, n = 64)
     Canvas(modifier.clip(CircleShape).border(1.dp, Palette.Line, CircleShape)) {
-        drawRect(Color(color.argb))
-        val c2 = Color((second ?: VinylColor.WHITE).argb)
-        val w = size.width
-        when (finish) {
-            null -> Unit
-            Finish.SPLIT -> drawRect(c2, Offset(w / 2, 0f), Size(w / 2, size.height))
-            Finish.MARBLE, Finish.SPLATTER, Finish.GALAXY -> {
-                drawCircle(c2, w * 0.22f, Offset(w * 0.32f, w * 0.34f))
-                drawCircle(c2, w * 0.14f, Offset(w * 0.70f, w * 0.62f))
-                drawCircle(c2, w * 0.08f, Offset(w * 0.40f, w * 0.78f))
-            }
-            Finish.GLITTER -> listOf(0.25f to 0.3f, 0.6f to 0.22f, 0.72f to 0.55f, 0.35f to 0.65f, 0.55f to 0.8f).forEach { (x, y) ->
-                drawCircle(Color(0xFFE6E8EC), w * 0.045f, Offset(w * x, w * y))
-            }
-        }
+        drawWax(color, finish, second, seed, marble)
     }
 }

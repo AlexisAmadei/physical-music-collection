@@ -57,7 +57,10 @@ import com.kiwidev.physical.data.Dates
 import com.kiwidev.physical.data.Disc
 import com.kiwidev.physical.data.Price
 import com.kiwidev.physical.data.upperCase
+import com.kiwidev.physical.data.shownFinish
+import com.kiwidev.physical.data.shownSecondColor
 import com.kiwidev.physical.data.shownVinylColor
+import com.kiwidev.physical.data.waxSeed
 import com.kiwidev.physical.data.shownSpeed
 import kotlin.random.Random
 
@@ -229,9 +232,13 @@ fun Vinyl(d: Disc, spinning: Boolean, modifier: Modifier = Modifier) {
         Box(Modifier.fillMaxSize().graphicsLayer { rotationZ = angle }, contentAlignment = Alignment.Center) {
             // Vinyl color only shows for vinyl; a CD keeps its hidden value.
             val wax = d.shownVinylColor
+            val finish = d.shownFinish
+            val second = d.shownSecondColor
+            val seed = d.waxSeed
+            val marble = rememberMarble(finish, wax, second, seed)
             val groove = if (wax?.light == true) Color.Black.copy(alpha = 0.10f) else Color.White.copy(alpha = 0.07f)
             Canvas(Modifier.fillMaxSize()) {
-                drawCircle(wax?.let { Color(it.argb) } ?: Color(0xFF121212))
+                drawWax(wax, finish, second, seed, marble)
                 val outer = size.minDimension / 2
                 var r = outer * 0.36f
                 while (r < outer - 2.dp.toPx()) {
