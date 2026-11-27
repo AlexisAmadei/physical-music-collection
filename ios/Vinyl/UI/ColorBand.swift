@@ -66,7 +66,7 @@ extension View {
 
 #Preview {
     HStack {
-        ForEach(VinylColor.allCases, id: \.self) { color in
+        ForEach(VinylColor.firstChoices, id: \.self) { color in
             Color.gray.frame(width: 64, height: 64).colorBand(color)
         }
     }

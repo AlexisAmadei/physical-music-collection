@@ -27,6 +27,18 @@ struct DraftVinylColorTests {
         #expect(app.collection.first?.hasColorBand == false)
     }
 
+    @Test func turningColoredVinylOffClearsTheFinishAndSecondColorBeforeSaving() {
+        app.draft.coloredVinyl = true
+        app.draft.pickFinish(.marble)
+        #expect(app.draft.showsFinishField)
+
+        app.draft.coloredVinyl = false
+        #expect(!app.draft.showsFinishField)
+        app.saveDraft()
+        #expect(app.collection.first?.finish == nil)
+        #expect(app.collection.first?.secondColor == nil)
+    }
+
     @Test func switchingToCDKeepsTheVinylColorHiddenAndSwitchingBackShowsIt() throws {
         app.draft.coloredVinyl = true
         app.draft.vinylColor = .green

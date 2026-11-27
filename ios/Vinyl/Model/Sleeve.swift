@@ -10,6 +10,11 @@ struct SleeveBack: Equatable, Sendable {
     let details: String
     /// "33 tr/min" or "45 tr/min": vinyl Discs with a Speed only, in the Collection and the Wishlist.
     let speed: String?
+    /// "Marbré · Rouge et noir": vinyl Discs with a Finish only.
+    let finish: String?
+    /// The Speed and the Finish on one line, "33 tr/min · Marbré · Rouge et noir"; nil when neither shows. One line, so a
+    /// Finish costs no extra title line.
+    let specs: String?
     /// "Ajouté le 3 nov. 2024".
     let addedOn: String
     /// "Vu à 12,50 €" in the Wishlist, "Payé 25 €" in the Collection; nil when that price is unset.
@@ -19,8 +24,8 @@ struct SleeveBack: Equatable, Sendable {
     let showsRating: Bool
 
     /// Title lines the back keeps (Android `backTitleLines` with `large = true`: the card is always the large one).
-    /// The card fits a 3-line title and the price line; a Speed line takes a title line.
-    var titleLines: Int { speed == nil ? 3 : 2 }
+    /// The card fits a 3-line title and the price line; the specs line (Speed and Finish) takes a title line.
+    var titleLines: Int { specs == nil ? 3 : 2 }
 
     @MainActor
     init(_ disc: Disc, language: Language, timeZone: TimeZone = .current) {
@@ -29,7 +34,12 @@ struct SleeveBack: Equatable, Sendable {
         } else {
             disc.paidPrice.map { language.string("Payé \(Price.format($0, locale: language.locale))") }
         }
-        speed = disc.speedLabel(in: language)
+        let speedLine = disc.speedLabel(in: language)
+        let finishLine = disc.finishLine(in: language)
+        let lines = [speedLine, finishLine].compactMap { $0 }
+        speed = speedLine
+        finish = finishLine
+        specs = lines.isEmpty ? nil : lines.joined(separator: " · ")
         showsRating = !disc.wishlist
         title = disc.shownTitle(in: language)
         artist = disc.shownArtist
@@ -53,6 +63,14 @@ struct VinylWax: Equatable, Sendable {
     /// Wax color as 0xAARRGGBB: the Vinyl color, or near black when none. Transparent carries its own alpha.
     let argb: UInt32
     let grooves: Grooves
+    /// The Vinyl color as shown, nil = black wax.
+    let base: VinylColor?
+    /// The Finish as shown, nil = Solid.
+    let finish: Finish?
+    /// The Second color as shown, for a Finish that uses one.
+    let second: VinylColor?
+    /// Seed of the Disc's pattern.
+    let seed: UInt64
 
     /// Black wax when there is no Vinyl color.
     static let black: UInt32 = 0xFF12_1212
@@ -62,5 +80,15 @@ struct VinylWax: Equatable, Sendable {
         let color = disc.shownVinylColor
         argb = color?.argb ?? Self.black
         grooves = color?.light == true ? .dark : .light
+        base = color
+        finish = disc.shownFinish
+        second = disc.shownSecondColor
+        seed = disc.waxSeed
+    }
+
+    /// What to draw for the Finish: nil for Solid (plain wax needs no image). `side` is the image side in pixels.
+    func look(side: Int) -> WaxLook? {
+        guard let finish else { return nil }
+        return WaxLook(base: base, finish: finish, second: second, seed: seed, side: side, marbleSide: WaxPattern.marbleSize)
     }
 }

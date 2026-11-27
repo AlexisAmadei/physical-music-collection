@@ -74,10 +74,13 @@ class StringResourcesTest {
         "search_not_found", "search_hint", "search_my_discs", "search_catalog", "search_searching", "search_add_manually",
         "scan_enter_manually", "scan_camera_needed", "scan_looking_up",
         "form_add_title", "form_edit_title", "form_title", "form_artist", "form_year", "form_barcode", "form_comment",
-        "form_vinyl_color", "form_speed", "speed_rpm", "form_rate", "form_in_wishlist", "form_seen_price", "form_paid_price",
+        "form_vinyl_color", "form_finish", "form_second_color", "form_speed", "speed_rpm", "form_rate", "form_in_wishlist", "form_seen_price", "form_paid_price",
         "form_price_example", "form_save", "form_delete",
         "vinyl_color_red", "vinyl_color_orange", "vinyl_color_yellow", "vinyl_color_green", "vinyl_color_blue",
         "vinyl_color_purple", "vinyl_color_pink", "vinyl_color_white", "vinyl_color_clear",
+        "vinyl_color_gold", "vinyl_color_silver", "vinyl_color_grey", "vinyl_color_brown", "vinyl_color_teal",
+        "vinyl_color_bone", "vinyl_color_black", "disc_a11y_vinyl_finish", "disc_a11y_vinyl_finish_second", "disc_colors_pair",
+        "finish_solid", "finish_marble", "finish_splatter", "finish_split", "finish_galaxy", "finish_glitter",
     )
 
     @Test fun searchScanAndFormStringsExistInBothLanguages() {
@@ -126,11 +129,38 @@ class StringResourcesTest {
             "red" to ("Red" to "Rouge"), "orange" to ("Orange" to "Orange"), "yellow" to ("Yellow" to "Jaune"),
             "green" to ("Green" to "Vert"), "blue" to ("Blue" to "Bleu"), "purple" to ("Purple" to "Violet"),
             "pink" to ("Pink" to "Rose"), "white" to ("White" to "Blanc"), "clear" to ("Clear" to "Transparent"),
+            "gold" to ("Gold" to "Or"), "silver" to ("Silver" to "Argent"), "grey" to ("Grey" to "Gris"),
+            "brown" to ("Brown" to "Marron"), "teal" to ("Teal" to "Bleu canard"), "bone" to ("Bone" to "Os"),
+            "black" to ("Black" to "Noir"),
         )
         for ((key, pair) in words) {
             assertEquals(key, pair.first, en.getValue("vinyl_color_$key").text)
             assertEquals(key, pair.second, fr.getValue("vinyl_color_$key").text)
         }
+    }
+
+    @Test fun finishesAreNamedInBothLanguages() {
+        val en = load("values")
+        val fr = load("values-fr")
+        val words = mapOf(
+            "solid" to ("Solid" to "Unie"), "marble" to ("Marble" to "Marbré"), "splatter" to ("Splatter" to "Splatter"),
+            "split" to ("Split" to "Bicolore"), "galaxy" to ("Galaxy" to "Galaxy"), "glitter" to ("Glitter" to "Pailleté"),
+        )
+        for ((key, pair) in words) {
+            assertEquals(key, pair.first, en.getValue("finish_$key").text)
+            assertEquals(key, pair.second, fr.getValue("finish_$key").text)
+        }
+    }
+
+    @Test fun finishAccessibilityLabelsAndColorPairsReadNaturallyInBothLanguages() {
+        val en = load("values")
+        val fr = load("values-fr")
+        assertEquals("red marble vinyl with black", String.format(en.getValue("disc_a11y_vinyl_finish_second").text, "red", "marble", "black"))
+        assertEquals("red glitter vinyl", String.format(en.getValue("disc_a11y_vinyl_finish").text, "red", "glitter"))
+        assertEquals("Red and black", String.format(en.getValue("disc_colors_pair").text, "Red", "black"))
+        assertEquals("Vinyle couleur rouge marbré noir", String.format(fr.getValue("disc_a11y_vinyl_finish_second").text, "rouge", "marbré", "noir"))
+        assertEquals("Vinyle couleur rouge pailleté", String.format(fr.getValue("disc_a11y_vinyl_finish").text, "rouge", "pailleté"))
+        assertEquals("Rouge et noir", String.format(fr.getValue("disc_colors_pair").text, "Rouge", "noir"))
     }
 
     @Test fun formatLabelsAreTranslated() {

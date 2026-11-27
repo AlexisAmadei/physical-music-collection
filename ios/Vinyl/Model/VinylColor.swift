@@ -1,12 +1,23 @@
 import Foundation
 
-/// The color of a vinyl Disc's wax. No value (nil) means black. Solid colors only.
+/// A wax color of a vinyl Disc: its Vinyl color, or the Second color of a Finish. No Vinyl color (nil) means black wax;
+/// `black` exists only to be a Second color.
 /// Mirrors the Android `VinylColor`: same list, same order, same wax colors and labels.
+/// New colors go at the end: the raw values are stored.
 enum VinylColor: String, Codable, CaseIterable, Sendable {
     case red = "RED", orange = "ORANGE", yellow = "YELLOW", green = "GREEN", blue = "BLUE"
     case purple = "PURPLE", pink = "PINK", white = "WHITE"
     /// See-through: drawn half transparent.
     case clear = "CLEAR"
+    case gold = "GOLD", silver = "SILVER", grey = "GREY", brown = "BROWN", teal = "TEAL", bone = "BONE"
+    /// Only as a Second color: plain black wax is "no Vinyl color". Same near black as the black wax.
+    case black = "BLACK"
+
+    /// The colors offered as the Vinyl color: all but `black`. Order is the order in the form.
+    static let firstChoices: [VinylColor] = allCases.filter { $0 != .black }
+
+    /// The colors offered as the Second color: all but `clear`.
+    static let secondChoices: [VinylColor] = allCases.filter { $0 != .clear }
 
     /// Wax color as 0xAARRGGBB, as on Android.
     var argb: UInt32 {
@@ -20,6 +31,13 @@ enum VinylColor: String, Codable, CaseIterable, Sendable {
         case .pink: 0xFFE0_609A
         case .white: 0xFFF4_F2EE
         case .clear: 0x8CE6_ECF0
+        case .gold: 0xFFC9_A227
+        case .silver: 0xFFB8_BCC2
+        case .grey: 0xFF7D_8085
+        case .brown: 0xFF6B_4A32
+        case .teal: 0xFF1F_8A8A
+        case .bone: 0xFFE9_E1CC
+        case .black: 0xFF12_1212
         }
     }
 
@@ -36,6 +54,13 @@ enum VinylColor: String, Codable, CaseIterable, Sendable {
         case .pink: language.string("Rose")
         case .white: language.string("Blanc")
         case .clear: language.string("Transparent")
+        case .gold: language.string("Or")
+        case .silver: language.string("Argent")
+        case .grey: language.string("Gris")
+        case .brown: language.string("Marron")
+        case .teal: language.string("Bleu canard")
+        case .bone: language.string("Os")
+        case .black: language.string("Noir")
         }
     }
 
@@ -67,14 +92,24 @@ extension Disc {
     /// Shows the Color band on its cover.
     var hasColorBand: Bool { shownVinylColor != nil }
 
-    /// What VoiceOver reads for its cover: title, artist, Format ("CD", "Vinyle" or "Vinyle couleur <color>"), year.
+    /// What VoiceOver reads for its cover: title, artist, Format ("CD", "Vinyle", "Vinyle couleur <color>" or, with a
+    /// Finish, "Vinyle couleur <color> <finish> <second color>"), year.
     /// Mirrors the Android `Disc.a11yLabel()`.
     @MainActor
     func coverLabel(in language: Language) -> String {
-        let formatLabel = if let color = shownVinylColor {
-            language.string("Vinyle couleur \(color.label(in: language).lowercased())")
+        let formatLabel: String
+        if let color = shownVinylColor {
+            let name = color.label(in: language).lowercased()
+            if let finish = shownFinish, let second = shownSecondColor {
+                let finishName = finish.label(in: language).lowercased()
+                formatLabel = language.string("Vinyle couleur \(name) \(finishName) \(second.label(in: language).lowercased())")
+            } else if let finish = shownFinish {
+                formatLabel = language.string("Vinyle couleur \(name) \(finish.label(in: language).lowercased())")
+            } else {
+                formatLabel = language.string("Vinyle couleur \(name)")
+            }
         } else {
-            format.label(in: language)
+            formatLabel = format.label(in: language)
         }
         return [
             shownTitle(in: language),
@@ -85,6 +120,20 @@ extension Disc {
         .compactMap { $0 }
         .joined(separator: ", ")
     }
+
+    /// The Finish and colors as text for the back of the card, "Marbré · Rouge et noir" ("Marble · Red and black" in
+    /// English). Nil for a Solid Disc, a Disc with no Vinyl color or a CD: those show no line.
+    @MainActor
+    func finishLine(in language: Language) -> String? {
+        guard let finish = shownFinish, let color = shownVinylColor else { return nil }
+        let colors: String
+        if let second = shownSecondColor {
+            colors = language.string("\(color.label(in: language)) et \(second.label(in: language).lowercased())")
+        } else {
+            colors = color.label(in: language)
+        }
+        return "\(finish.label(in: language)) · \(colors)"
+    }
 }
 
 extension Draft {
@@ -94,9 +143,18 @@ extension Draft {
     /// The Draft form shows the "Vinyle couleur" field on vinyl Drafts only.
     var showsVinylColorField: Bool { VinylColor.isShown(on: format) }
 
-    /// The "Vinyle couleur" switch: turning it on picks Rouge, off means black (no Vinyl color).
+    /// The "Vinyle couleur" switch: turning it on picks Rouge, off means black (no Vinyl color) and clears the Finish
+    /// and the Second color too.
     var coloredVinyl: Bool {
         get { vinylColor != nil }
-        set { vinylColor = newValue ? vinylColor ?? .red : nil }
+        set {
+            if newValue {
+                vinylColor = vinylColor ?? .red
+            } else {
+                vinylColor = nil
+                finish = nil
+                secondColor = nil
+            }
+        }
     }
 }
