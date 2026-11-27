@@ -481,6 +481,22 @@
         }
       }
     },
+    "Deuxième couleur" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Second color"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deuxième couleur"
+          }
+        }
+      }
+    },
     "Disque précédent" : {
       "localizations" : {
         "en" : {
@@ -557,6 +573,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Exemple : 12,50"
+          }
+        }
+      }
+    },
+    "Finition" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finish"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finition"
           }
         }
       }
