@@ -17,7 +17,7 @@ The main color of a vinyl Disc's wax, picked from a short fixed list of colors (
 _Avoid_: Colour, variant
 
 **Finish**:
-How a vinyl Disc's wax is patterned: Solid, Marble, Splatter, Split, Galaxy or Glitter. Solid when not set, so existing Discs stay Solid. It only exists on a Disc with a Vinyl color, and is drawn from it (and from the Second color, for the Finishes that use one). It shows on the Disc out of its sleeve and in the form, never on the Color band. Every Disc has its own pattern, which never changes between launches. Typed by the user, never prefilled from the Catalog. Kept but hidden if the Disc's Format is CD; cleared when the Vinyl color is turned off. Picture discs and rarer finishes are out of scope.
+How a vinyl Disc's wax is patterned: Solid, Marble, Splatter, Split, Galaxy or Glitter. Solid when not set, so existing Discs stay Solid. It only exists on a Disc with a Vinyl color, and is drawn from it (and from the Second color, for the Finishes that use one). It shows on the Disc out of its sleeve and in the form, never on the Color band. Every Disc has its own pattern, which never changes between launches. Glitter and Galaxy also shimmer: glints flash as the phone tilts, unless Reduce Motion is on. Typed by the user, never prefilled from the Catalog. Kept but hidden if the Disc's Format is CD; cleared when the Vinyl color is turned off. Picture discs and rarer finishes are out of scope.
 _Avoid_: Pattern, effect, style, variant
 
 **Second color**:

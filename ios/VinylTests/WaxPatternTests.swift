@@ -221,7 +221,62 @@ struct WaxPatternTests {
         #expect(abs(d[d.count - 1].x - 0.4386496446218519) < 1e-9)
         #expect(abs(d[d.count - 1].ry - 0.020505143576469913) < 1e-9)
     }
+
+    @Test func onlyGlitterAndGalaxyHaveGlints() {
+        #expect(WaxPattern.glints(finish: .glitter, seed: 1).count == 150)
+        #expect(WaxPattern.glints(finish: .galaxy, seed: 1).count == 40)
+        for finish in [nil, .marble, .splatter, .split] as [Finish?] {
+            #expect(WaxPattern.glints(finish: finish, seed: 1).isEmpty)
+        }
+    }
+
+    @Test func glintsAreTheSameEveryTimeAndStayOnTheDisc() {
+        #expect(WaxPattern.glints(finish: .glitter, seed: 3) == WaxPattern.glints(finish: .glitter, seed: 3))
+        #expect(WaxPattern.glints(finish: .glitter, seed: 3) != WaxPattern.glints(finish: .glitter, seed: 4))
+        #expect(WaxPattern.glints(finish: .glitter, seed: 3).map(\.x) != WaxPattern.glints(finish: .galaxy, seed: 3).map(\.x))
+        #expect(WaxPattern.glints(finish: .glitter, seed: 3).allSatisfy { $0.x * $0.x + $0.y * $0.y <= 0.97 * 0.97 + 1e-9 })
+    }
+
+    @Test func aGlintLevelIsBetweenZeroAndOne() {
+        let gs = WaxPattern.glints(finish: .glitter, seed: 7)
+        for tx in [-1.0, -0.4, 0.0, 0.3, 1.0] {
+            for ty in [-0.7, 0.0, 0.5] {
+                #expect(gs.allSatisfy { (0...1).contains(WaxPattern.glintLevel($0, tiltX: tx, tiltY: ty)) })
+            }
+        }
+    }
+
+    @Test func mostGlintsAreDarkAtAnyMomentAndAFewFlash() {
+        let gs = WaxPattern.glints(finish: .glitter, seed: 7)
+        let levels = gs.map { WaxPattern.glintLevel($0, tiltX: 0.2, tiltY: -0.1) }
+        #expect((3...60).contains(levels.filter { $0 > 0.5 }.count))
+        #expect(levels.filter { $0 < 0.05 }.count > gs.count / 2)
+    }
+
+    @Test func tiltingThePhoneMakesGlintsTwinkle() {
+        let gs = WaxPattern.glints(finish: .glitter, seed: 7)
+        let before = gs.map { WaxPattern.glintLevel($0, tiltX: 0, tiltY: 0) }
+        let after = gs.map { WaxPattern.glintLevel($0, tiltX: 0.1, tiltY: 0.05) } // about 1.5 degrees
+        #expect(before.indices.filter { abs(before[$0] - after[$0]) > 0.2 }.count > 10)
+    }
+
+    @Test func glintsMatchAndroid() {
+        let seed: UInt64 = 0x1234_5678_9ABC
+        let gs = WaxPattern.glints(finish: .glitter, seed: seed)
+        let ga = WaxPattern.glints(finish: .galaxy, seed: seed)
+        func same(_ g: Glint, _ x: Double, _ y: Double, _ r: Double, _ a: Double, _ b: Double, _ p: Double) {
+            #expect(abs(g.x - x) < 1e-9 && abs(g.y - y) < 1e-9 && abs(g.r - r) < 1e-9)
+            #expect(abs(g.a - a) < 1e-9 && abs(g.b - b) < 1e-9 && abs(g.phase - p) < 1e-9)
+        }
+        same(gs[0], 0.09883692305658315, 0.3186241175110279, 0.009092540931959648, 6.698980966665108, -4.200471113907781, 3.227141011191712)
+        same(gs[gs.count - 1], -0.639439374105745, 0.04226807487864142, 0.008655954921933344, 3.0813268904137776, -7.869898837767321, 3.6386120720273616)
+        same(ga[0], 0.10761710611858927, -0.8810250168695598, 0.025059460494169888, 3.1672590051492113, 8.499173694726384, 0.9239875742356026)
+        #expect(abs(WaxPattern.glintLevel(gs[0], tiltX: 0.3, tiltY: -0.2) - 0.7733069166475773) < 1e-9)
+        #expect(abs(WaxPattern.glintLevel(gs[7], tiltX: -0.5, tiltY: 0.1) - 0.026459898314168062) < 1e-9)
+        #expect(abs(WaxPattern.glintLevel(ga[3], tiltX: 0.9, tiltY: 0.9)) < 1e-9)
+    }
 }
+
 
 /// The wax images: one per Finish, the right size, cached.
 struct WaxRendererTests {

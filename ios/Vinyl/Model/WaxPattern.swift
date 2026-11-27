@@ -34,6 +34,17 @@ struct Droplet: Equatable, Sendable {
     var tone: Int = 0
 }
 
+/// A flake that flashes when the phone tilts. It has its own flashing angles: `a` and `b`, in radians per unit of tilt,
+/// and `phase`. `r` is its size on the unit disc. See `WaxPattern.glintLevel`.
+struct Glint: Equatable, Sendable {
+    let x: Double
+    let y: Double
+    let r: Double
+    let a: Double
+    let b: Double
+    let phase: Double
+}
+
 /// Galaxy stars: `dots` are fine white points of varied size, `glows` a few bigger stars drawn with a halo.
 struct Stars: Equatable, Sendable {
     let dots: [Droplet]
@@ -297,5 +308,39 @@ enum WaxPattern {
         case .galaxy: nebula(seed: seed, base: base, second: second, size: n)
         default: nil
         }
+    }
+
+    /// The glints that shimmer with the tilt: 150 small ones on Glitter, 40 bigger ones (the twinkling stars) on Galaxy,
+    /// none on any other Finish. They are drawn over the still wax, which does not change.
+    static func glints(finish: Finish?, seed: UInt64) -> [Glint] {
+        let count: Int
+        let minRadius: Double
+        let radiusSpan: Double
+        let stream: UInt64
+        switch finish {
+        case .glitter:
+            (count, minRadius, radiusSpan, stream) = (150, 0.007, 0.011, 4)
+        case .galaxy:
+            (count, minRadius, radiusSpan, stream) = (40, 0.012, 0.016, 5)
+        default:
+            return []
+        }
+        var rand = WaxRandom(seed: seed &+ stream)
+        var out: [Glint] = []
+        for _ in 0..<count {
+            let (x, y) = inDisc(&rand, radius: 0.97)
+            let r = minRadius + rand.unit() * radiusSpan
+            let a = (rand.unit() * 2 - 1) * 14
+            let b = (rand.unit() * 2 - 1) * 14
+            let phase = rand.unit() * tau
+            out.append(Glint(x: x, y: y, r: r, a: a, b: b, phase: phase))
+        }
+        return out
+    }
+
+    /// How brightly a `glint` flashes, 0 to 1, for a phone tilt of (`tiltX`, `tiltY`), each in -1...1. A spiky cosine: a
+    /// glint is dark most of the time and flashes when the tilt faces its own angle, so a tilting phone makes them twinkle.
+    static func glintLevel(_ glint: Glint, tiltX: Double, tiltY: Double) -> Double {
+        pow(max(0, cos(glint.a * tiltX + glint.b * tiltY + glint.phase)), 12)
     }
 }

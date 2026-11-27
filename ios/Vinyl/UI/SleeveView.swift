@@ -203,6 +203,7 @@ struct VinylView: View {
                         r += 3
                     }
                 }
+                WaxShimmer(base: wax.base, finish: wax.finish, seed: wax.seed)
                 Cover(url: disc.coverURL)
                     .frame(width: 64, height: 64)
                     .clipShape(Circle())

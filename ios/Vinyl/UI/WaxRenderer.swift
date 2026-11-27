@@ -1,5 +1,6 @@
 import CoreGraphics
 import Foundation
+import SwiftUI
 
 /// A rendered wax image. CGImage is immutable, so it is safe to hand between threads.
 struct WaxImage: @unchecked Sendable {
@@ -168,5 +169,65 @@ enum WaxRenderer {
             drops(WaxPattern.flecks(seed: look.seed)) { cgColor(WaxPattern.fleckColor(base: tint, tone: $0.tone), alpha: $0.alpha) }
         }
         return ctx.makeImage()
+    }
+}
+
+/// The shimmer over Glitter and Galaxy wax: glints that flash as the phone tilts, drawn over the still wax image (which is
+/// not redrawn). Nothing is drawn, and the sensor stays off, for other Finishes and with Reduce Motion. The tilt is read in
+/// the small inner view, so a tilting phone redraws these few glints and nothing else. Put it inside the turning disc, so
+/// the glints turn with the wax. Mirrors Android `WaxShimmer`.
+struct WaxShimmer: View {
+    let base: VinylColor?
+    let finish: Finish?
+    let seed: UInt64
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        if let base, finish == .glitter || finish == .galaxy, !reduceMotion {
+            ShimmerGlints(
+                glints: WaxPattern.glints(finish: finish, seed: seed),
+                // Glitter catches the light in the color of its strongest flecks; Galaxy stars are white.
+                color: finish == .galaxy ? .white : Color(hex: WaxPattern.fleckColor(base: base, tone: 0) & 0xFF_FFFF)
+            )
+        }
+    }
+}
+
+private struct ShimmerGlints: View {
+    let glints: [Glint]
+    let color: Color
+
+    var body: some View {
+        // Read here, not in the Canvas: the view redraws when the tilt changes.
+        let tilt = HoloLight.shared.tilt
+        Canvas { context, size in
+            let radius = min(size.width, size.height) / 2
+            let centre = CGPoint(x: size.width / 2, y: size.height / 2)
+            for g in glints {
+                let level = WaxPattern.glintLevel(g, tiltX: tilt.x, tiltY: tilt.y)
+                guard level >= 0.06 else { continue }
+                let c = CGPoint(x: centre.x + g.x * radius, y: centre.y + g.y * radius)
+                let r = g.r * radius * (0.8 + 0.8 * level)
+                let halo = r * 2.4
+                let glow = Gradient(stops: [
+                    .init(color: color.opacity(level * 0.9), location: 0),
+                    .init(color: color.opacity(level * 0.45), location: 0.35),
+                    .init(color: color.opacity(0), location: 1),
+                ])
+                context.fill(
+                    Path(ellipseIn: CGRect(x: c.x - halo, y: c.y - halo, width: 2 * halo, height: 2 * halo)),
+                    with: .radialGradient(glow, center: c, startRadius: 0, endRadius: halo)
+                )
+                let arm = r * 2.5
+                var cross = Path()
+                cross.move(to: CGPoint(x: c.x - arm, y: c.y))
+                cross.addLine(to: CGPoint(x: c.x + arm, y: c.y))
+                cross.move(to: CGPoint(x: c.x, y: c.y - arm))
+                cross.addLine(to: CGPoint(x: c.x, y: c.y + arm))
+                context.stroke(cross, with: .color(color.opacity(level * 0.7)), lineWidth: 0.8)
+            }
+        }
+        .onAppear { HoloLight.shared.addReader() }
+        .onDisappear { HoloLight.shared.removeReader() }
     }
 }
