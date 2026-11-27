@@ -9,6 +9,7 @@ struct VinylColorTests {
     @Test func labelsAreTheFrenchNamesInFrench() {
         #expect(VinylColor.allCases.map { $0.label(in: language) } == [
             "Rouge", "Orange", "Jaune", "Vert", "Bleu", "Violet", "Rose", "Blanc", "Transparent",
+            "Or", "Argent", "Gris", "Marron", "Bleu canard", "Os", "Noir",
         ])
     }
 
@@ -16,6 +17,7 @@ struct VinylColorTests {
         language.select(.english)
         #expect(VinylColor.allCases.map { $0.label(in: language) } == [
             "Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Pink", "White", "Clear",
+            "Gold", "Silver", "Grey", "Brown", "Teal", "Bone", "Black",
         ])
     }
 
@@ -39,7 +41,23 @@ struct VinylColorTests {
 
     @Test func onlyLightWaxGetsDarkGrooves() {
         let light = Set(VinylColor.allCases.filter { $0.light })
-        #expect(light == [.yellow, .white, .clear])
+        #expect(light == [.yellow, .white, .clear, .silver, .bone])
+    }
+
+    @Test func newColorsComeAfterTodaysNineSoStoredValuesAreStable() {
+        #expect(VinylColor.allCases.map(\.rawValue) == [
+            "RED", "ORANGE", "YELLOW", "GREEN", "BLUE", "PURPLE", "PINK", "WHITE", "CLEAR",
+            "GOLD", "SILVER", "GREY", "BROWN", "TEAL", "BONE", "BLACK",
+        ])
+    }
+
+    @Test func blackIsOnlyASecondColorAndClearIsOnlyAVinylColor() {
+        #expect(!VinylColor.firstChoices.contains(.black))
+        #expect(VinylColor.secondChoices.contains(.black))
+        #expect(VinylColor.firstChoices.contains(.clear))
+        #expect(!VinylColor.secondChoices.contains(.clear))
+        #expect(VinylColor.firstChoices.count == 15)
+        #expect(VinylColor.secondChoices.count == 15)
     }
 
     @Test func colorBandOnlyOnColoredVinyl() {

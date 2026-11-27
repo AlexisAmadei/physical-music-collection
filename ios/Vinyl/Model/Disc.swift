@@ -55,6 +55,12 @@ final class Disc {
     /// Speed (33 or 45 RPM), nil = not set. Kept (not cleared) if the Format becomes CD.
     /// Added after release: an optional field, so Discs saved before it open with no Speed.
     var speed: Speed?
+    /// Finish, nil = Solid. Needs a Vinyl color; kept (not cleared) if the Format becomes CD.
+    /// Added after release: an optional field, so Discs saved before it open Solid.
+    var finish: Finish?
+    /// Second color of a Finish that uses one. Kept (not cleared) when the Finish goes back to Solid or the Format becomes CD.
+    /// Added after release: an optional field, so Discs saved before it open with none.
+    var secondColor: VinylColor?
 
     init(_ draft: Draft) {
         update(from: draft)
@@ -76,6 +82,8 @@ final class Disc {
         paidPrice = draft.paidPrice
         vinylColor = draft.vinylColor
         speed = draft.speed
+        finish = draft.finish
+        secondColor = draft.secondColor
     }
 }
 
@@ -99,6 +107,10 @@ struct Draft: Equatable, Sendable {
     var vinylColor: VinylColor?
     /// Speed (33 or 45 RPM), nil = not set. Kept (not cleared) if the Format becomes CD.
     var speed: Speed?
+    /// Finish, nil = Solid. Kept (not cleared) if the Format becomes CD. Pick it with `pickFinish(_:)`.
+    var finish: Finish?
+    /// Second color of a Finish that uses one. Kept (not cleared) when the Finish goes back to Solid or the Format becomes CD.
+    var secondColor: VinylColor?
     /// Price texts as typed in the Draft form; nil = not typed. Read them through `DraftPrice.swift`.
     var seenPriceEdit: String?
     var paidPriceEdit: String?
@@ -122,7 +134,7 @@ extension Draft {
             format: disc.format, barcode: disc.barcode, rating: disc.rating, comment: disc.comment,
             wishlist: disc.wishlist, addedAt: disc.addedAt, coverURL: disc.coverURL,
             seenPrice: disc.seenPrice, paidPrice: disc.paidPrice, vinylColor: disc.vinylColor,
-            speed: disc.speed
+            speed: disc.speed, finish: disc.finish, secondColor: disc.secondColor
         )
     }
 }

@@ -11,7 +11,7 @@ struct VinylColorField: View {
         if let picked = draft.vinylColor {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    ForEach(VinylColor.allCases, id: \.self) { color in
+                    ForEach(VinylColor.firstChoices, id: \.self) { color in
                         Button { draft.vinylColor = color } label: {
                             Circle()
                                 .fill(color.color)
