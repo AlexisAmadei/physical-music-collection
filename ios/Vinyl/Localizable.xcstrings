@@ -17,6 +17,22 @@
         }
       }
     },
+    "%@ et %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ and %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ et %@"
+          }
+        }
+      }
+    },
     "%lld disques" : {
       "localizations" : {
         "en" : {
@@ -1437,6 +1453,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vinyle couleur %@"
+          }
+        }
+      }
+    },
+    "Vinyle couleur %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ %@ vinyl"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vinyle couleur %@ %@"
+          }
+        }
+      }
+    },
+    "Vinyle couleur %@ %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ %@ vinyl with %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vinyle couleur %@ %@ %@"
           }
         }
       }

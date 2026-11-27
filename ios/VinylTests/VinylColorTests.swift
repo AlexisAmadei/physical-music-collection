@@ -39,6 +39,57 @@ struct VinylColorTests {
         #expect(Disc(Draft(format: .cd)).coverLabel(in: language) == "Untitled, CD")
     }
 
+    @Test func coverIsReadWithTheFinishAndSecondColorInBothLanguages() {
+        var draft = Draft(title: "Currents", artist: "Tame Impala", year: 2015, format: .vinyl, vinylColor: .red)
+        draft.pickFinish(.marble)
+        draft.secondColor = .black
+        let disc = Disc(draft)
+        #expect(disc.coverLabel(in: language) == "Currents, Tame Impala, Vinyle couleur rouge marbré noir, 2015")
+
+        language.select(.english)
+        #expect(disc.coverLabel(in: language) == "Currents, Tame Impala, red marble vinyl with black, 2015")
+
+        // A Finish with no Second color reads without one.
+        var glitter = draft
+        glitter.pickFinish(.glitter)
+        #expect(Disc(glitter).coverLabel(in: language) == "Currents, Tame Impala, red glitter vinyl, 2015")
+        language.select(.french)
+        #expect(Disc(glitter).coverLabel(in: language) == "Currents, Tame Impala, Vinyle couleur rouge pailleté, 2015")
+    }
+
+    @Test func aCDOrASolidDiscReadsNoFinish() {
+        var draft = Draft(title: "Currents", format: .vinyl, vinylColor: .red)
+        draft.pickFinish(.marble)
+        draft.format = .cd
+        #expect(Disc(draft).coverLabel(in: language) == "Currents, CD")
+        draft.format = .vinyl
+        draft.pickFinish(nil)
+        #expect(Disc(draft).coverLabel(in: language) == "Currents, Vinyle couleur rouge")
+    }
+
+    @Test func finishLineIsTheFinishAndColorsInBothLanguages() {
+        var draft = Draft(format: .vinyl, vinylColor: .red)
+        draft.pickFinish(.marble)
+        draft.secondColor = .black
+        #expect(Disc(draft).finishLine(in: language) == "Marbré · Rouge et noir")
+        draft.secondColor = .teal
+        #expect(Disc(draft).finishLine(in: language) == "Marbré · Rouge et bleu canard")
+        language.select(.english)
+        #expect(Disc(draft).finishLine(in: language) == "Marble · Red and teal")
+
+        draft.pickFinish(.glitter)
+        #expect(Disc(draft).finishLine(in: language) == "Glitter · Red")
+    }
+
+    @Test func finishLineIsNilForSolidCDAndUncoloredDiscs() {
+        #expect(Disc(Draft(format: .vinyl, vinylColor: .red)).finishLine(in: language) == nil)
+        #expect(Disc(Draft(format: .vinyl)).finishLine(in: language) == nil)
+        var draft = Draft(format: .vinyl, vinylColor: .red)
+        draft.pickFinish(.splatter)
+        draft.format = .cd
+        #expect(Disc(draft).finishLine(in: language) == nil)
+    }
+
     @Test func onlyLightWaxGetsDarkGrooves() {
         let light = Set(VinylColor.allCases.filter { $0.light })
         #expect(light == [.yellow, .white, .clear, .silver, .bone])

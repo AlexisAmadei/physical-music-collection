@@ -92,14 +92,24 @@ extension Disc {
     /// Shows the Color band on its cover.
     var hasColorBand: Bool { shownVinylColor != nil }
 
-    /// What VoiceOver reads for its cover: title, artist, Format ("CD", "Vinyle" or "Vinyle couleur <color>"), year.
+    /// What VoiceOver reads for its cover: title, artist, Format ("CD", "Vinyle", "Vinyle couleur <color>" or, with a
+    /// Finish, "Vinyle couleur <color> <finish> <second color>"), year.
     /// Mirrors the Android `Disc.a11yLabel()`.
     @MainActor
     func coverLabel(in language: Language) -> String {
-        let formatLabel = if let color = shownVinylColor {
-            language.string("Vinyle couleur \(color.label(in: language).lowercased())")
+        let formatLabel: String
+        if let color = shownVinylColor {
+            let name = color.label(in: language).lowercased()
+            if let finish = shownFinish, let second = shownSecondColor {
+                let finishName = finish.label(in: language).lowercased()
+                formatLabel = language.string("Vinyle couleur \(name) \(finishName) \(second.label(in: language).lowercased())")
+            } else if let finish = shownFinish {
+                formatLabel = language.string("Vinyle couleur \(name) \(finish.label(in: language).lowercased())")
+            } else {
+                formatLabel = language.string("Vinyle couleur \(name)")
+            }
         } else {
-            format.label(in: language)
+            formatLabel = format.label(in: language)
         }
         return [
             shownTitle(in: language),
@@ -109,6 +119,20 @@ extension Disc {
         ]
         .compactMap { $0 }
         .joined(separator: ", ")
+    }
+
+    /// The Finish and colors as text for the back of the card, "Marbré · Rouge et noir" ("Marble · Red and black" in
+    /// English). Nil for a Solid Disc, a Disc with no Vinyl color or a CD: those show no line.
+    @MainActor
+    func finishLine(in language: Language) -> String? {
+        guard let finish = shownFinish, let color = shownVinylColor else { return nil }
+        let colors: String
+        if let second = shownSecondColor {
+            colors = language.string("\(color.label(in: language)) et \(second.label(in: language).lowercased())")
+        } else {
+            colors = color.label(in: language)
+        }
+        return "\(finish.label(in: language)) · \(colors)"
     }
 }
 

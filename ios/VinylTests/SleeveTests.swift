@@ -105,6 +105,30 @@ struct SleeveBackTests {
         #expect(back(Draft(format: .vinyl, wishlist: true, seenPrice: 1250, speed: .rpm45)).titleLines == 2)
     }
 
+    @Test func theFinishSharesTheSpeedLineAndCostsNoExtraTitleLine() {
+        var draft = Draft(format: .vinyl, vinylColor: .red, speed: .rpm33)
+        draft.pickFinish(.marble)
+        let both = back(draft)
+        #expect(both.specs == "33 tr/min · Marbré · Rouge et blanc")
+        #expect(both.titleLines == 2)
+
+        draft.speed = nil
+        let finishOnly = back(draft)
+        #expect(finishOnly.speed == nil)
+        #expect(finishOnly.specs == "Marbré · Rouge et blanc")
+        #expect(finishOnly.titleLines == 2)
+    }
+
+    @Test func noSpecsLineForASolidDiscWithNoSpeedOrACD() {
+        #expect(back(Draft(format: .vinyl, vinylColor: .red)).specs == nil)
+        #expect(back(Draft(format: .vinyl, vinylColor: .red)).titleLines == 3)
+        var cd = Draft(format: .cd, vinylColor: .red, speed: .rpm33)
+        cd.pickFinish(.marble)
+        #expect(back(cd).specs == nil)
+        #expect(back(cd).titleLines == 3)
+        #expect(back(Draft(format: .vinyl, speed: .rpm45)).specs == "45 tr/min")
+    }
+
     @Test func aCDsHiddenSpeedDoesNotCostATitleLine() {
         #expect(back(Draft(format: .cd, speed: .rpm33)).titleLines == 3)
     }

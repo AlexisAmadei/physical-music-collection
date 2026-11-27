@@ -85,10 +85,11 @@ struct SleeveBackFace: View {
                 Text(verbatim: back.details)
                     .textStyle(Typography.label)
                     .foregroundStyle(Palette.ink)
-                if let speed = back.speed {
-                    Text(verbatim: speed)
+                if let specs = back.specs {
+                    Text(verbatim: specs)
                         .textStyle(Typography.label)
                         .foregroundStyle(Palette.ink)
+                        .lineLimit(1)
                 }
                 Text(verbatim: back.addedOn)
                     .textStyle(TextStyle(size: 11, lineHeight: 15))

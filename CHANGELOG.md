@@ -7,7 +7,7 @@
 - Android and iOS: Marble, Splatter, Split and Galaxy take a Second color, picked from the Vinyl colors plus Black. It starts as White (Black for Split) and can be changed.
 - Android and iOS: six new Vinyl colors: Gold, Silver, Grey, Brown, Teal and Bone.
 - Android and iOS: Glitter and Galaxy shimmer as the phone tilts, unless the system asks to reduce motion.
-- Android and iOS: the Disc detail shows the Finish and colors as text (for example "Marbré, Rouge et noir"), and the cover's screen reader label includes them.
+- Android and iOS: the back of a card shows the Finish and colors as text on the Speed line (for example "33 tr/min · Marbré · Rouge et noir"), and the cover's screen reader label includes them ("Vinyle couleur rouge marbré noir", "red marble vinyl with black").
 
 ## v1.2.2 - 2026-11-21
 
