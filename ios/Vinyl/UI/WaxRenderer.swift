@@ -33,11 +33,10 @@ extension Optional where Wrapped == RenderedWax {
     }
 }
 
-/// Draws a Finish onto round wax: Marble and Galaxy from the noise bitmap, the others from `WaxPattern`'s ellipses.
+/// Draws a Finish onto round wax: Marble and Galaxy from a noise bitmap, the others from `WaxPattern`'s ellipses.
 /// Mirrors Android `drawWax`. Heavy for Marble (one pass of noise per pixel), so call it off the main thread; images are cached.
 enum WaxRenderer {
     private static let blackWax: UInt32 = 0xFF12_1212
-    private static let silver: UInt32 = 0xFFE6_E8EC
 
     private final class Box {
         let image: CGImage
@@ -117,16 +116,15 @@ enum WaxRenderer {
         ctx.addEllipse(in: full)
         ctx.clip()
         // Marble and Galaxy: the noise bitmap is the whole wax, drawn upright before the y axis is flipped below.
-        var marbleDrawn = false
-        if look.finish == .marble || look.finish == .galaxy, let base = look.base, let second = look.second {
-            let pixels = WaxPattern.marble(seed: look.seed, base: base, second: second, size: look.marbleSide)
-            if let image = marbleImage(pixels, side: look.marbleSide) {
-                ctx.interpolationQuality = .high
-                ctx.draw(image, in: full)
-                marbleDrawn = true
-            }
+        var bitmapDrawn = false
+        if let base = look.base, let second = look.second,
+           let pixels = WaxPattern.bitmap(finish: look.finish, seed: look.seed, base: base, second: second, size: look.marbleSide),
+           let image = marbleImage(pixels, side: look.marbleSide) {
+            ctx.interpolationQuality = .high
+            ctx.draw(image, in: full)
+            bitmapDrawn = true
         }
-        if !marbleDrawn {
+        if !bitmapDrawn {
             ctx.setFillColor(cgColor(baseArgb))
             ctx.fill(full)
         }
@@ -134,12 +132,12 @@ enum WaxRenderer {
         ctx.translateBy(x: 0, y: CGFloat(side))
         ctx.scaleBy(x: 1, y: -1)
 
-        func drops(_ list: [Droplet], _ argb: UInt32) {
+        func drops(_ list: [Droplet], _ colorOf: (Droplet) -> CGColor) {
             for d in list {
                 ctx.saveGState()
                 ctx.translateBy(x: radius + d.x * radius, y: radius + d.y * radius)
                 ctx.rotate(by: d.rot)
-                ctx.setFillColor(cgColor(argb, alpha: d.alpha))
+                ctx.setFillColor(colorOf(d))
                 ctx.fillEllipse(in: CGRect(x: -d.rx * radius, y: -d.ry * radius, width: 2 * d.rx * radius, height: 2 * d.ry * radius))
                 ctx.restoreGState()
             }
@@ -147,7 +145,7 @@ enum WaxRenderer {
 
         switch look.finish {
         case .marble: break
-        case .splatter: drops(WaxPattern.splatter(seed: look.seed), secondArgb)
+        case .splatter: drops(WaxPattern.splatter(seed: look.seed)) { cgColor(secondArgb, alpha: $0.alpha) }
         case .split:
             ctx.saveGState()
             ctx.translateBy(x: radius, y: radius)
@@ -155,8 +153,19 @@ enum WaxRenderer {
             ctx.setFillColor(cgColor(secondArgb))
             ctx.fill(CGRect(x: 0, y: -radius, width: radius, height: 2 * radius))
             ctx.restoreGState()
-        case .galaxy: drops(WaxPattern.speckles(seed: look.seed), 0xFFFF_FFFF)
-        case .glitter: drops(WaxPattern.flecks(seed: look.seed), silver)
+        case .galaxy:
+            let stars = WaxPattern.stars(seed: look.seed)
+            drops(stars.dots) { cgColor(0xFFFF_FFFF, alpha: $0.alpha) }
+            let halo = [cgColor(0xFFFF_FFFF, alpha: 0.95), cgColor(0xFFFF_FFFF, alpha: 0.55), cgColor(0xFFFF_FFFF, alpha: 0)]
+            if let gradient = CGGradient(colorsSpace: space, colors: halo as CFArray, locations: [0, 0.25, 1]) {
+                for glow in stars.glows {
+                    let centre = CGPoint(x: radius + glow.x * radius, y: radius + glow.y * radius)
+                    ctx.drawRadialGradient(gradient, startCenter: centre, startRadius: 0, endCenter: centre, endRadius: glow.rx * radius, options: [])
+                }
+            }
+        case .glitter:
+            let tint = look.base ?? .white
+            drops(WaxPattern.flecks(seed: look.seed)) { cgColor(WaxPattern.fleckColor(base: tint, tone: $0.tone), alpha: $0.alpha) }
         }
         return ctx.makeImage()
     }

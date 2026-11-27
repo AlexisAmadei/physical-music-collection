@@ -21,7 +21,7 @@ How a vinyl Disc's wax is patterned: Solid, Marble, Splatter, Split, Galaxy or G
 _Avoid_: Pattern, effect, style, variant
 
 **Second color**:
-The other color of a Finish that uses one: Marble, Splatter, Split and Galaxy (Solid and Glitter have none). Picked from the Vinyl color list plus Black (Clear is not offered). Choosing such a Finish preselects White, or Black for Split. Kept when the Finish goes back to Solid, hidden then; cleared when the Vinyl color is turned off, and hidden but kept if the Disc's Format is CD.
+The other color of a Finish that uses one: Marble, Splatter, Split and Galaxy (Solid and Glitter have none). Picked from the Vinyl color list plus Black (Clear is not offered). Choosing such a Finish preselects White, or Black for Split and Galaxy. Kept when the Finish goes back to Solid, hidden then; cleared when the Vinyl color is turned off, and hidden but kept if the Disc's Format is CD.
 _Avoid_: Accent color, color 2
 
 **Speed**:

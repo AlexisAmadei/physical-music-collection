@@ -30,6 +30,14 @@ struct Droplet: Equatable, Sendable {
     let ry: Double
     let rot: Double
     let alpha: Double
+    /// Glitter flecks only: 0 (strongest), 1 or 2, turned into a tint of the wax by `WaxPattern.fleckColor`.
+    var tone: Int = 0
+}
+
+/// Galaxy stars: `dots` are fine white points of varied size, `glows` a few bigger stars drawn with a halo.
+struct Stars: Equatable, Sendable {
+    let dots: [Droplet]
+    let glows: [Droplet]
 }
 
 extension Disc {
@@ -89,24 +97,64 @@ enum WaxPattern {
         return out
     }
 
-    /// Galaxy: fine white speckles over the marbled swirl.
-    static func speckles(seed: UInt64) -> [Droplet] {
+    /// Galaxy: stars over the nebula.
+    static func stars(seed: UInt64) -> Stars {
         var rand = WaxRandom(seed: seed &+ 1)
-        return (0..<160).map { _ in
+        var dots: [Droplet] = []
+        for _ in 0..<260 {
             let (x, y) = inDisc(&rand, radius: 1.02)
-            let r = 0.004 + rand.unit() * 0.007
-            return Droplet(x: x, y: y, rx: r, ry: r, rot: 0, alpha: 0.5 + rand.unit() * 0.45)
+            let r = 0.003 + pow(rand.unit(), 4) * 0.014
+            let alpha = 0.45 + rand.unit() * 0.5
+            dots.append(Droplet(x: x, y: y, rx: r, ry: r, rot: 0, alpha: alpha))
         }
+        var glows: [Droplet] = []
+        for _ in 0..<14 {
+            let (x, y) = inDisc(&rand, radius: 0.98)
+            let r = 0.022 + rand.unit() * 0.02
+            glows.append(Droplet(x: x, y: y, rx: r, ry: r, rot: 0, alpha: 1))
+        }
+        return Stars(dots: dots, glows: glows)
     }
 
-    /// Glitter: many tiny silver flecks.
+    /// Glitter: about 1400 flecks of mixed size and brightness. Each fleck has a tone, 0 (strongest), 1 or 2, that
+    /// `fleckColor` turns into a tint of the wax: light flecks on dark wax, dark flecks on light wax.
     static func flecks(seed: UInt64) -> [Droplet] {
         var rand = WaxRandom(seed: seed &+ 2)
-        return (0..<420).map { _ in
+        var out: [Droplet] = []
+        for _ in 0..<1400 {
             let (x, y) = inDisc(&rand, radius: 1.02)
-            let r = 0.004 + rand.unit() * 0.005
-            return Droplet(x: x, y: y, rx: r, ry: r, rot: 0, alpha: 0.45 + rand.unit() * 0.45)
+            let r = 0.003 + pow(rand.unit(), 3) * 0.013
+            let k = rand.unit()
+            let tone = k < 0.45 ? 0 : (k < 0.8 ? 1 : 2)
+            let alpha = 0.35 + rand.unit() * 0.6
+            out.append(Droplet(x: x, y: y, rx: r, ry: r, rot: 0, alpha: alpha, tone: tone))
         }
+        return out
+    }
+
+    /// The opaque ARGB of a Glitter fleck of `tone` on wax of the `base` color.
+    static func fleckColor(base: VinylColor, tone: Int) -> UInt32 {
+        let wax = rgb(base)
+        let white: [Double] = [255, 255, 255]
+        let black: [Double] = [0, 0, 0]
+        let c: [Double]
+        if base.light {
+            switch tone {
+            case 0: c = mix(wax, black, 0.5)
+            case 1: c = mix(wax, black, 0.22)
+            default: c = white
+            }
+        } else {
+            switch tone {
+            case 0: c = white
+            case 1: c = mix(wax, white, 0.5)
+            default: c = mix(wax, black, 0.4)
+            }
+        }
+        let r = UInt32(c[0])
+        let g = UInt32(c[1])
+        let b = UInt32(c[2])
+        return 0xFF00_0000 | (r << 16) | (g << 8) | b
     }
 
     /// Split: the angle, in radians, of the line between the two colors. The second color is on the far side of it.
@@ -205,5 +253,49 @@ enum WaxPattern {
             }
         }
         return out
+    }
+
+    /// Galaxy nebula as `size` x `size` ARGB pixels, like `marble` but smooth: soft clouds of the `second` color over the
+    /// `base`, with brighter cores. Stars are drawn over it from `stars`.
+    static func nebula(seed: UInt64, base: VinylColor, second: VinylColor, size n: Int = marbleSize) -> [UInt32] {
+        var rand = WaxRandom(seed: seed)
+        let s0 = Int32(floor(rand.unit() * 1e6))
+        var o: [Double] = []
+        for _ in 0..<6 { o.append(rand.unit() * 80) }
+        let scale = 1.3
+        let baseRgb = rgb(base)
+        let secRgb = rgb(second)
+        let baseAlpha = Double(base.argb >> 24) / 255.0
+        let lite = mix(secRgb, [255, 255, 255], 0.35)
+        var out = [UInt32](repeating: 0, count: n * n)
+        for y in 0..<n {
+            for x in 0..<n {
+                let px = ((Double(x) + 0.5) / Double(n) * 2 - 1) * scale
+                let py = ((Double(y) + 0.5) / Double(n) * 2 - 1) * scale
+                let qx = fbm(px + o[0], py + o[1], s0)
+                let qy = fbm(px + o[2], py + o[3], s0 &+ 7)
+                let f = fbm(px + 2.2 * qx + o[4], py + 2.2 * qy + o[5], s0 &+ 13)
+                let t = smooth(0.38, 0.78, f)
+                let core = smooth(0.62, 0.9, f)
+                var col = mix(baseRgb, secRgb, t)
+                col = mix(col, lite, core * 0.5)
+                let alpha = baseAlpha + (1 - baseAlpha) * t
+                let a = UInt32((alpha * 255).rounded())
+                let r = UInt32(col[0])
+                let g = UInt32(col[1])
+                let b = UInt32(col[2])
+                out[y * n + x] = (a << 24) | (r << 16) | (g << 8) | b
+            }
+        }
+        return out
+    }
+
+    /// The bitmap under a Finish that has one: Marble (veined bands) or Galaxy (soft nebula); nil for the others.
+    static func bitmap(finish: Finish, seed: UInt64, base: VinylColor, second: VinylColor, size n: Int = marbleSize) -> [UInt32]? {
+        switch finish {
+        case .marble: marble(seed: seed, base: base, second: second, size: n)
+        case .galaxy: nebula(seed: seed, base: base, second: second, size: n)
+        default: nil
+        }
     }
 }

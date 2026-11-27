@@ -6,16 +6,16 @@ import Foundation
 enum Finish: String, Codable, CaseIterable, Sendable {
     case marble = "MARBLE", splatter = "SPLATTER", split = "SPLIT", galaxy = "GALAXY", glitter = "GLITTER"
 
-    /// White, or Black for Split; nil for Glitter, which has no Second color.
+    /// White, or Black for Split and Galaxy; nil for Glitter, which has no Second color.
     var defaultSecondColor: VinylColor? {
         switch self {
-        case .marble, .splatter, .galaxy: .white
-        case .split: .black
+        case .marble, .splatter: .white
+        case .split, .galaxy: .black
         case .glitter: nil
         }
     }
 
-    /// Marble, Splatter, Split and Galaxy take a Second color; Glitter is silver flecks on the Vinyl color.
+    /// Marble, Splatter, Split and Galaxy take a Second color; Glitter is flecks tinted to the Vinyl color.
     var usesSecondColor: Bool { defaultSecondColor != nil }
 
     /// The name shown to the user and read by VoiceOver.

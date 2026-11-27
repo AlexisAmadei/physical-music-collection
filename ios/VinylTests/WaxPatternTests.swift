@@ -56,10 +56,78 @@ struct WaxPatternTests {
         #expect(Double(on) > Double(drops.count) * 0.85)
     }
 
-    @Test func speckleAndFleckCountsAreFixed() {
-        #expect(WaxPattern.speckles(seed: 1).count == 160)
-        #expect(WaxPattern.flecks(seed: 1).count == 420)
-        #expect(WaxPattern.speckles(seed: 1).allSatisfy { $0.x * $0.x + $0.y * $0.y <= 1.05 * 1.05 })
+    @Test func starAndFleckCountsAreFixed() {
+        #expect(WaxPattern.stars(seed: 1).dots.count == 260)
+        #expect(WaxPattern.stars(seed: 1).glows.count == 14)
+        #expect(WaxPattern.flecks(seed: 1).count == 1400)
+        #expect(WaxPattern.stars(seed: 1).dots.allSatisfy { $0.x * $0.x + $0.y * $0.y <= 1.05 * 1.05 })
+        #expect(WaxPattern.flecks(seed: 1).allSatisfy { $0.x * $0.x + $0.y * $0.y <= 1.05 * 1.05 })
+    }
+
+    @Test func starsAndFlecksAreTheSameEveryTime() {
+        #expect(WaxPattern.flecks(seed: 3) == WaxPattern.flecks(seed: 3))
+        #expect(WaxPattern.stars(seed: 3) == WaxPattern.stars(seed: 3))
+        #expect(WaxPattern.flecks(seed: 3) != WaxPattern.flecks(seed: 4))
+    }
+
+    @Test func starsAreMostlyFineWithAFewBigGlows() {
+        let s = WaxPattern.stars(seed: 5)
+        #expect(s.dots.filter { $0.rx < 0.006 }.count > s.dots.count / 2)
+        #expect(s.glows.allSatisfy { $0.rx >= 0.022 && $0.rx <= 0.042 })
+    }
+
+    @Test func fleckTonesAreSpreadAcrossTheThreeTones() {
+        let flecks = WaxPattern.flecks(seed: 5)
+        let counts = [0, 1, 2].map { tone in flecks.filter { $0.tone == tone }.count }
+        #expect(counts.allSatisfy { $0 > 0 })
+        #expect(counts[0] > counts[2])
+    }
+
+    @Test func fleckTintsAreLightOnDarkWaxAndDarkOnLightWax() {
+        func sum(_ argb: UInt32) -> UInt32 { ((argb >> 16) & 0xFF) + ((argb >> 8) & 0xFF) + (argb & 0xFF) }
+        #expect(WaxPattern.fleckColor(base: .blue, tone: 0) == 0xFFFF_FFFF)
+        #expect(sum(WaxPattern.fleckColor(base: .white, tone: 0)) < sum(VinylColor.white.argb))
+        #expect(sum(WaxPattern.fleckColor(base: .yellow, tone: 1)) < sum(VinylColor.yellow.argb))
+        #expect(WaxPattern.fleckColor(base: .yellow, tone: 2) == 0xFFFF_FFFF)
+        #expect(sum(WaxPattern.fleckColor(base: .red, tone: 2)) < sum(VinylColor.red.argb))
+        #expect(WaxPattern.fleckColor(base: .teal, tone: 1) >> 24 == 0xFF)
+    }
+
+    @Test func nebulaIsSoftOpaqueAndTheSameEveryTime() {
+        let a = WaxPattern.nebula(seed: 9, base: .blue, second: .black, size: 32)
+        #expect(a.count == 32 * 32)
+        #expect(a == WaxPattern.nebula(seed: 9, base: .blue, second: .black, size: 32))
+        #expect(a.allSatisfy { $0 >> 24 == 255 })
+        #expect(a != WaxPattern.nebula(seed: 10, base: .blue, second: .black, size: 32))
+        var biggest = 0
+        for row in 0..<32 {
+            for col in 0..<31 {
+                let p = Int((a[row * 32 + col] >> 16) & 0xFF)
+                let q = Int((a[row * 32 + col + 1] >> 16) & 0xFF)
+                biggest = max(biggest, abs(p - q))
+            }
+        }
+        #expect(biggest < 40)
+    }
+
+    @Test func nebulaMixesBothColors() {
+        let a = WaxPattern.nebula(seed: 9, base: .blue, second: .black, size: 48)
+        let dark = a.filter { (($0 >> 16) & 0xFF) < 0x20 && ($0 & 0xFF) < 0x40 }.count
+        let blue = a.filter { ($0 & 0xFF) > 0x90 && (($0 >> 16) & 0xFF) < 0x50 }.count
+        #expect(dark > 48 * 48 / 20 && blue > 48 * 48 / 20)
+    }
+
+    @Test func nebulaOnClearWaxIsSeeThroughWhereTheSecondColorIsAbsent() {
+        let alphas = WaxPattern.nebula(seed: 9, base: .clear, second: .red, size: 48).map { $0 >> 24 }
+        #expect((0x8A...0x95).contains(alphas.min() ?? 0))
+        #expect((alphas.max() ?? 0) > 0xE0)
+    }
+
+    @Test func bitmapIsMarbleForMarbleNebulaForGalaxyAndNilOtherwise() {
+        #expect(WaxPattern.bitmap(finish: .marble, seed: 9, base: .red, second: .white, size: 16) == WaxPattern.marble(seed: 9, base: .red, second: .white, size: 16))
+        #expect(WaxPattern.bitmap(finish: .galaxy, seed: 9, base: .red, second: .white, size: 16) == WaxPattern.nebula(seed: 9, base: .red, second: .white, size: 16))
+        #expect(WaxPattern.bitmap(finish: .splatter, seed: 9, base: .red, second: .white, size: 16) == nil)
+        #expect(WaxPattern.bitmap(finish: .glitter, seed: 9, base: .red, second: .white, size: 16) == nil)
     }
 
     @Test func splitAngleIsWithinAFullTurn() {
@@ -104,6 +172,42 @@ struct WaxPatternTests {
                 #expect(abs(got - exp) <= 1, "pixel \(index), shift \(shift): \(got) vs \(exp)")
             }
         }
+    }
+
+    @Test func nebulaStarsAndFlecksMatchAndroid() {
+        let seed: UInt64 = 0x1234_5678_9ABC
+        let n = WaxPattern.nebula(seed: seed, base: .blue, second: .black, size: 16)
+        let expected: [(Int, UInt32)] = [
+            (0, 0xFF29_559C), (17, 0xFF28_5398), (100, 0xFF19_2539), (135, 0xFF19_2230), (255, 0xFF24_4780),
+        ]
+        for (index, want) in expected {
+            for shift in [24, 16, 8, 0] as [UInt32] {
+                let got = Int((n[index] >> shift) & 0xFF)
+                let exp = Int((want >> shift) & 0xFF)
+                #expect(abs(got - exp) <= 1, "nebula pixel \(index), shift \(shift): \(got) vs \(exp)")
+            }
+        }
+        let stars = WaxPattern.stars(seed: seed)
+        #expect(abs(stars.dots[0].x - -0.6076736162442895) < 1e-9)
+        #expect(abs(stars.dots[0].y - -0.5869105169175586) < 1e-9)
+        #expect(abs(stars.dots[0].rx - 0.005999525691160388) < 1e-9)
+        #expect(abs(stars.dots[0].alpha - 0.6857312517606784) < 1e-9)
+        #expect(abs(stars.dots[stars.dots.count - 1].x - 0.33211123641401147) < 1e-9)
+        #expect(abs(stars.dots[stars.dots.count - 1].rx - 0.0031537245436594687) < 1e-9)
+        #expect(abs(stars.glows[0].x - -0.040921805961647455) < 1e-9)
+        #expect(abs(stars.glows[0].rx - 0.03673884539194255) < 1e-9)
+        #expect(abs(stars.glows[stars.glows.count - 1].x - 0.6750497501233313) < 1e-9)
+        #expect(abs(stars.glows[stars.glows.count - 1].rx - 0.034548589046788966) < 1e-9)
+        let flecks = WaxPattern.flecks(seed: seed)
+        #expect(abs(flecks[0].x - -0.5084313018175756) < 1e-9)
+        #expect(abs(flecks[0].rx - 0.009172563331896023) < 1e-9)
+        #expect(abs(flecks[0].alpha - 0.6517783316081485) < 1e-9)
+        #expect(flecks[0].tone == 0)
+        #expect(abs(flecks[700].y - 0.616497619115278) < 1e-9)
+        #expect(abs(flecks[flecks.count - 1].x - 0.34199837017293205) < 1e-9)
+        #expect(flecks[flecks.count - 1].tone == 1)
+        #expect([0, 1, 2].map { WaxPattern.fleckColor(base: .red, tone: $0) } == [0xFFFF_FFFF, 0xFFE3_9195, 0xFF78_1519])
+        #expect([0, 1, 2].map { WaxPattern.fleckColor(base: .yellow, tone: $0) } == [0xFF79_6426, 0xFFBC_9C3B, 0xFFFF_FFFF])
     }
 
     @Test func splatterMatchesAndroid() {

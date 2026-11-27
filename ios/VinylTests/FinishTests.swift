@@ -11,10 +11,10 @@ struct FinishTests {
         #expect(!Finish.glitter.usesSecondColor)
     }
 
-    @Test func secondColorStartsAsWhiteAndBlackForSplit() {
+    @Test func secondColorStartsAsWhiteAndBlackForSplitAndGalaxy() {
         #expect(Finish.marble.defaultSecondColor == .white)
         #expect(Finish.splatter.defaultSecondColor == .white)
-        #expect(Finish.galaxy.defaultSecondColor == .white)
+        #expect(Finish.galaxy.defaultSecondColor == .black)
         #expect(Finish.split.defaultSecondColor == .black)
         #expect(Finish.glitter.defaultSecondColor == nil)
     }
