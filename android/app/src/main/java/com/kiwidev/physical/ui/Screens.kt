@@ -38,7 +38,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -62,8 +61,7 @@ import com.kiwidev.physical.data.shownVinylColor
 import com.kiwidev.physical.data.tapped
 import com.kiwidev.physical.data.upperCase
 import com.kiwidev.physical.R as AppR
-import com.kiwidev.physical.data.CollectionValue
-import com.kiwidev.physical.data.collectionValue
+import com.kiwidev.physical.data.collectionStats
 import kotlinx.coroutines.launch
 
 @Composable
@@ -139,7 +137,7 @@ fun WishlistScreen(vm: AppVm, nav: NavHostController) {
     }
 }
 
-/** The user's own screen: the Profile card, then the Collection value by Format. */
+/** The user's own screen: the Profile card, then the Language switch. */
 @Composable
 fun ProfileScreen(vm: AppVm, nav: NavHostController) {
     val all by vm.dao.byList(false).collectAsState(null)
@@ -148,44 +146,24 @@ fun ProfileScreen(vm: AppVm, nav: NavHostController) {
     val language = currentLanguage()
     var editing by rememberSaveable { mutableStateOf(false) }
     val list = all ?: return
-    val value = remember(list) { collectionValue(list) }
+    val stats = remember(list) { collectionStats(list) }
     Column(
         Modifier.fillMaxSize().hazeSource(LocalHaze.current).verticalScroll(rememberScrollState())
             .padding(start = 20.dp, end = 20.dp, top = screenTop(), bottom = 119.dp + chromeBottom()),
     ) {
         Text(stringResource(AppR.string.profile_title), style = Type.Display)
-        ProfileCard(name, value.total, list.size, onEditName = { editing = true }, Modifier.padding(top = 24.dp))
+        ProfileCard(name, stats, onEditName = { editing = true }, Modifier.padding(top = 24.dp))
         if (list.isEmpty()) {
             var adding by remember { mutableStateOf(false) }
             EmptyState(
                 stringResource(AppR.string.profile_empty_hint), stringResource(AppR.string.profile_empty_action),
                 onAdd = { adding = true }, Modifier.padding(top = 35.dp),
             ) { AddChoices(adding, { adding = false }, vm, nav) }
-        } else {
-            ValueByFormat(value, Modifier.padding(top = 35.dp))
         }
-        LanguageSwitch(language, onPick = vm::setLanguage, Modifier.padding(top = 35.dp))
+        // Stops short of the nav pill, which floats over the right edge (the screen margin is 20 dp).
+        LanguageSwitch(language, onPick = vm::setLanguage, Modifier.padding(top = 35.dp, end = NavPillClearance - 20.dp))
     }
     if (editing) NameSheet(name, onDone = { vm.setName(it); editing = false }, onDismiss = { editing = false })
-}
-
-@Composable
-private fun ValueByFormat(v: CollectionValue, modifier: Modifier = Modifier) {
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(stringResource(AppR.string.profile_by_format), Modifier.padding(bottom = 4.dp), style = Type.Label, color = Palette.Muted)
-        listOf(stringResource(AppR.string.format_cd) to v.cd, stringResource(AppR.string.format_vinyl) to v.vinyl).forEach { (label, cents) ->
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(label, style = Type.Body)
-                Text(Price.format(cents, currentLanguage()), style = Type.Body, fontWeight = FontWeight.Medium)
-            }
-        }
-        if (v.unpriced > 0) {
-            Text(
-                pluralStringResource(AppR.plurals.discs_without_price, v.unpriced, v.unpriced),
-                Modifier.padding(top = 12.dp), style = Type.Body, color = Palette.Muted,
-            )
-        }
-    }
 }
 
 /** "English | Français": a native segmented control. Each language is named in its own language, never translated. */

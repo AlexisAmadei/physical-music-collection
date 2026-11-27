@@ -9,6 +9,9 @@
 - Android and iOS: Glitter and Galaxy shimmer as the phone tilts, unless the system asks to reduce motion.
 - Android and iOS: the Disc detail shows the Finish and colors as text (for example "Marbré, Rouge et noir"), and the cover's screen reader label includes them.
 
+### Changed
+- Android and iOS: the Profile card is now a portrait card brushed in diagonal lines, and it shows the Collection stats: the Collection value (and how many Discs have no Paid price), the number of vinyls, CDs and colored vinyls, and the oldest year. The Collection value by Format below it is gone.
+
 ## v1.2.2 - 2026-11-21
 
 ### Added

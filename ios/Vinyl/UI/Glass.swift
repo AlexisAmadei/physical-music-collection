@@ -27,6 +27,10 @@ struct GlassIcon: View {
     }
 }
 
+/// How far the nav pill reaches in from the right screen edge (14 pt margin + 52 pt wide), plus a 12 pt gap.
+/// Android `NavPillClearance`.
+let navPillClearance: CGFloat = 78
+
 /// Vertical glass navigation pill, anchored right (Android `GlassNavPill`). Active tab: Accent fill + Ink outline.
 struct GlassNavPill: View {
     let current: Tab

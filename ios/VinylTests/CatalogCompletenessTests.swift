@@ -35,19 +35,6 @@ struct CatalogCompletenessTests {
         }
     }
 
-    /// Counts need real plural forms in both languages: French 0 and 1 are singular, English 0 is plural.
-    @Test func discCountsHavePluralFormsInBothLanguages() throws {
-        let strings = try catalog("Localizable")
-        for key in ["%lld disques", "%lld disques sans prix"] {
-            let localizations = try #require(strings[key]?["localizations"] as? [String: [String: Any]])
-            for language in ["en", "fr"] {
-                let variations = try #require(localizations[language]?["variations"] as? [String: [String: Any]])
-                let forms = try #require(variations["plural"])
-                #expect(forms["one"] != nil && forms["other"] != nil, "\(key) needs one and other in \(language)")
-            }
-        }
-    }
-
     /// Format labels come from the model (`Format.label`), not from a screen-specific key.
     @Test func noScreenSpecificFormatKeyLeftBehind() throws {
         #expect(try catalog("Localizable")["collection.filter.vinyl"] == nil)

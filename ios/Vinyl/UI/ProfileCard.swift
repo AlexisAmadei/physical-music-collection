@@ -1,26 +1,30 @@
 import SwiftUI
 
-/// The Profile card: round-brushed silver, like the grooves of a vinyl Disc, with the Profile name, the Collection value
-/// and the number of Collection Discs. Mirrors Android `ProfileCard`. Tapping it edits the Profile name.
+/// The Profile card: a portrait silver card, brushed in diagonal lines, with the Profile name and the
+/// `CollectionStats`. Mirrors Android `ProfileCard`. Tapping it edits the Profile name.
 ///
 /// Tilts (10° at most) with the phone, and with the finger while it touches; the light sits where the card is
 /// pushed away (`CardTiltDriver`). Reduce Motion: no tilt, light fixed at `stillLight`.
 struct ProfileCard: View {
     let name: String
-    /// Collection value, euro cents.
-    let value: Int
-    let discs: Int
+    let stats: CollectionStats
     let onEditName: () -> Void
 
     /// Reduce Motion: no tilt, light fixed here. The Android `StillLight`.
     static let stillLight = CGPoint(x: 0.35, y: -0.3)
     private static let maxDegrees = 10.0
+    /// Portrait, like a trading card.
+    private static let ratio = 0.63
+    /// Shown when no Collection Disc has a year.
+    private static let noYear = "–"
 
     @Environment(\.locale) private var locale
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var driver = CardTiltDriver()
     /// The card in window coordinates, to read the finger.
     @State private var frame = CGRect.zero
+    /// Width the card is centered in; the card takes 70% of it, 320 at most.
+    @State private var available: CGFloat = 0
 
     private static let shape = RoundedRectangle(cornerRadius: 18, style: .continuous)
     private static let ink = Color(hex: 0x33363B)
@@ -30,15 +34,22 @@ struct ProfileCard: View {
     )
 
     var body: some View {
+        let width = min(available * 0.7, 320)
+        card
+            .frame(width: width, height: width / Self.ratio)
+            .frame(maxWidth: .infinity)
+            .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { available = $0 }
+    }
+
+    private var card: some View {
         let tilt = reduceMotion ? Self.stillLight : driver.shown
         let turn = reduceMotion ? CGPoint.zero : tilt
-        Button(action: onEditName) {
+        return Button(action: onEditName) {
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                .background { SilverSheen(tilt: tilt, rings: true) }
+                .background { SilverSheen(tilt: tilt, lines: true) }
                 .clipShape(Self.shape)
                 .overlay { Self.shape.strokeBorder(Self.rim, lineWidth: 1) }
-                .aspectRatio(1.586, contentMode: .fit)
                 .shadow(color: Color(hex: 0x2A2E33, opacity: 0.35), radius: 14, y: 8)
                 .contentShape(Self.shape)
         }
@@ -77,34 +88,55 @@ struct ProfileCard: View {
                 GlyphView(glyph: Glyphs.disc, tint: Self.ink, size: 40)
             }
             Spacer(minLength: 0)
-            HStack(alignment: .bottom, spacing: 0) {
-                VStack(alignment: .leading, spacing: 0) {
-                    Text("Valeur de la collection")
+            VStack(alignment: .leading, spacing: 0) {
+                Text("Valeur")
+                    .textStyle(Typography.label)
+                    .foregroundStyle(Self.muted)
+                Text(verbatim: Price.format(stats.value, locale: locale))
+                    .textStyle(Typography.display)
+                    .foregroundStyle(Self.ink)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.55)
+                if stats.unpriced > 0 {
+                    Text("\(stats.unpriced) sans prix")
                         .textStyle(Typography.label)
                         .foregroundStyle(Self.muted)
-                    Text(verbatim: Price.format(value, locale: locale))
-                        .textStyle(Typography.display)
-                        .foregroundStyle(Self.ink)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.6)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                Group {
-                    Text("\(discs) disques")
+                Grid(alignment: .leading, horizontalSpacing: 8, verticalSpacing: 14) {
+                    GridRow {
+                        stat("Vinyles", "\(stats.vinyls)")
+                        stat("Nombre de CD", "\(stats.cds)")
+                    }
+                    GridRow {
+                        stat("Disques colorés", "\(stats.colored)")
+                        stat("Plus ancien", stats.oldestYear.map { "\($0)" } ?? Self.noYear)
+                    }
                 }
-                .textStyle(Typography.body)
-                .foregroundStyle(Self.ink)
-                .padding(.leading, 8)
-                .padding(.trailing, 6)
-                .padding(.bottom, 5)
+                .padding(.top, 20)
             }
             .engraved()
-            .padding(.leading, 6)
+            .padding(.horizontal, 6)
         }
         .padding(.leading, 14)
         .padding(.trailing, 12)
         .padding(.top, 6)
         .padding(.bottom, 18)
+    }
+
+    /// A small muted label over its number, read as one: "Vinyles, 12".
+    private func stat(_ label: LocalizedStringKey, _ value: String) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text(label)
+                .textStyle(Typography.label)
+                .foregroundStyle(Self.muted)
+                .lineLimit(1)
+            Text(verbatim: value)
+                .textStyle(Typography.title)
+                .foregroundStyle(Self.ink)
+                .lineLimit(1)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .combine)
     }
 }
 
@@ -124,13 +156,16 @@ private extension View {
     }
 }
 
-/// Brushed silver as Android `drawSilver`: soft bands, two bright lobes turning with the tilt, a slight rainbow
-/// kept around the light, and glare. `rings`: the fine concentric brush lines. The lines never depend on the tilt,
-/// so they are not redrawn when it changes.
+/// Along the brush lines, on screen: from bottom left to top right.
+private let grain = CGPoint(x: 0.7071, y: -0.7071)
+
+/// Brushed silver as Android `drawSilver`: soft bands, one streak of light across the lines that slides along them
+/// with the tilt, a slight rainbow kept around the light, and glare. `lines`: the fine diagonal brush lines. The
+/// lines never depend on the tilt, so they are not redrawn when it changes.
 struct SilverSheen: View {
     /// Shown tilt, x and y in -1...1.
     let tilt: CGPoint
-    var rings = false
+    var lines = false
 
     private static let base = Gradient(colors: [
         Color(hex: 0xC6CACF), Color(hex: 0xEEF0F2), Color(hex: 0xB6BBC1), Color(hex: 0xE2E5E8), Color(hex: 0xC2C6CB),
@@ -143,7 +178,7 @@ struct SilverSheen: View {
     var body: some View {
         ZStack {
             Canvas { context, size in drawBase(&context, size) }
-            if rings { BrushedRings() }
+            if lines { BrushedLines() }
             Canvas { context, size in drawLight(&context, size) }
         }
         .accessibilityHidden(true)
@@ -170,22 +205,27 @@ struct SilverSheen: View {
     private func drawLight(_ context: inout GraphicsContext, _ size: CGSize) {
         let w = size.width, h = size.height
         let rect = Path(CGRect(origin: .zero, size: size))
-        let center = CGPoint(x: w / 2, y: h / 2)
+        let diagonal = hypot(w, h)
         let s = shift(size)
 
-        // Round brushing reflects as two bright lobes through the center; they turn with the tilt.
-        let bright = Color.white.opacity(0.45 + 0.35 * reach)
-        let dark = Color.black.opacity(0.1)
+        // Straight brushing reflects as one streak across the lines; the tilt slides it along them.
+        let along = (tilt.x * grain.x + tilt.y * grain.y) * diagonal * 0.35
+        let mid = CGPoint(x: w / 2 + grain.x * along, y: h / 2 + grain.y * along)
+        let out = diagonal * 0.4
+        let dark = Color.black.opacity(0.08)
         let clear = Color.white.opacity(0)
-        // The sweep wraps at 0 / 1: keep that in a clear zone, or it shows as a thin seam.
-        let lobes = Gradient(stops: [
-            .init(color: clear, location: 0), .init(color: clear, location: 0.045), .init(color: bright, location: 0.125),
-            .init(color: clear, location: 0.205), .init(color: dark, location: 0.375), .init(color: clear, location: 0.545),
-            .init(color: bright, location: 0.625), .init(color: clear, location: 0.705), .init(color: dark, location: 0.875),
-            .init(color: clear, location: 0.96), .init(color: clear, location: 1),
+        let streak = Gradient(stops: [
+            .init(color: clear, location: 0), .init(color: dark, location: 0.18),
+            .init(color: .white.opacity(0.45 + 0.35 * reach), location: 0.5), .init(color: dark, location: 0.82),
+            .init(color: clear, location: 1),
         ])
-        let turn = Angle.degrees(-15 + tilt.x * 70 + tilt.y * 45)
-        context.fill(rect, with: .conicGradient(lobes, center: center, angle: turn))
+        context.fill(
+            rect,
+            with: .linearGradient(
+                streak, startPoint: CGPoint(x: mid.x - grain.x * out, y: mid.y - grain.y * out),
+                endPoint: CGPoint(x: mid.x + grain.x * out, y: mid.y + grain.y * out)
+            )
+        )
 
         // Slight rainbow, kept only around the light.
         let light = CGPoint(x: (0.5 + 0.5 * tilt.x) * w, y: (0.5 + 0.5 * tilt.y) * h)
@@ -220,30 +260,34 @@ struct SilverSheen: View {
     }
 }
 
-/// Fine concentric brush lines, one pixel wide. Fixed seed: same metal every time.
-private struct BrushedRings: View {
+/// Fine straight brush lines at 45° (along `grain`), one pixel wide. Fixed seed: same metal every time.
+private struct BrushedLines: View {
     @Environment(\.displayScale) private var scale
 
     var body: some View {
         Canvas { context, size in
             var random = SeededRandom(seed: 7)
             let center = CGPoint(x: size.width / 2, y: size.height / 2)
-            let max = hypot(size.width, size.height) / 2
+            // Half the diagonal: rotated lines this long still cover the corners.
+            let half = hypot(size.width, size.height) / 2
             let pixel = 1 / scale
-            func ring(_ r: CGFloat) -> Path {
-                Path(ellipseIn: CGRect(x: center.x - r, y: center.y - r, width: 2 * r, height: 2 * r))
+            // Horizontal lines turned 45° counterclockwise: from bottom left to top right.
+            context.translateBy(x: center.x, y: center.y)
+            context.rotate(by: .degrees(-45))
+            func line(_ y: CGFloat) -> Path {
+                Path { $0.move(to: CGPoint(x: -half, y: y)); $0.addLine(to: CGPoint(x: half, y: y)) }
             }
-            var r = 1.5 * pixel
-            while r < max {
+            var y = -half
+            while y < half {
                 let a = random.nextUnit()
                 let color = random.nextBool()
                     ? Color.white.opacity(0.05 + 0.22 * a) : Color.black.opacity(0.02 + 0.07 * a)
-                context.stroke(ring(r), with: .color(color), lineWidth: pixel)
-                r += 1.4 * pixel
+                context.stroke(line(y), with: .color(color), lineWidth: pixel)
+                y += 1.4 * pixel
             }
-            // A few soft dark bands, like the gaps between tracks on a vinyl Disc.
+            // A few soft darker bands, where the brush pressed harder.
             for _ in 0..<5 {
-                context.stroke(ring(max * (0.3 + 0.7 * random.nextUnit())), with: .color(.black.opacity(0.05)), lineWidth: 2.5)
+                context.stroke(line(half * (1.8 * random.nextUnit() - 0.9)), with: .color(.black.opacity(0.05)), lineWidth: 2.5)
             }
         }
         .drawingGroup()
@@ -252,8 +296,10 @@ private struct BrushedRings: View {
 
 #Preview {
     VStack(spacing: 32) {
-        ProfileCard(name: "Alexis", value: 124_050, discs: 42) {}
-        ProfileCard(name: "", value: 0, discs: 0) {}
+        ProfileCard(
+            name: "Alexis", stats: CollectionStats(vinyls: 5, cds: 2, colored: 3, oldestYear: 1959, value: 15_839, unpriced: 1)
+        ) {}
+        ProfileCard(name: "", stats: CollectionStats([])) {}
     }
     .padding(20)
 }

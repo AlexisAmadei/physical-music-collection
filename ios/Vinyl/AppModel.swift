@@ -22,6 +22,8 @@ final class AppModel {
     var shownCollection: [Disc] { collectionFilter.apply(to: collection) }
     /// The Collection value, by Format; follows every save and delete.
     var collectionValue: CollectionValue { CollectionValue(collection) }
+    /// What the Profile card shows; follows every save and delete.
+    var collectionStats: CollectionStats { CollectionStats(collection) }
     /// Profile name; "" = unset. Change it with `setProfileName(_:)`.
     private(set) var profileName: String
     @ObservationIgnored private let profilePreferences: any ProfilePreferences

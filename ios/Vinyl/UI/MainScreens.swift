@@ -67,7 +67,7 @@ struct WishlistScreen: View {
     }
 }
 
-/// "MON PROFIL": the Profile card, then the Collection value by Format (or the empty state).
+/// "MON PROFIL": the Profile card (with the empty state under it when the Collection is empty), then the Language switch.
 struct ProfileScreen: View {
     let app: AppModel
     @State private var editingName = false
@@ -76,20 +76,16 @@ struct ProfileScreen: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 ScreenTitle(text: "MON PROFIL")
-                ProfileCard(
-                    name: app.profileName, value: app.collectionValue.total, discs: app.collection.count,
-                    onEditName: { editingName = true }
-                )
+                ProfileCard(name: app.profileName, stats: app.collectionStats, onEditName: { editingName = true })
                 .padding(.top, 24)
                 if app.collection.isEmpty {
                     EmptyState(app: app)
                         .padding(.top, 35)
-                } else {
-                    ValueByFormat(value: app.collectionValue, language: app.language)
-                        .padding(.top, 35)
                 }
+                // Stops short of the nav pill, which floats over the right edge (the screen margin is 20 pt).
                 LanguagePicker(language: app.language)
                     .padding(.top, 35)
+                    .padding(.trailing, navPillClearance - 20)
             }
             .sheet(isPresented: $editingName) {
                 ProfileNameSheet(current: app.profileName) { name in

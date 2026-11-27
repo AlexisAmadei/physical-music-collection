@@ -71,42 +71,26 @@ struct LanguageTests {
 
     // MARK: String Catalog, through the language object
 
-    @Test func discCountIsCorrectFor0_1AndNInBothLanguages() {
-        let language = language(device: ["fr-FR"])
-        func count(_ n: Int) -> String { language.string("\(n) disques") }
-
-        // French: 0 and 1 are singular.
-        #expect(count(0) == "0 disque")
-        #expect(count(1) == "1 disque")
-        #expect(count(2) == "2 disques")
-        #expect(count(42) == "42 disques")
-
-        language.select(.english)
-        // English: 0 is plural.
-        #expect(count(0) == "0 discs")
-        #expect(count(1) == "1 disc")
-        #expect(count(2) == "2 discs")
-        #expect(count(42) == "42 discs")
-    }
-
     @Test func unpricedCountIsCorrectInBothLanguages() {
         let language = language(device: ["fr-FR"])
-        func count(_ n: Int) -> String { language.string("\(n) disques sans prix") }
-
-        #expect(count(1) == "1 disque sans prix")
-        #expect(count(3) == "3 disques sans prix")
-
+        #expect(language.string("\(3) sans prix") == "3 sans prix")
         language.select(.english)
-        #expect(count(1) == "1 disc without a price")
-        #expect(count(3) == "3 discs without a price")
+        #expect(language.string("\(3) sans prix") == "3 without price")
+    }
+
+    /// The Profile card labels: short, to fit the narrow portrait card. Same words as Android.
+    @Test func profileCardLabelsInBothLanguages() {
+        let language = language(device: ["fr-FR"])
+        let keys: [String.LocalizationValue] = ["Valeur", "Vinyles", "Nombre de CD", "Disques colorés", "Plus ancien"]
+        #expect(keys.map { language.string($0) } == ["Valeur", "Vinyles", "CD", "Disques colorés", "Plus ancien"])
+        language.select(.english)
+        #expect(keys.map { language.string($0) } == ["Collection value", "Vinyls", "CDs", "Colored discs", "Oldest"])
     }
 
     @Test func existingFrenchWordingIsUnchanged() {
         let language = language(device: ["fr-FR"])
         #expect(language.string("MON PROFIL") == "MON PROFIL")
         #expect(language.string("Ton nom") == "Ton nom")
-        #expect(language.string("Valeur de la collection") == "Valeur de la collection")
-        #expect(language.string("Par format") == "Par format")
         #expect(language.string("Rien ici pour l’instant.") == "Rien ici pour l’instant.")
     }
 
@@ -114,9 +98,7 @@ struct LanguageTests {
         let language = language(device: ["en-US"])
         #expect(language.string("MON PROFIL") == "MY PROFILE")
         #expect(language.string("Ton nom") == "Your name")
-        #expect(language.string("Valeur de la collection") == "Collection value")
-        #expect(language.string("Par format") == "By format")
-        // The Profile's "By format" rows read the Format's own label, so there is no view-only key for it.
+        // Format labels come from the Format itself, so there is no view-only key for them.
         #expect(Format.vinyl.label(in: language) == "Vinyl")
         language.select(.french)
         #expect(Format.vinyl.label(in: language) == "Vinyle")
