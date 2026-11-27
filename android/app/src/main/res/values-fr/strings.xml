@@ -30,6 +30,9 @@
     <string name="disc_paid">Payé %1$s</string>
     <string name="disc_added_on">Ajouté le %1$s</string>
     <string name="disc_a11y_vinyl_color">Vinyle couleur %1$s</string>
+    <string name="disc_a11y_vinyl_finish">Vinyle couleur %1$s %2$s</string>
+    <string name="disc_a11y_vinyl_finish_second">Vinyle couleur %1$s %2$s %3$s</string>
+    <string name="disc_colors_pair">%1$s et %2$s</string>
     <string name="wheel_next">Disque suivant</string>
     <string name="wheel_previous">Disque précédent</string>
     <string name="rating_of_five">Note : %1$d sur 5</string>

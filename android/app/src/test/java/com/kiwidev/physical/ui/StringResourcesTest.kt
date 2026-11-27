@@ -79,7 +79,7 @@ class StringResourcesTest {
         "vinyl_color_red", "vinyl_color_orange", "vinyl_color_yellow", "vinyl_color_green", "vinyl_color_blue",
         "vinyl_color_purple", "vinyl_color_pink", "vinyl_color_white", "vinyl_color_clear",
         "vinyl_color_gold", "vinyl_color_silver", "vinyl_color_grey", "vinyl_color_brown", "vinyl_color_teal",
-        "vinyl_color_bone", "vinyl_color_black",
+        "vinyl_color_bone", "vinyl_color_black", "disc_a11y_vinyl_finish", "disc_a11y_vinyl_finish_second", "disc_colors_pair",
         "finish_solid", "finish_marble", "finish_splatter", "finish_split", "finish_galaxy", "finish_glitter",
     )
 
@@ -150,6 +150,17 @@ class StringResourcesTest {
             assertEquals(key, pair.first, en.getValue("finish_$key").text)
             assertEquals(key, pair.second, fr.getValue("finish_$key").text)
         }
+    }
+
+    @Test fun finishAccessibilityLabelsAndColorPairsReadNaturallyInBothLanguages() {
+        val en = load("values")
+        val fr = load("values-fr")
+        assertEquals("red marble vinyl with black", String.format(en.getValue("disc_a11y_vinyl_finish_second").text, "red", "marble", "black"))
+        assertEquals("red glitter vinyl", String.format(en.getValue("disc_a11y_vinyl_finish").text, "red", "glitter"))
+        assertEquals("Red and black", String.format(en.getValue("disc_colors_pair").text, "Red", "black"))
+        assertEquals("Vinyle couleur rouge marbré noir", String.format(fr.getValue("disc_a11y_vinyl_finish_second").text, "rouge", "marbré", "noir"))
+        assertEquals("Vinyle couleur rouge pailleté", String.format(fr.getValue("disc_a11y_vinyl_finish").text, "rouge", "pailleté"))
+        assertEquals("Rouge et noir", String.format(fr.getValue("disc_colors_pair").text, "Rouge", "noir"))
     }
 
     @Test fun formatLabelsAreTranslated() {

@@ -58,6 +58,8 @@ import com.kiwidev.physical.data.ProfileName
 import com.kiwidev.physical.data.Speed
 import com.kiwidev.physical.data.VinylColor
 import com.kiwidev.physical.data.lowerCase
+import com.kiwidev.physical.data.shownFinish
+import com.kiwidev.physical.data.shownSecondColor
 import com.kiwidev.physical.data.shownVinylColor
 import com.kiwidev.physical.data.tapped
 import com.kiwidev.physical.data.withVinylColor
@@ -257,10 +259,33 @@ private fun CoverGrid(title: String, rowGap: Dp, headerGap: Dp, header: @Composa
 
 @Composable
 fun Disc.a11yLabel(): String {
-    val formatLabel = shownVinylColor?.let { stringResource(AppR.string.disc_a11y_vinyl_color, it.displayName().lowerCase()) }
-        ?: stringResource(format.labelRes)
+    val color = shownVinylColor
+    val finish = shownFinish
+    val second = shownSecondColor
+    val formatLabel = when {
+        color == null -> stringResource(format.labelRes)
+        finish == null -> stringResource(AppR.string.disc_a11y_vinyl_color, color.displayName().lowerCase())
+        second == null -> stringResource(AppR.string.disc_a11y_vinyl_finish, color.displayName().lowerCase(), finish.displayName().lowerCase())
+        else -> stringResource(
+            AppR.string.disc_a11y_vinyl_finish_second,
+            color.displayName().lowerCase(), finish.displayName().lowerCase(), second.displayName().lowerCase(),
+        )
+    }
     return listOfNotNull(title.ifBlank { stringResource(AppR.string.disc_untitled) }, artist.ifBlank { null }, formatLabel, year?.toString())
         .joinToString(", ")
+}
+
+/**
+ * The Finish and colors as text for the back of the card, "Marbré · Rouge et noir" ("Marble · Red and black" in English).
+ * Null for a Solid Disc, a Disc with no Vinyl color or a CD: those show no line.
+ */
+@Composable
+fun Disc.finishLine(): String? {
+    val finish = shownFinish ?: return null
+    val color = shownVinylColor ?: return null
+    val second = shownSecondColor
+    val colors = if (second == null) color.displayName() else stringResource(AppR.string.disc_colors_pair, color.displayName(), second.displayName().lowerCase())
+    return "${finish.displayName()} · $colors"
 }
 
 /** Cover art, or a neutral disc placeholder while loading / when there is none. */
