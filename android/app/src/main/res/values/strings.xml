@@ -34,6 +34,9 @@
     <string name="disc_paid">Paid %1$s</string>
     <string name="disc_added_on">Added on %1$s</string>
     <string name="disc_a11y_vinyl_color">%1$s vinyl</string>
+    <string name="disc_a11y_vinyl_finish">%1$s %2$s vinyl</string>
+    <string name="disc_a11y_vinyl_finish_second">%1$s %2$s vinyl with %3$s</string>
+    <string name="disc_colors_pair">%1$s and %2$s</string>
     <string name="wheel_next">Next disc</string>
     <string name="wheel_previous">Previous disc</string>
     <string name="rating_of_five">Rating: %1$d out of 5</string>
@@ -90,6 +93,21 @@
     <string name="vinyl_color_purple">Purple</string>
     <string name="vinyl_color_pink">Pink</string>
     <string name="vinyl_color_white">White</string>
+    <string name="form_finish">Finish</string>
+    <string name="form_second_color">Second color</string>
     <string name="vinyl_color_clear">Clear</string>
+    <string name="vinyl_color_gold">Gold</string>
+    <string name="vinyl_color_silver">Silver</string>
+    <string name="vinyl_color_grey">Grey</string>
+    <string name="vinyl_color_brown">Brown</string>
+    <string name="vinyl_color_teal">Teal</string>
+    <string name="vinyl_color_bone">Bone</string>
+    <string name="vinyl_color_black">Black</string>
+    <string name="finish_solid">Solid</string>
+    <string name="finish_marble">Marble</string>
+    <string name="finish_splatter">Splatter</string>
+    <string name="finish_split">Split</string>
+    <string name="finish_galaxy">Galaxy</string>
+    <string name="finish_glitter">Glitter</string>
     <!-- ===== end #26 ===== -->
 </resources>

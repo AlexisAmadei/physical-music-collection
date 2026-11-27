@@ -57,7 +57,10 @@ import com.kiwidev.physical.data.Dates
 import com.kiwidev.physical.data.Disc
 import com.kiwidev.physical.data.Price
 import com.kiwidev.physical.data.upperCase
+import com.kiwidev.physical.data.shownFinish
+import com.kiwidev.physical.data.shownSecondColor
 import com.kiwidev.physical.data.shownVinylColor
+import com.kiwidev.physical.data.waxSeed
 import com.kiwidev.physical.data.shownSpeed
 import kotlin.random.Random
 
@@ -128,6 +131,8 @@ private fun BackFace(d: Disc, onTap: () -> Unit, onEdit: () -> Unit, large: Bool
     val price = if (d.wishlist) d.seenPrice?.let { stringResource(AppR.string.disc_seen_at, Price.format(it, language)) }
     else d.paidPrice?.let { stringResource(AppR.string.disc_paid, Price.format(it, language)) }
     val speed = d.shownSpeed?.let { stringResource(AppR.string.speed_rpm, it.rpm) }
+    // Speed and Finish share one line, so a Finish costs no extra title line.
+    val specs = listOfNotNull(speed, d.finishLine()).joinToString(" · ").ifEmpty { null }
     Box(Modifier.fillMaxSize().clipToBounds().clickable(onClickLabel = stringResource(AppR.string.disc_flip), role = Role.Button, onClick = onTap)) {
         Cover(
             d.coverUrl,
@@ -143,7 +148,7 @@ private fun BackFace(d: Disc, onTap: () -> Unit, onEdit: () -> Unit, large: Bool
                 )
             }
             Text(
-                d.title.ifBlank { stringResource(AppR.string.disc_untitled) }, maxLines = backTitleLines(large, hasPrice = price != null, hasSpeed = speed != null), overflow = TextOverflow.Ellipsis,
+                d.title.ifBlank { stringResource(AppR.string.disc_untitled) }, maxLines = backTitleLines(large, hasPrice = price != null, hasSpecs = specs != null), overflow = TextOverflow.Ellipsis,
                 style = Type.Title.copy(fontSize = if (large) 17.sp else 15.sp, lineHeight = if (large) 21.sp else 19.sp),
                 color = Palette.Ink,
             )
@@ -151,7 +156,7 @@ private fun BackFace(d: Disc, onTap: () -> Unit, onEdit: () -> Unit, large: Bool
                 listOfNotNull(d.year?.toString(), stringResource(d.format.labelRes)).joinToString(" · "),
                 style = Type.Label, color = Palette.Ink,
             )
-            speed?.let { Text(it, style = Type.Label, color = Palette.Ink) }
+            specs?.let { Text(it, maxLines = 1, overflow = TextOverflow.Ellipsis, style = Type.Label, color = Palette.Ink) }
             Text(stringResource(AppR.string.disc_added_on, Dates.format(d.addedAt, language)), style = Type.Label.copy(fontSize = 11.sp), color = Palette.Ink.copy(alpha = 0.7f))
             if (price != null) Text(price, style = Type.Label, color = Palette.Ink)
             if (!d.wishlist) StarRating(d.rating, size = star)
@@ -163,12 +168,13 @@ private fun BackFace(d: Disc, onTap: () -> Unit, onEdit: () -> Unit, large: Bool
 
 /**
  * Title lines on the back of a card, so the details never reach the barcode and the rating.
- * A small card has room for 3 lines in all: each extra line (price, Speed) takes one from the title, down to 1.
- * A large card has room for the price line beside a 3-line title; a Speed line takes one more.
+ * A small card has room for 3 lines in all: each extra line (price, specs) takes one from the title, down to 1.
+ * A large card has room for the price line beside a 3-line title; a specs line takes one more.
+ * The specs line is the Speed and the Finish together.
  */
-internal fun backTitleLines(large: Boolean, hasPrice: Boolean, hasSpeed: Boolean): Int =
-    if (large) (if (hasSpeed) 2 else 3)
-    else (3 - (if (hasPrice) 1 else 0) - (if (hasSpeed) 1 else 0)).coerceAtLeast(1)
+internal fun backTitleLines(large: Boolean, hasPrice: Boolean, hasSpecs: Boolean): Int =
+    if (large) (if (hasSpecs) 2 else 3)
+    else (3 - (if (hasPrice) 1 else 0) - (if (hasSpecs) 1 else 0)).coerceAtLeast(1)
 
 /** 44 dp glass-look round button (the haze backdrop does not follow a rotated layer, so a plain wash). */
 @Composable
@@ -229,9 +235,13 @@ fun Vinyl(d: Disc, spinning: Boolean, modifier: Modifier = Modifier) {
         Box(Modifier.fillMaxSize().graphicsLayer { rotationZ = angle }, contentAlignment = Alignment.Center) {
             // Vinyl color only shows for vinyl; a CD keeps its hidden value.
             val wax = d.shownVinylColor
+            val finish = d.shownFinish
+            val second = d.shownSecondColor
+            val seed = d.waxSeed
+            val bitmap = rememberWaxBitmap(finish, wax, second, seed)
             val groove = if (wax?.light == true) Color.Black.copy(alpha = 0.10f) else Color.White.copy(alpha = 0.07f)
             Canvas(Modifier.fillMaxSize()) {
-                drawCircle(wax?.let { Color(it.argb) } ?: Color(0xFF121212))
+                drawWax(wax, finish, second, seed, bitmap)
                 val outer = size.minDimension / 2
                 var r = outer * 0.36f
                 while (r < outer - 2.dp.toPx()) {
@@ -239,6 +249,7 @@ fun Vinyl(d: Disc, spinning: Boolean, modifier: Modifier = Modifier) {
                     r += 3.dp.toPx()
                 }
             }
+            WaxShimmer(wax, finish, seed, Modifier.fillMaxSize())
             Cover(d.coverUrl, Modifier.size(64.dp).clip(CircleShape))
             Canvas(Modifier.size(8.dp)) { drawCircle(Color.White) }
         }

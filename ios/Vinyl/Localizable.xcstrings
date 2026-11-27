@@ -17,6 +17,22 @@
         }
       }
     },
+    "%@ et %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ and %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ et %@"
+          }
+        }
+      }
+    },
     "Disques colorés" : {
       "localizations" : {
         "en" : {
@@ -273,6 +289,22 @@
         }
       }
     },
+    "Argent" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silver"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Argent"
+          }
+        }
+      }
+    },
     "Artist" : {
       "localizations" : {
         "en" : {
@@ -321,6 +353,22 @@
         }
       }
     },
+    "Bicolore" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Split"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bicolore"
+          }
+        }
+      }
+    },
     "Blanc" : {
       "localizations" : {
         "en" : {
@@ -349,6 +397,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bleu"
+          }
+        }
+      }
+    },
+    "Bleu canard" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bleu canard"
           }
         }
       }
@@ -449,6 +513,22 @@
         }
       }
     },
+    "Deuxième couleur" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Second color"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deuxième couleur"
+          }
+        }
+      }
+    },
     "Disque précédent" : {
       "localizations" : {
         "en" : {
@@ -529,6 +609,22 @@
         }
       }
     },
+    "Finition" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finish"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finition"
+          }
+        }
+      }
+    },
     "Format" : {
       "localizations" : {
         "fr" : {
@@ -541,6 +637,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Format"
+          }
+        }
+      }
+    },
+    "Galaxy" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Galaxy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Galaxy"
+          }
+        }
+      }
+    },
+    "Gris" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grey"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gris"
           }
         }
       }
@@ -641,6 +769,38 @@
         }
       }
     },
+    "Marbré" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marble"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marbré"
+          }
+        }
+      }
+    },
+    "Marron" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brown"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marron"
+          }
+        }
+      }
+    },
     "Modifier le disque" : {
       "localizations" : {
         "en" : {
@@ -705,6 +865,22 @@
         }
       }
     },
+    "Noir" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Black"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noir"
+          }
+        }
+      }
+    },
     "Non noté" : {
       "localizations" : {
         "en" : {
@@ -753,6 +929,22 @@
         }
       }
     },
+    "Or" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gold"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Or"
+          }
+        }
+      }
+    },
     "Orange" : {
       "localizations" : {
         "en" : {
@@ -765,6 +957,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Orange"
+          }
+        }
+      }
+    },
+    "Os" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bone"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os"
+          }
+        }
+      }
+    },
+    "Pailleté" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glitter"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pailleté"
           }
         }
       }
@@ -1057,6 +1281,22 @@
         }
       }
     },
+    "Splatter" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Splatter"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Splatter"
+          }
+        }
+      }
+    },
     "Title" : {
       "localizations" : {
         "en" : {
@@ -1101,6 +1341,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Transparent"
+          }
+        }
+      }
+    },
+    "Unie" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solid"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unie"
           }
         }
       }
@@ -1181,6 +1437,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vinyle couleur %@"
+          }
+        }
+      }
+    },
+    "Vinyle couleur %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ %@ vinyl"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vinyle couleur %@ %@"
+          }
+        }
+      }
+    },
+    "Vinyle couleur %@ %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ %@ vinyl with %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vinyle couleur %@ %@ %@"
           }
         }
       }

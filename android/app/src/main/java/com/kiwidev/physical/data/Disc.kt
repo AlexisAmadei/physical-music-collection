@@ -34,6 +34,10 @@ data class Disc(
     val vinylColor: VinylColor? = null,
     /** Speed (33 or 45), null = not set. Kept (not cleared) if the Format becomes CD. */
     val speed: Speed? = null,
+    /** Finish, null = Solid. Needs a Vinyl color; kept (not cleared) if the Format becomes CD. */
+    val finish: Finish? = null,
+    /** Second color of a Finish that uses one. Kept (not cleared) when the Finish goes back to Solid or the Format becomes CD. */
+    val secondColor: VinylColor? = null,
 )
 
 @Dao
@@ -51,7 +55,7 @@ interface DiscDao {
     @Delete suspend fun delete(d: Disc)
 }
 
-@Database(entities = [Disc::class], version = 5)
+@Database(entities = [Disc::class], version = 6)
 abstract class AppDb : RoomDatabase() {
     abstract fun dao(): DiscDao
     companion object {
@@ -71,11 +75,17 @@ abstract class AppDb : RoomDatabase() {
         private val V4_5 = object : Migration(4, 5) {
             override fun migrate(db: SupportSQLiteDatabase) = db.execSQL("ALTER TABLE Disc ADD COLUMN speed TEXT")
         }
+        private val V5_6 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE Disc ADD COLUMN finish TEXT")
+                db.execSQL("ALTER TABLE Disc ADD COLUMN secondColor TEXT")
+            }
+        }
         /**
          * Every step from version 1. The exported schemas (app/schemas) start at version 4, so the migration test
          * can only replay the steps from version 4 on; steps 1 to 4 are not covered by a test.
          */
-        val MIGRATIONS: Array<Migration> = arrayOf(V1_2, V2_3, V3_4, V4_5)
+        val MIGRATIONS: Array<Migration> = arrayOf(V1_2, V2_3, V3_4, V4_5, V5_6)
         fun get(c: Context) = db ?: synchronized(this) {
             db ?: Room.databaseBuilder(c.applicationContext, AppDb::class.java, "vinyl.db")
                 .addMigrations(*MIGRATIONS).build().also { db = it }
