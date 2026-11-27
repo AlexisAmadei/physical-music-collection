@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PROTOTYPE vinyl finishes</title>
+<!--
+  PROTOTYPE, THROWAWAY. Lives on branch prototype/vinyl-finishes, never on main.
+
+  Question: how should Marble and Splatter wax be DRAWN so it looks like a real pressing, and which technique can both
+  SwiftUI Canvas (iOS 26) and Compose Canvas (Android minSdk 26) reproduce?
+
+  Portability rules the variants obey (no WebGL, no AGSL, no blur filters):
+    - vector only: paths, ellipses, fills, linear/radial gradients, clip   -> A, C, D, E, F
+    - one CPU-built bitmap per Disc (cached), per pixel math               -> B
+  Randomness is a seeded SplitMix-style generator, as ios/Vinyl/UI/SeededRandom.swift. Seed would be derived from the
+  Disc id. The disc geometry copies ios/Vinyl/UI/SleeveView.swift (grooves from 36 % of the radius every 3/94 R,
+  64 pt label on a 188 pt disc, 8 pt hole, fixed highlight while the wax spins) and the Color band copies ColorBandShape.
+
+  Run: open this file in a browser. ?variant=A..F &base=RED &second=WHITE &seed=1234
+-->
+<style>
+  :root { color-scheme: dark; --bg:#17181b; --panel:#212328; --ink:#ececf0; --dim:#9a9ca6; --line:#383b42; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.45 system-ui, sans-serif; padding-bottom:84px; }
+  header { padding:14px 20px; background:#2b1d1d; border-bottom:1px solid #5a2c2c; }
+  header b { color:#ff8a80; letter-spacing:.08em; }
+  header span { color:var(--dim); }
+  main { padding:20px; max-width:1180px; margin:0 auto; }
+  h3 { margin:28px 0 10px; font-size:13px; text-transform:uppercase; letter-spacing:.07em; color:var(--dim); font-weight:600; }
+  .stage { display:flex; gap:28px; flex-wrap:wrap; align-items:flex-start; }
+  .bigwrap { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px; }
+  canvas.disc { border-radius:50%; display:block; }
+  body.clear canvas.disc, body.clear canvas.cov {
+    background: repeating-conic-gradient(#8a8d95 0 25%, #5d6068 0 50%) 0 0 / 16px 16px;
+  }
+  .side { flex:1; min-width:300px; display:flex; flex-direction:column; gap:16px; }
+  .row { display:flex; gap:14px; flex-wrap:wrap; align-items:center; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 14px; }
+  .lbl { font-size:12px; color:var(--dim); margin-bottom:6px; }
+  .dots { display:flex; gap:6px; flex-wrap:wrap; }
+  .dot { width:28px; height:28px; border-radius:50%; border:1px solid #ffffff40; padding:0; cursor:pointer; position:relative; }
+  .dot.on { outline:2px solid #fff; outline-offset:2px; }
+  .dot[title]:hover::after { content:attr(title); position:absolute; top:32px; left:0; background:#000; color:#fff; padding:1px 6px; border-radius:4px; font-size:11px; z-index:5; white-space:nowrap; }
+  button.chip { background:#2e3138; color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:5px 10px; cursor:pointer; font:inherit; }
+  button.chip:hover { background:#3a3e46; }
+  .tile { text-align:center; cursor:pointer; padding:6px; border-radius:10px; border:2px solid transparent; }
+  .tile.on { border-color:#fff; background:#ffffff10; }
+  .tile small { display:block; color:var(--dim); font-size:11px; margin-top:4px; max-width:136px; }
+  #notes { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 16px; color:var(--dim); }
+  #notes b { color:var(--ink); }
+  #bar { position:fixed; left:50%; bottom:18px; transform:translateX(-50%); background:#fff; color:#111; border-radius:999px;
+         box-shadow:0 6px 24px #000a; display:flex; align-items:center; gap:6px; padding:6px; z-index:20; }
+  #bar button { border:0; background:#111; color:#fff; width:38px; height:38px; border-radius:50%; font-size:18px; cursor:pointer; }
+  #bar span { min-width:250px; text-align:center; font-weight:600; padding:0 8px; }
+</style>
+</head>
+<body>
+<header><b>PROTOTYPE</b> <span>Vinyl Finish drawing: Marble and Splatter. Throwaway, branch prototype/vinyl-finishes. Not the app.</span></header>
+<main>
+  <div class="stage">
+    <div class="bigwrap">
+      <div class="lbl">Out of the sleeve, 2x size (spinning, highlight fixed)</div>
+      <canvas class="disc" id="big"></canvas>
+    </div>
+    <div class="side">
+      <div class="card">
+        <div class="lbl">Real size, as in the app (188 pt disc) and the cover with its flat Color band (first color only)</div>
+        <div class="row">
+          <canvas class="disc" id="real"></canvas>
+          <canvas class="cov" id="cover" width="120" height="120" style="border-radius:8px"></canvas>
+          <canvas class="cov" id="cover2" width="72" height="72" style="border-radius:6px"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="lbl">First color (the Vinyl color)</div>
+        <div class="dots" id="baseDots"></div>
+        <div class="lbl" style="margin-top:10px">Second color (Black allowed, Clear left out: open question)</div>
+        <div class="dots" id="secDots"></div>
+        <div class="lbl" style="margin-top:10px">Pairs to judge with</div>
+        <div class="row" id="presets" style="gap:6px"></div>
+      </div>
+      <div class="card">
+        <div class="row">
+          <label>Seed <input id="seed" type="number" style="width:110px;background:#111;color:#fff;border:1px solid var(--line);border-radius:6px;padding:4px 6px"></label>
+          <button class="chip" id="reroll">New seed (R)</button>
+          <label><input type="checkbox" id="spin" checked> spin</label>
+          <span id="ms" style="color:var(--dim)"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Same colors and seed, all six techniques (click one to select it)</h3>
+  <div class="row" id="compare"></div>
+
+  <h3>Selected technique, 8 different seeds (does every Disc look different, and still like the same finish?)</h3>
+  <div class="row" id="sheet"></div>
+
+  <h3>Notes on the selected technique</h3>
+  <div id="notes"></div>
+</main>
+
+<nav id="bar"><button id="prev" aria-label="Previous">&larr;</button><span id="barlabel"></span><button id="next" aria-label="Next">&rarr;</button></nav>
+
+<script>
+'use strict';
+const TAU = Math.PI * 2;
+
+/* ---------- palette: today's 9 + the 6 proposed, plus Black (second color only) ---------- */
+const PAL = {
+  RED:'#C8242B', ORANGE:'#E8731E', YELLOW:'#F2C94C', GREEN:'#2E8B57', BLUE:'#2B5BA8', PURPLE:'#6B3FA0',
+  PINK:'#E0609A', WHITE:'#F4F2EE', CLEAR:'#E6ECF0',
+  GOLD:'#C9A227', SILVER:'#B8BCC2', GREY:'#7D8085', BROWN:'#6B4A32', TEAL:'#1F8A8A', BONE:'#E9E1CC',
+  BLACK:'#121212',
+};
+const BASES = Object.keys(PAL).filter(k => k !== 'BLACK');
+const SECONDS = Object.keys(PAL).filter(k => k !== 'CLEAR');
+const CLEAR_A = 0x8C / 255;
+const PRESETS = [['RED','BLACK'],['BLUE','WHITE'],['TEAL','GOLD'],['PURPLE','PINK'],['GREEN','BLACK'],['YELLOW','ORANGE'],['WHITE','BLUE'],['CLEAR','RED'],['ORANGE','WHITE'],['PINK','TEAL']];
+
+/* ---------- small helpers ---------- */
+const hex2rgb = h => [1,3,5].map(i => parseInt(h.slice(i, i + 2), 16));
+const mix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
+const css = (c, a = 1) => `rgba(${c[0]|0},${c[1]|0},${c[2]|0},${a})`;
+const lum = c => {
+  const l = v => { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+  return 0.2126 * l(c[0]) + 0.7152 * l(c[1]) + 0.0722 * l(c[2]);
+};
+const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+
+/* SplitMix32, the native apps would keep SplitMix64 (SeededRandom.swift). */
+function rng(seed) {
+  let s = seed >>> 0;
+  return () => {
+    s = (s + 0x9E3779B9) >>> 0;
+    let z = s;
+    z = Math.imul(z ^ (z >>> 16), 0x85ebca6b);
+    z = Math.imul(z ^ (z >>> 13), 0xc2b2ae35);
+    return ((z ^ (z >>> 16)) >>> 0) / 4294967296;
+  };
+}
+
+/* value noise + fbm, used by technique B only */
+function hash2(ix, iy, s) {
+  let h = (Math.imul(ix, 374761393) + Math.imul(iy, 668265263) + Math.imul(s, 1597334677)) | 0;
+  h = Math.imul(h ^ (h >>> 13), 1274126177);
+  h ^= h >>> 16;
+  return (h >>> 0) / 4294967296;
+}
+function vnoise(x, y, s) {
+  const ix = Math.floor(x), iy = Math.floor(y), fx = x - ix, fy = y - iy;
+  const u = fx * fx * fx * (fx * (fx * 6 - 15) + 10), v = fy * fy * fy * (fy * (fy * 6 - 15) + 10);
+  const a = hash2(ix, iy, s), b = hash2(ix + 1, iy, s), c = hash2(ix, iy + 1, s), d = hash2(ix + 1, iy + 1, s);
+  return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+}
+function fbm(x, y, s) {
+  let t = 0, amp = 0.5, f = 1;
+  for (let i = 0; i < 4; i++) { t += amp * vnoise(x * f, y * f, s + i * 31); f *= 2; amp *= 0.5; }
+  return t / 0.9375;
+}
+
+/* ---------- drawing primitives, unit disc (radius 1 at the origin) ---------- */
+function ellipse(g, x, y, rx, ry, rot, fill) {
+  g.beginPath();
+  g.ellipse(x, y, Math.max(rx, 0.0005), Math.max(ry, 0.0005), rot, 0, TAU);
+  g.fillStyle = fill; g.fill();
+}
+function inDisc(rand, r = 1) { const a = rand() * TAU, d = Math.sqrt(rand()) * r; return [Math.cos(a) * d, Math.sin(a) * d]; }
+
+/* A ribbon is a closed polygon around a wandering centre line; feathered by 3 stacked passes (no blur). */
+function ribbon(g, rand, rgb, alpha, w0, opts = {}) {
+  const steps = opts.steps || 90, step = opts.step || 0.04;
+  const th = rand() * TAU, r0 = 0.95;
+  let x = Math.cos(th) * r0, y = Math.sin(th) * r0, h = th + Math.PI + (rand() - 0.5) * 1.4;
+  const a1 = 0.6 + rand() * 1.0, f1 = 0.05 + rand() * 0.1, p1 = rand() * TAU;
+  const a2 = rand() * 0.7, f2 = 0.1 + rand() * 0.25, p2 = rand() * TAU, pw = rand() * TAU;
+  const pts = [];
+  for (let i = 0; i < steps; i++) {
+    pts.push([x, y]);
+    h += (a1 * Math.sin(f1 * i + p1) + a2 * Math.sin(f2 * i + p2)) * 0.09;
+    x += Math.cos(h) * step; y += Math.sin(h) * step;
+  }
+  const left = [], right = [];
+  for (let i = 0; i < pts.length; i++) {
+    const p0 = pts[Math.max(0, i - 1)], p1_ = pts[Math.min(pts.length - 1, i + 1)];
+    let dx = p1_[0] - p0[0], dy = p1_[1] - p0[1]; const n = Math.hypot(dx, dy) || 1; dx /= n; dy /= n;
+    const k = Math.pow(Math.sin(Math.PI * i / (pts.length - 1)), 0.55) * (0.7 + 0.3 * Math.sin(i * 0.31 + pw));
+    left.push([pts[i][0] - dy * w0 * k, pts[i][1] + dx * w0 * k]);
+    right.push([pts[i][0] + dy * w0 * k, pts[i][1] - dx * w0 * k]);
+  }
+  const passes = opts.hard ? [[1, 0.9]] : [[1.55, 0.18], [1.22, 0.30], [1, 0.75]];
+  for (const [grow, a] of passes) {
+    g.beginPath();
+    for (let i = 0; i < pts.length; i++) {
+      const lx = pts[i][0] + (left[i][0] - pts[i][0]) * grow, ly = pts[i][1] + (left[i][1] - pts[i][1]) * grow;
+      i ? g.lineTo(lx, ly) : g.moveTo(lx, ly);
+    }
+    for (let i = pts.length - 1; i >= 0; i--) {
+      g.lineTo(pts[i][0] + (right[i][0] - pts[i][0]) * grow, pts[i][1] + (right[i][1] - pts[i][1]) * grow);
+    }
+    g.closePath(); g.fillStyle = css(rgb, alpha * a); g.fill();
+  }
+}
+
+function veins(g, rand, sec, n, strong) {
+  const veinCol = lum(sec) > 0.4 ? mix(sec, [0, 0, 0], 0.4) : mix(sec, [255, 255, 255], 0.45);
+  for (let i = 0; i < n; i++) ribbon(g, rand, veinCol, strong ? 0.55 : 0.4, 0.006 + rand() * 0.014, { hard: true, steps: 110, step: 0.035 });
+}
+
+/* ---------- the six techniques ---------- */
+const TECH = {};
+
+/* A. Marble, ribbons: curling feathered ribbons of the second color, a mid tone beneath, thin veins on top. */
+TECH.A = (g, rand, c) => {
+  const mid = mix(c.base, c.sec, 0.5);
+  for (let i = 0; i < 4; i++) ribbon(g, rand, mid, 0.55, 0.12 + rand() * 0.16);
+  for (let i = 0; i < 6; i++) ribbon(g, rand, c.sec, 0.92, 0.07 + rand() * 0.15);
+  veins(g, rand, c.sec, 7, false);
+};
+
+/* B. Marble, warped noise: domain-warped fbm thresholded into bands, one CPU bitmap per Disc. */
+TECH.B = (g, rand, c) => {
+  const N = Math.min(c.S, 256);
+  const T = document.createElement('canvas'); T.width = T.height = N;
+  const tg = T.getContext('2d'); const img = tg.createImageData(N, N); const d = img.data;
+  const s0 = Math.floor(rand() * 1e6), sc = 1.45;
+  const o = Array.from({ length: 6 }, () => rand() * 80);
+  const vein = lum(c.sec) > 0.4 ? mix(c.sec, [0, 0, 0], 0.35) : mix(c.sec, [255, 255, 255], 0.4);
+  const mid = mix(c.base, c.sec, 0.5);
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    const px = ((x + 0.5) / N * 2 - 1) * sc, py = ((y + 0.5) / N * 2 - 1) * sc;
+    const qx = fbm(px + o[0], py + o[1], s0), qy = fbm(px + o[2], py + o[3], s0 + 7);
+    const rx = fbm(px + 3.2 * qx + o[4], py + 3.2 * qy + 1.7, s0 + 13), ry = fbm(px + 3.2 * qx + 8.3, py + 3.2 * qy + o[5], s0 + 19);
+    const f = fbm(px + 3.2 * rx, py + 3.2 * ry, s0 + 29);
+    const band = 0.5 + 0.5 * Math.sin((f - 0.5) * TAU * 2.1 + 0.6);
+    const t = smooth(0.3, 0.7, band);
+    const edge = Math.exp(-Math.pow((band - 0.5) / 0.09, 2));
+    let col = mix(c.base, c.sec, t);
+    col = mix(col, mid, edge * 0.45);
+    col = mix(col, vein, Math.exp(-Math.pow((band - 0.5) / 0.03, 2)) * 0.45);
+    const i = (y * N + x) * 4;
+    d[i] = col[0]; d[i + 1] = col[1]; d[i + 2] = col[2];
+    d[i + 3] = (c.clear ? CLEAR_A + (1 - CLEAR_A) * t : 1) * 255;
+  }
+  tg.putImageData(img, 0, 0);
+  g.clearRect(-1.1, -1.1, 2.2, 2.2);
+  g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
+  g.drawImage(T, -1, -1, 2, 2);
+};
+
+/* C. Marble, clouds: big soft elongated radial-gradient blobs, smoke-like, plus a few veins. */
+TECH.C = (g, rand, c) => {
+  const mid = mix(c.base, c.sec, 0.5), lite = mix(c.sec, [255, 255, 255], 0.25);
+  const blob = (col, a) => {
+    const [x, y] = inDisc(rand, 1.05), rx = 0.22 + rand() * 0.45, ry = 0.08 + rand() * 0.2, rot = rand() * TAU;
+    g.save(); g.translate(x, y); g.rotate(rot); g.scale(rx, ry);
+    const grad = g.createRadialGradient(0, 0, 0, 0, 0, 1);
+    grad.addColorStop(0, css(col, a)); grad.addColorStop(0.55, css(col, a * 0.55)); grad.addColorStop(1, css(col, 0));
+    g.fillStyle = grad; g.beginPath(); g.arc(0, 0, 1, 0, TAU); g.fill(); g.restore();
+  };
+  for (let i = 0; i < 9; i++) blob(mid, 0.7);
+  for (let i = 0; i < 12; i++) blob(c.sec, 0.8);
+  for (let i = 0; i < 5; i++) blob(lite, 0.45);
+  veins(g, rand, c.sec, 4, false);
+};
+
+/* D. Splatter, uniform: round droplets, power-law sizes, scattered evenly. */
+TECH.D = (g, rand, c) => {
+  const n = 230;
+  for (let i = 0; i < n; i++) {
+    const [x, y] = inDisc(rand, 1.05);
+    const r = 0.007 * Math.pow(0.085 / 0.007, Math.pow(rand(), 2.3));
+    ellipse(g, x, y, r, r, 0, css(c.sec, 0.96));
+  }
+};
+
+/* E. Splatter, bursts: a few impact points, each throwing elongated droplets away from a core blob. */
+TECH.E = (g, rand, c) => {
+  const m = 4 + Math.floor(rand() * 3);
+  for (let k = 0; k < m; k++) {
+    const [cx, cy] = inDisc(rand, 0.85);
+    const core = 5 + Math.floor(rand() * 4);
+    for (let i = 0; i < core; i++) {
+      const a = rand() * TAU, d = rand() * 0.05, r = 0.025 + rand() * 0.05;
+      ellipse(g, cx + Math.cos(a) * d, cy + Math.sin(a) * d, r, r, 0, css(c.sec, 0.97));
+    }
+    const n = 90 + Math.floor(rand() * 70), reach = 0.3 + rand() * 0.3;
+    for (let i = 0; i < n; i++) {
+      const a = rand() * TAU, d = 0.05 - Math.log(1 - rand()) * reach * 0.5;
+      const r = Math.max(0.005, 0.07 * Math.exp(-d * 4) * (0.3 + rand() * 0.9));
+      const e = 1 + d * 7 * rand();
+      ellipse(g, cx + Math.cos(a) * d, cy + Math.sin(a) * d, r * e, r, a, css(c.sec, 0.96));
+    }
+  }
+};
+
+/* F. Splatter, blobs and mist: lumpy paint blobs, medium drops with slight tint variation, fine mist. */
+TECH.F = (g, rand, c) => {
+  const lite = mix(c.sec, [255, 255, 255], 0.18), dark = mix(c.sec, [0, 0, 0], 0.18);
+  for (let k = 0; k < 7; k++) {
+    const [cx, cy] = inDisc(rand, 0.9), n = 5 + Math.floor(rand() * 5), size = 0.03 + rand() * 0.07;
+    for (let i = 0; i < n; i++) {
+      const a = rand() * TAU, d = rand() * size * 1.2, r = size * (0.5 + rand() * 0.7);
+      ellipse(g, cx + Math.cos(a) * d, cy + Math.sin(a) * d, r, r * (0.8 + rand() * 0.3), rand() * TAU, css(c.sec, 0.97));
+    }
+  }
+  for (let i = 0; i < 70; i++) {
+    const [x, y] = inDisc(rand, 1.05), r = 0.012 + rand() * 0.02;
+    ellipse(g, x, y, r, r, 0, css(rand() < 0.5 ? c.sec : (rand() < 0.5 ? lite : dark), 0.96));
+  }
+  for (let i = 0; i < 480; i++) {
+    const [x, y] = inDisc(rand, 1.05), r = 0.004 + rand() * 0.008;
+    ellipse(g, x, y, r, r, 0, css(c.sec, 0.9));
+  }
+};
+
+const VARIANTS = [
+  { key:'A', name:'Marble, ribbons',          kind:'vector',  note:'Curling feathered ribbons (3 stacked translucent passes instead of a blur), a mid tone underneath, thin veins on top. Pure paths and fills: trivial on SwiftUI Canvas and Compose Canvas, a few ms. Risk: looks drawn rather than poured when ribbons overlap a lot.' },
+  { key:'B', name:'Marble, warped noise',     kind:'bitmap',  note:'Domain-warped fbm thresholded into bands. Richest and closest to real marbling, but it is per-pixel math: build one 256 px bitmap per Disc on a background thread, cache it, draw it scaled. Works on iOS (CGContext buffer) and Android minSdk 26 (Bitmap.setPixels); a shader is not an option on Android below API 33. Needs a noise function ported twice and kept identical in style.' },
+  { key:'C', name:'Marble, clouds',           kind:'vector',  note:'Large soft elongated radial-gradient blobs plus a few veins. Reads as smoky or swirled marble rather than veined stone. Radial gradients are native on both platforms, no blur needed. Looks softer and less crisp than A or B.' },
+  { key:'D', name:'Splatter, uniform',        kind:'vector',  note:'About 230 round droplets with power-law sizes, scattered evenly. The simplest thing. Risk: reads as polka dots or confetti, not flicked paint.' },
+  { key:'E', name:'Splatter, bursts',         kind:'vector',  note:'3 to 6 impact points, each a core blob throwing elongated droplets outward. Closest to how splatter vinyl is actually made. Uneven coverage is part of the look. Elliptical droplets are rotated paths, easy on both platforms.' },
+  { key:'F', name:'Splatter, blobs and mist', kind:'vector',  note:'Lumpy paint blobs, medium drops with slight tint variation, and 480 fine mist dots. Busiest, about 600 shapes per Disc, still cheap if cached as a bitmap once.' },
+];
+
+/* ---------- layer cache ---------- */
+const cache = new Map();
+function getLayer(v, baseK, secK, seed, S) {
+  const key = [v, baseK, secK, seed, S].join('|');
+  let hit = cache.get(key);
+  if (!hit) {
+    const t0 = performance.now();
+    const L = document.createElement('canvas'); L.width = L.height = S;
+    const g = L.getContext('2d');
+    const base = hex2rgb(PAL[baseK]), sec = hex2rgb(PAL[secK]), clear = baseK === 'CLEAR';
+    g.save(); g.beginPath(); g.arc(S / 2, S / 2, S / 2, 0, TAU); g.clip();
+    g.fillStyle = css(base, clear ? CLEAR_A : 1); g.fillRect(0, 0, S, S);
+    g.translate(S / 2, S / 2); g.scale(S / 2, S / 2);
+    TECH[v](g, rng(seed * 2654435761 + v.charCodeAt(0)), { base, sec, S, clear });
+    g.restore();
+    hit = { layer: L, ms: performance.now() - t0 };
+    if (cache.size > 300) cache.clear();
+    cache.set(key, hit);
+  }
+  return hit;
+}
+
+/* ---------- the disc, as SleeveView.VinylView draws it ---------- */
+function paintDisc(canvas, css_px, st, v, seed, spin) {
+  const dpr = window.devicePixelRatio || 1, S = Math.round(css_px * dpr);
+  if (canvas.width !== S) { canvas.width = S; canvas.height = S; }
+  canvas.style.width = canvas.style.height = css_px + 'px';
+  const { layer } = getLayer(v, st.base, st.second, seed, S);
+  const g = canvas.getContext('2d'), c = S / 2, R = S / 2, u = R / 94;
+  g.clearRect(0, 0, S, S);
+  g.save(); g.translate(c, c); g.rotate(spin); g.drawImage(layer, -c, -c, S, S); g.restore();
+  const light = lum(hex2rgb(PAL[st.base])) > 0.4;
+  g.strokeStyle = light ? 'rgba(0,0,0,.10)' : 'rgba(255,255,255,.07)'; g.lineWidth = 0.8 * u;
+  for (let r = R * 0.36; r < R - 2 * u; r += 3 * u) { g.beginPath(); g.arc(c, c, r, 0, TAU); g.stroke(); }
+  const lr = 32 * u;
+  g.save(); g.beginPath(); g.arc(c, c, lr, 0, TAU); g.clip();
+  const lg = g.createLinearGradient(c - lr, c - lr, c + lr, c + lr); lg.addColorStop(0, '#7d9a86'); lg.addColorStop(1, '#2c3b4c');
+  g.fillStyle = lg; g.fillRect(c - lr, c - lr, lr * 2, lr * 2);
+  g.fillStyle = 'rgba(255,255,255,.75)'; g.font = `600 ${lr * 0.34}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.fillText('COVER', c, c); g.restore();
+  g.beginPath(); g.arc(c, c, 4 * u, 0, TAU); g.fillStyle = '#fff'; g.fill();
+  const hg = g.createConicGradient(0, c, c);
+  [[0, 0], [0.06, 0.13], [0.12, 0], [0.5, 0], [0.56, 0.13], [0.62, 0], [1, 0]].forEach(([p, a]) => hg.addColorStop(p, `rgba(255,255,255,${a})`));
+  g.beginPath(); g.arc(c, c, R, 0, TAU); g.fillStyle = hg; g.fill();
+}
+
+/* the flat Color band, geometry of ColorBandShape */
+function paintCover(canvas, w, baseK) {
+  const dpr = window.devicePixelRatio || 1, S = Math.round(w * dpr);
+  canvas.width = S; canvas.height = S; canvas.style.width = canvas.style.height = w + 'px';
+  const g = canvas.getContext('2d'); g.scale(dpr, dpr);
+  const gr = g.createLinearGradient(0, 0, w, w); gr.addColorStop(0, '#6b7280'); gr.addColorStop(1, '#374151');
+  g.fillStyle = gr; g.fillRect(0, 0, w, w);
+  g.fillStyle = 'rgba(255,255,255,.6)'; g.font = `600 ${w * 0.13}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('COVER', w / 2, w * 0.62);
+  const t = Math.max(8, w * 0.11), centre = w - 4 * t, half = t / Math.SQRT2;
+  g.beginPath(); g.moveTo(centre - half, 0); g.lineTo(centre + half, 0); g.lineTo(w, w - (centre + half)); g.lineTo(w, w - (centre - half)); g.closePath();
+  const rgb = hex2rgb(PAL[baseK]);
+  g.fillStyle = css(rgb, baseK === 'CLEAR' ? 0.75 : 1); g.fill();
+  if (lum(rgb) > 0.4) { g.strokeStyle = 'rgba(0,0,0,.3)'; g.lineWidth = 0.5; g.stroke(); }
+}
+
+/* ---------- state, URL, UI ---------- */
+const params = new URLSearchParams(location.search);
+const st = {
+  v: VARIANTS.find(x => x.key === params.get('variant')) ? params.get('variant') : 'A',
+  base: PAL[params.get('base')] && params.get('base') !== 'BLACK' ? params.get('base') : 'RED',
+  second: PAL[params.get('second')] && params.get('second') !== 'CLEAR' ? params.get('second') : 'WHITE',
+  seed: Number.isFinite(+params.get('seed')) && params.get('seed') ? +params.get('seed') : 20260101,
+};
+const $ = id => document.getElementById(id);
+let spin = 0, raf = 0;
+
+function syncUrl() {
+  const p = new URLSearchParams({ variant: st.v, base: st.base, second: st.second, seed: st.seed });
+  history.replaceState(null, '', '?' + p.toString());
+}
+function dots(el, keys, cur, on) {
+  el.innerHTML = '';
+  for (const k of keys) {
+    const b = document.createElement('button');
+    b.className = 'dot' + (k === cur ? ' on' : ''); b.title = k[0] + k.slice(1).toLowerCase();
+    b.style.background = k === 'CLEAR' ? 'repeating-conic-gradient(#aab 0 25%, #667 0 50%) 0 0/10px 10px' : PAL[k];
+    b.onclick = () => on(k); el.appendChild(b);
+  }
+}
+function renderStatic() {
+  document.body.classList.toggle('clear', st.base === 'CLEAR');
+  dots($('baseDots'), BASES, st.base, k => { st.base = k; renderAll(); });
+  dots($('secDots'), SECONDS, st.second, k => { st.second = k; renderAll(); });
+  $('seed').value = st.seed;
+  const info = VARIANTS.find(x => x.key === st.v);
+  $('barlabel').textContent = `${info.key} (${info.name})`;
+  $('notes').innerHTML = `<b>${info.key}. ${info.name}</b> <span>(${info.kind})</span><br>${info.note}`;
+
+  const cmp = $('compare'); cmp.innerHTML = '';
+  for (const vr of VARIANTS) {
+    const tile = document.createElement('div'); tile.className = 'tile' + (vr.key === st.v ? ' on' : '');
+    const cv = document.createElement('canvas'); cv.className = 'disc';
+    tile.appendChild(cv); const sm = document.createElement('small'); sm.textContent = `${vr.key}. ${vr.name}`; tile.appendChild(sm);
+    tile.onclick = () => select(vr.key); cmp.appendChild(tile);
+    paintDisc(cv, 132, st, vr.key, st.seed, 0);
+  }
+  const sheet = $('sheet'); sheet.innerHTML = '';
+  for (let i = 0; i < 8; i++) {
+    const tile = document.createElement('div'); tile.className = 'tile';
+    const cv = document.createElement('canvas'); cv.className = 'disc'; tile.appendChild(cv); sheet.appendChild(tile);
+    paintDisc(cv, 132, st, st.v, st.seed + (i + 1) * 7919, 0);
+  }
+  paintCover($('cover'), 120, st.base); paintCover($('cover2'), 72, st.base);
+  syncUrl();
+}
+function frame() {
+  if ($('spin').checked) spin += 0.006;
+  paintDisc($('big'), 376, st, st.v, st.seed, spin);
+  paintDisc($('real'), 188, st, st.v, st.seed, spin);
+  const S = Math.round(376 * (window.devicePixelRatio || 1));
+  $('ms').textContent = `build at 376 px: ${getLayer(st.v, st.base, st.second, st.seed, S).ms.toFixed(1)} ms (first draw only, then cached)`;
+  raf = requestAnimationFrame(frame);
+}
+function renderAll() { renderStatic(); }
+function select(k) { st.v = k; renderAll(); }
+function cycle(d) { const i = VARIANTS.findIndex(x => x.key === st.v); select(VARIANTS[(i + d + VARIANTS.length) % VARIANTS.length].key); }
+function reroll() { st.seed = Math.floor(Math.random() * 1e9); renderAll(); }
+
+$('prev').onclick = () => cycle(-1); $('next').onclick = () => cycle(1);
+$('reroll').onclick = reroll;
+$('seed').onchange = e => { st.seed = Math.floor(+e.target.value) || 1; renderAll(); };
+addEventListener('keydown', e => {
+  if (/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName) || document.activeElement.isContentEditable) return;
+  if (e.key === 'ArrowLeft') cycle(-1); else if (e.key === 'ArrowRight') cycle(1);
+  else if (e.key === 'r' || e.key === 'R') reroll();
+  else if (/^[1-6]$/.test(e.key)) select(VARIANTS[+e.key - 1].key);
+});
+for (const [b, s] of PRESETS) {
+  const el = document.createElement('button'); el.className = 'chip';
+  el.innerHTML = `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${PAL[b]};margin-right:3px"></span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${PAL[s]};margin-right:5px;border:1px solid #fff4"></span>${b[0] + b.slice(1).toLowerCase()} / ${s[0] + s.slice(1).toLowerCase()}`;
+  el.onclick = () => { st.base = b; st.second = s; renderAll(); };
+  $('presets').appendChild(el);
+}
+renderAll(); frame();
+</script>
+</body>
+</html>
