@@ -26,6 +26,11 @@ class WaxPatternTest {
         assertEquals(Disc(addedAt = 5).waxSeed, Disc(addedAt = 5, title = "x", vinylColor = VinylColor.RED).waxSeed)
     }
 
+    @Test fun theSeedForAGivenTimeIsPinnedForCrossPlatformParity() {
+        // Computed independently with a Python SplitMix64; iOS WaxPatternTests pins the same value.
+        assertEquals(940689255921423875L, Disc(addedAt = 1_700_000_000_000).waxSeed)
+    }
+
     @Test fun splatterIsTheSameEveryTimeAndDiffersPerSeed() {
         assertEquals(WaxPattern.splatter(7), WaxPattern.splatter(7))
         assertNotEquals(WaxPattern.splatter(7), WaxPattern.splatter(8))
