@@ -95,6 +95,9 @@ private val pillTabs = listOf(
     Tab(R.HOME, AppR.string.tab_home, Glyphs.Home, Glyphs.HomeOn),
 )
 
+/** How far the nav pill reaches in from the right screen edge (14 dp margin + 52 dp wide), plus a 12 dp gap. */
+val NavPillClearance = 78.dp
+
 /** Vertical glass navigation pill, anchored right. Active tab: Accent fill + Ink outline. */
 @Composable
 fun GlassNavPill(current: String?, onNavigate: (String) -> Unit, modifier: Modifier = Modifier) {

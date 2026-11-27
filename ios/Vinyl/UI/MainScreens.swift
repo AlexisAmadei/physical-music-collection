@@ -82,8 +82,10 @@ struct ProfileScreen: View {
                     EmptyState(app: app)
                         .padding(.top, 35)
                 }
+                // Stops short of the nav pill, which floats over the right edge (the screen margin is 20 pt).
                 LanguagePicker(language: app.language)
                     .padding(.top, 35)
+                    .padding(.trailing, navPillClearance - 20)
             }
             .sheet(isPresented: $editingName) {
                 ProfileNameSheet(current: app.profileName) { name in

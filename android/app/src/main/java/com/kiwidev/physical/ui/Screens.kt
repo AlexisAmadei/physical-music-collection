@@ -160,7 +160,8 @@ fun ProfileScreen(vm: AppVm, nav: NavHostController) {
                 onAdd = { adding = true }, Modifier.padding(top = 35.dp),
             ) { AddChoices(adding, { adding = false }, vm, nav) }
         }
-        LanguageSwitch(language, onPick = vm::setLanguage, Modifier.padding(top = 35.dp))
+        // Stops short of the nav pill, which floats over the right edge (the screen margin is 20 dp).
+        LanguageSwitch(language, onPick = vm::setLanguage, Modifier.padding(top = 35.dp, end = NavPillClearance - 20.dp))
     }
     if (editing) NameSheet(name, onDone = { vm.setName(it); editing = false }, onDismiss = { editing = false })
 }
