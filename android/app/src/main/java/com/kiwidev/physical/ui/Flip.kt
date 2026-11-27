@@ -249,6 +249,7 @@ fun Vinyl(d: Disc, spinning: Boolean, modifier: Modifier = Modifier) {
                     r += 3.dp.toPx()
                 }
             }
+            WaxShimmer(wax, finish, seed, Modifier.fillMaxSize())
             Cover(d.coverUrl, Modifier.size(64.dp).clip(CircleShape))
             Canvas(Modifier.size(8.dp)) { drawCircle(Color.White) }
         }

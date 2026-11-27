@@ -3,6 +3,10 @@ package com.kiwidev.physical.ui
 import android.graphics.Bitmap
 import android.util.LruCache
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.Modifier
+import androidx.compose.runtime.remember
+import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.geometry.Offset
@@ -109,6 +113,42 @@ fun DrawScope.drawWax(base: VinylColor?, finish: Finish?, second: VinylColor?, s
         Finish.GLITTER -> clipPath(disc) {
             val tint = base ?: VinylColor.WHITE
             drops(WaxPattern.flecks(seed)) { Color(WaxPattern.fleckColor(tint, it.tone)) }
+        }
+    }
+}
+
+/**
+ * The shimmer over Glitter and Galaxy wax: glints that flash as the phone tilts, drawn over the still wax (which is not
+ * redrawn). Nothing is drawn, and the sensor stays off, for other Finishes and with reduced motion. The tilt is read only
+ * while drawing, so a tilting phone redraws these few glints and nothing else. Put it inside the turning disc, so the glints
+ * turn with the wax.
+ */
+@Composable
+fun WaxShimmer(base: VinylColor?, finish: Finish?, seed: Long, modifier: Modifier = Modifier) {
+    if ((finish != Finish.GLITTER && finish != Finish.GALAXY) || base == null || rememberReducedMotion()) return
+    val tilt = rememberHoloTilt()
+    val glints = remember(finish, seed) { WaxPattern.glints(finish, seed) }
+    // Glitter catches the light in the color of its strongest flecks; Galaxy stars are white.
+    val color = if (finish == Finish.GALAXY) Color.White else Color(WaxPattern.fleckColor(base, 0))
+    Canvas(modifier) {
+        val t = tilt.value
+        val radius = size.minDimension / 2
+        val centre = Offset(size.width / 2, size.height / 2)
+        val stroke = 0.8.dp.toPx()
+        for (g in glints) {
+            val level = WaxPattern.glintLevel(g, t.x.toDouble(), t.y.toDouble()).toFloat()
+            if (level < 0.06f) continue
+            val c = Offset(centre.x + (g.x * radius).toFloat(), centre.y + (g.y * radius).toFloat())
+            val r = (g.r * radius).toFloat() * (0.8f + 0.8f * level)
+            val halo = r * 2.4f
+            drawCircle(
+                Brush.radialGradient(0f to color.copy(alpha = level * 0.9f), 0.35f to color.copy(alpha = level * 0.45f), 1f to Color.Transparent, center = c, radius = halo),
+                halo, c,
+            )
+            val arm = r * 2.5f
+            val line = color.copy(alpha = level * 0.7f)
+            drawLine(line, Offset(c.x - arm, c.y), Offset(c.x + arm, c.y), stroke)
+            drawLine(line, Offset(c.x, c.y - arm), Offset(c.x, c.y + arm), stroke)
         }
     }
 }

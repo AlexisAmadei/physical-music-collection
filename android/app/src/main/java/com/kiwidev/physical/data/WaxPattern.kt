@@ -44,6 +44,12 @@ val Disc.waxSeed: Long get() = WaxRandom(addedAt).next()
 /** An ellipse on the unit disc (radius 1, origin at the centre, y down), turned by [rot] radians. */
 data class Droplet(val x: Double, val y: Double, val rx: Double, val ry: Double, val rot: Double, val alpha: Double, val tone: Int = 0)
 
+/**
+ * A flake that flashes when the phone tilts. It has its own flashing angles: [a] and [b], in radians per unit of tilt,
+ * and [phase]. [r] is its size on the unit disc. See [WaxPattern.glintLevel].
+ */
+data class Glint(val x: Double, val y: Double, val r: Double, val a: Double, val b: Double, val phase: Double)
+
 /** Galaxy stars: [dots] are fine white points of varied size, [glows] a few bigger stars drawn with a halo. */
 class Stars(val dots: List<Droplet>, val glows: List<Droplet>)
 
@@ -254,4 +260,33 @@ object WaxPattern {
         Finish.GALAXY -> nebula(seed, base, second, n)
         else -> null
     }
+
+    private class GlintSpec(val rand: WaxRandom, val count: Int, val minRadius: Double, val radiusSpan: Double)
+
+    /**
+     * The glints that shimmer with the tilt: 150 small ones on Glitter, 40 bigger ones (the twinkling stars) on Galaxy,
+     * none on any other Finish. They are drawn over the still wax, which does not change.
+     */
+    fun glints(finish: Finish?, seed: Long): List<Glint> {
+        val spec = when (finish) {
+            Finish.GLITTER -> GlintSpec(WaxRandom(seed + 4), 150, 0.007, 0.011)
+            Finish.GALAXY -> GlintSpec(WaxRandom(seed + 5), 40, 0.012, 0.016)
+            else -> return emptyList()
+        }
+        val rand = spec.rand
+        return List(spec.count) {
+            val (x, y) = inDisc(rand, 0.97)
+            val r = spec.minRadius + rand.unit() * spec.radiusSpan
+            val a = (rand.unit() * 2 - 1) * 14
+            val b = (rand.unit() * 2 - 1) * 14
+            Glint(x, y, r, a, b, rand.unit() * TAU)
+        }
+    }
+
+    /**
+     * How brightly a [glint] flashes, 0 to 1, for a phone tilt of ([tiltX], [tiltY]), each in -1..1. A spiky cosine: a
+     * glint is dark most of the time and flashes when the tilt faces its own angle, so a tilting phone makes them twinkle.
+     */
+    fun glintLevel(glint: Glint, tiltX: Double, tiltY: Double): Double =
+        max(0.0, cos(glint.a * tiltX + glint.b * tiltY + glint.phase)).pow(12)
 }

@@ -175,4 +175,60 @@ class WaxPatternTest {
         assertEquals(0.4386496446218519, d.last().x, 1e-9)
         assertEquals(0.020505143576469913, d.last().ry, 1e-9)
     }
+
+    @Test fun onlyGlitterAndGalaxyHaveGlints() {
+        assertEquals(150, WaxPattern.glints(Finish.GLITTER, 1).size)
+        assertEquals(40, WaxPattern.glints(Finish.GALAXY, 1).size)
+        for (f in listOf(null, Finish.MARBLE, Finish.SPLATTER, Finish.SPLIT)) assertTrue(WaxPattern.glints(f, 1).isEmpty())
+    }
+
+    @Test fun glintsAreTheSameEveryTimeAndStayOnTheDisc() {
+        assertEquals(WaxPattern.glints(Finish.GLITTER, 3), WaxPattern.glints(Finish.GLITTER, 3))
+        assertNotEquals(WaxPattern.glints(Finish.GLITTER, 3), WaxPattern.glints(Finish.GLITTER, 4))
+        assertNotEquals(WaxPattern.glints(Finish.GLITTER, 3).map { it.x }, WaxPattern.glints(Finish.GALAXY, 3).map { it.x })
+        assertTrue(WaxPattern.glints(Finish.GLITTER, 3).all { it.x * it.x + it.y * it.y <= 0.97 * 0.97 + 1e-9 })
+    }
+
+    @Test fun aGlintLevelIsBetweenZeroAndOne() {
+        val gs = WaxPattern.glints(Finish.GLITTER, 7)
+        for (tx in listOf(-1.0, -0.4, 0.0, 0.3, 1.0)) for (ty in listOf(-0.7, 0.0, 0.5)) {
+            assertTrue(gs.all { WaxPattern.glintLevel(it, tx, ty) in 0.0..1.0 })
+        }
+    }
+
+    @Test fun mostGlintsAreDarkAtAnyMomentAndAFewFlash() {
+        val gs = WaxPattern.glints(Finish.GLITTER, 7)
+        val levels = gs.map { WaxPattern.glintLevel(it, 0.2, -0.1) }
+        assertTrue("some flash: ${levels.count { it > 0.5 }}", levels.count { it > 0.5 } in 3..60)
+        assertTrue(levels.count { it < 0.05 } > gs.size / 2)
+    }
+
+    @Test fun tiltingThePhoneMakesGlintsTwinkle() {
+        val gs = WaxPattern.glints(Finish.GLITTER, 7)
+        val before = gs.map { WaxPattern.glintLevel(it, 0.0, 0.0) }
+        val after = gs.map { WaxPattern.glintLevel(it, 0.1, 0.05) } // about 1.5 degrees
+        assertTrue(before.indices.count { kotlin.math.abs(before[it] - after[it]) > 0.2 } > 10)
+    }
+
+    @Test fun aStillPhoneKeepsTheGlintsStill() {
+        val g = WaxPattern.glints(Finish.GALAXY, 7)[0]
+        assertEquals(WaxPattern.glintLevel(g, 0.3, 0.3), WaxPattern.glintLevel(g, 0.3, 0.3), 0.0)
+    }
+
+    @Test fun glintsArePinnedForCrossPlatformParity() {
+        // Also asserted by iOS WaxPatternTests.
+        val seed = 0x1234_5678_9ABCL
+        val gs = WaxPattern.glints(Finish.GLITTER, seed)
+        val ga = WaxPattern.glints(Finish.GALAXY, seed)
+        fun same(g: Glint, x: Double, y: Double, r: Double, a: Double, b: Double, p: Double) {
+            assertEquals(x, g.x, 1e-9); assertEquals(y, g.y, 1e-9); assertEquals(r, g.r, 1e-9)
+            assertEquals(a, g.a, 1e-9); assertEquals(b, g.b, 1e-9); assertEquals(p, g.phase, 1e-9)
+        }
+        same(gs[0], 0.09883692305658315, 0.3186241175110279, 0.009092540931959648, 6.698980966665108, -4.200471113907781, 3.227141011191712)
+        same(gs.last(), -0.639439374105745, 0.04226807487864142, 0.008655954921933344, 3.0813268904137776, -7.869898837767321, 3.6386120720273616)
+        same(ga[0], 0.10761710611858927, -0.8810250168695598, 0.025059460494169888, 3.1672590051492113, 8.499173694726384, 0.9239875742356026)
+        assertEquals(0.7733069166475773, WaxPattern.glintLevel(gs[0], 0.3, -0.2), 1e-9)
+        assertEquals(0.026459898314168062, WaxPattern.glintLevel(gs[7], -0.5, 0.1), 1e-9)
+        assertEquals(0.0, WaxPattern.glintLevel(ga[3], 0.9, 0.9), 1e-9)
+    }
 }
