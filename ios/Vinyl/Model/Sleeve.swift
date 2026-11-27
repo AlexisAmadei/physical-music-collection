@@ -53,6 +53,14 @@ struct VinylWax: Equatable, Sendable {
     /// Wax color as 0xAARRGGBB: the Vinyl color, or near black when none. Transparent carries its own alpha.
     let argb: UInt32
     let grooves: Grooves
+    /// The Vinyl color as shown, nil = black wax.
+    let base: VinylColor?
+    /// The Finish as shown, nil = Solid.
+    let finish: Finish?
+    /// The Second color as shown, for a Finish that uses one.
+    let second: VinylColor?
+    /// Seed of the Disc's pattern.
+    let seed: UInt64
 
     /// Black wax when there is no Vinyl color.
     static let black: UInt32 = 0xFF12_1212
@@ -62,5 +70,15 @@ struct VinylWax: Equatable, Sendable {
         let color = disc.shownVinylColor
         argb = color?.argb ?? Self.black
         grooves = color?.light == true ? .dark : .light
+        base = color
+        finish = disc.shownFinish
+        second = disc.shownSecondColor
+        seed = disc.waxSeed
+    }
+
+    /// What to draw for the Finish: nil for Solid (plain wax needs no image). `side` is the image side in pixels.
+    func look(side: Int) -> WaxLook? {
+        guard let finish else { return nil }
+        return WaxLook(base: base, finish: finish, second: second, seed: seed, side: side, marbleSide: WaxPattern.marbleSize)
     }
 }

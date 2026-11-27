@@ -175,9 +175,13 @@ private struct Barcode: View {
 struct VinylView: View {
     let disc: Disc
     let spin: Double
+    @Environment(\.displayScale) private var displayScale
+    @State private var rendered: RenderedWax?
 
     var body: some View {
         let wax = VinylWax(disc)
+        let look = wax.look(side: Int((188 * displayScale).rounded()))
+        let image = rendered.image(for: look)
         ZStack {
             ZStack {
                 Canvas { context, size in
@@ -186,7 +190,11 @@ struct VinylView: View {
                     func circle(_ r: Double) -> Path {
                         Path(ellipseIn: CGRect(x: centre.x - r, y: centre.y - r, width: 2 * r, height: 2 * r))
                     }
-                    context.fill(circle(outer), with: .color(Color(hex: wax.argb & 0xFF_FFFF, opacity: Double(wax.argb >> 24) / 255)))
+                    if let image {
+                        context.draw(Image(decorative: image, scale: displayScale), in: CGRect(origin: .zero, size: size))
+                    } else {
+                        context.fill(circle(outer), with: .color(Color(hex: wax.argb & 0xFF_FFFF, opacity: Double(wax.argb >> 24) / 255)))
+                    }
                     let groove = wax.grooves == .dark ? Color.black.opacity(0.10) : Color.white.opacity(0.07)
                     var r = outer * 0.36
                     while r < outer - 2 {
@@ -213,5 +221,7 @@ struct VinylView: View {
         }
         .frame(width: 188, height: 188)
         .accessibilityHidden(true)
+        // The Finish is drawn off the main thread (Marble is a pass of noise per pixel) and cached; until then, plain wax.
+        .task(id: look) { rendered = await WaxRenderer.renderedOffMain(look) }
     }
 }

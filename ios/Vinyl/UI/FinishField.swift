@@ -21,7 +21,7 @@ struct FinishField: View {
                             let name = finish.label(in: language)
                             Button { draft.pickFinish(finish) } label: {
                                 VStack(spacing: 4) {
-                                    FinishSwatch(finish: finish, color: color, second: draft.secondColor ?? finish?.defaultSecondColor)
+                                    FinishSwatch(finish: finish, color: color, second: draft.secondColor ?? finish?.defaultSecondColor, seed: draft.waxSeed)
                                         .frame(width: 40, height: 40)
                                         .padding(4)
                                         .overlay { Circle().strokeBorder(picked ? Palette.ink : .clear, lineWidth: 2) }
@@ -65,44 +65,42 @@ struct FinishField: View {
     }
 }
 
-/// A round hint of a Finish in the form. A stand-in until the wax drawing exists: Split is two halves, Marble, Splatter
-/// and Galaxy are the Vinyl color with spots of the Second color, Glitter has silver flecks.
+/// A round preview of a Finish in the form, drawn like the wax of the Disc: same colors, same pattern.
+/// Solid is the plain color; the others are rendered off the main thread and cached.
 struct FinishSwatch: View {
     let finish: Finish?
     let color: VinylColor
     let second: VinylColor?
+    let seed: UInt64
+    @Environment(\.displayScale) private var displayScale
+    @State private var rendered: RenderedWax?
+
+    private var look: WaxLook? {
+        guard let finish else { return nil }
+        return WaxLook(base: color, finish: finish, second: second, seed: seed, side: Int((40 * displayScale).rounded()), marbleSide: 64)
+    }
 
     var body: some View {
-        Canvas { context, size in
-            let w = size.width
-            let c2 = (second ?? .white).color
-            func dot(_ x: Double, _ y: Double, _ r: Double, _ fill: Color) {
-                context.fill(Path(ellipseIn: CGRect(x: w * x - w * r, y: w * y - w * r, width: 2 * w * r, height: 2 * w * r)), with: .color(fill))
-            }
-            switch finish {
-            case nil: break
-            case .split: context.fill(Path(CGRect(x: w / 2, y: 0, width: w / 2, height: size.height)), with: .color(c2))
-            case .marble, .splatter, .galaxy:
-                dot(0.32, 0.34, 0.22, c2)
-                dot(0.70, 0.62, 0.14, c2)
-                dot(0.40, 0.78, 0.08, c2)
-            case .glitter:
-                for (x, y) in [(0.25, 0.3), (0.6, 0.22), (0.72, 0.55), (0.35, 0.65), (0.55, 0.8)] {
-                    dot(x, y, 0.045, Color(white: 0.9))
-                }
+        let currentLook = look
+        let image = rendered.image(for: currentLook)
+        Group {
+            if let image {
+                Image(decorative: image, scale: displayScale).resizable()
+            } else {
+                Circle().fill(color.color)
             }
         }
-        .background(color.color)
         .clipShape(Circle())
         .overlay { Circle().strokeBorder(Palette.line, lineWidth: 1) }
         .accessibilityHidden(true)
+        .task(id: currentLook) { rendered = await WaxRenderer.renderedOffMain(currentLook) }
     }
 }
 
 #Preview {
     HStack {
         ForEach([nil] + Finish.allCases.map(Optional.some), id: \.self) { finish in
-            FinishSwatch(finish: finish, color: .red, second: finish?.defaultSecondColor).frame(width: 40, height: 40)
+            FinishSwatch(finish: finish, color: .red, second: finish?.defaultSecondColor, seed: 42).frame(width: 40, height: 40)
         }
     }
     .padding()
